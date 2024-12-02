@@ -2,6 +2,7 @@ import React from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
 import App from "./App"
+import { NextUIProvider } from "@nextui-org/react"
 import { store } from "./app/store"
 import "./index.css"
 
@@ -13,7 +14,12 @@ if (container) {
   root.render(
     <React.StrictMode>
       <Provider store={store}>
-        <App />
+        <NextUIProvider>
+          <main className="dark text-foreground bg-background">
+            <h1 className="text-3xl font-bold underline">Hello world!</h1>
+            <App />
+          </main>
+        </NextUIProvider>
       </Provider>
     </React.StrictMode>,
   )

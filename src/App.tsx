@@ -1,68 +1,24 @@
-import "./App.css"
-import { Counter } from "./features/counter/Counter"
-import { Quotes } from "./features/quotes/Quotes"
-import logo from "./logo.svg"
+import { Accordion, AccordionItem } from "@nextui-org/react"
+import { DatePicker } from "@nextui-org/date-picker"
 
-const App = () => {
+export default function App() {
+  const defaultContent =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <Quotes />
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://reselect.js.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Reselect
-          </a>
-        </span>
-      </header>
-    </div>
+    <>
+      <DatePicker label="Birth date" className="max-w-[284px]" />
+      <Accordion>
+        <AccordionItem key="1" aria-label="Accordion 1" title="Accordion 1">
+          {defaultContent}
+        </AccordionItem>
+        <AccordionItem key="2" aria-label="Accordion 2" title="Accordion 2">
+          {defaultContent}
+        </AccordionItem>
+        <AccordionItem key="3" aria-label="Accordion 3" title="Accordion 3">
+          {defaultContent}
+        </AccordionItem>
+      </Accordion>
+    </>
   )
 }
-
-export default App
