@@ -1,4 +1,6 @@
 {
+  "include": ["src/**/*"], // Только файлы внутри src
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
