@@ -1,12 +1,53 @@
-import React from "react"
-import { createRoot } from "react-dom/client"
-import { Provider } from "react-redux"
-import App from "./App"
-import { NextUIProvider } from "@nextui-org/react"
-import { store } from "./app/store"
-import "./index.css"
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { store } from './app/store'
+import './index.css'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import ThemeProvider from './components/ThemeProvider'
+import Auth from './pages/Auth'
+import Layout from './layout'
+import Posts from './pages/Posts'
+import CurrentPost from './pages/CurrentPost'
+import UserProfile from './pages/UserProfile'
+import Followers from './pages/Followers'
+import Following from './pages/Following'
+import AuthGuard from './features/user/AuthGuard'
 
-const container = document.getElementById("root")
+const container = document.getElementById('root')
+
+const router = createBrowserRouter([
+  {
+    path: '/auth',
+    element: <Auth />,
+  },
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        path: '',
+        element: <Posts />,
+      },
+      {
+        path: 'posts/:id',
+        element: <CurrentPost />,
+      },
+      {
+        path: 'users/:id',
+        element: <UserProfile />,
+      },
+      {
+        path: 'followers',
+        element: <Followers />,
+      },
+      {
+        path: 'following',
+        element: <Following />,
+      },
+    ],
+  },
+])
 
 if (container) {
   const root = createRoot(container)
@@ -14,12 +55,11 @@ if (container) {
   root.render(
     <React.StrictMode>
       <Provider store={store}>
-        <NextUIProvider>
-          <main className="dark text-foreground bg-background">
-            <h1 className="text-3xl font-bold underline">Hello world!</h1>
-            <App />
-          </main>
-        </NextUIProvider>
+        <ThemeProvider>
+          <AuthGuard>
+            <RouterProvider router={router} />
+          </AuthGuard>
+        </ThemeProvider>
       </Provider>
     </React.StrictMode>,
   )
