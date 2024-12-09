@@ -18,6 +18,7 @@ function Profile() {
     <Card className="py-4 w-[302px]">
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
         <Image
+          isBlurred
           alt="Изображение профиля"
           className="object-cover rounded-xl"
           src={`${BASE_URL}${avatarUrl}`}

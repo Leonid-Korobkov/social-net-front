@@ -1,6 +1,6 @@
 import { Alert, Button, Input, Link } from '@nextui-org/react'
 import { useForm } from 'react-hook-form'
-import type { SubmitHandler } from 'react-hook-form'
+import { SubmitHandler } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
 import { useRegisterUserMutation } from '../../app/services/user.api'
 import { hasErrorField } from '../../utils/hasErrorField'
@@ -36,7 +36,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       setSelected('login')
       setRegisterSuccess(true)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

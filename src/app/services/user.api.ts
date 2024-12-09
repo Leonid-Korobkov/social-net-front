@@ -1,5 +1,5 @@
-import type { User } from "../types"
-import { api } from "./api"
+import { User } from '../types'
+import { api } from './api'
 
 export const userApi = api.injectEndpoints({
   endpoints: builder => ({
@@ -8,8 +8,8 @@ export const userApi = api.injectEndpoints({
       { email: string; password: string }
     >({
       query: body => ({
-        url: "/login",
-        method: "POST",
+        url: '/login',
+        method: 'POST',
         body,
       }),
     }),
@@ -19,35 +19,35 @@ export const userApi = api.injectEndpoints({
       { email: string; password: string; name: string }
     >({
       query: body => ({
-        url: "/register",
-        method: "POST",
+        url: '/register',
+        method: 'POST',
         body,
       }),
     }),
 
     currentUser: builder.query<User, void>({
       query: () => ({
-        url: "/current",
-        method: "GET",
+        url: '/current',
+        method: 'GET',
       }),
     }),
 
     getUserById: builder.query<User, { id: string }>({
       query: ({ id }) => ({
         url: `/users/${id}`,
-        method: "GET",
+        method: 'GET',
       }),
     }),
 
     updateUser: builder.mutation<User, { body: FormData; id: string }>({
       query: ({ id, body }) => ({
         url: `/users/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body,
       }),
     }),
   }),
-})  
+})
 
 export const {
   useRegisterUserMutation,

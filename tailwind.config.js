@@ -19,12 +19,13 @@ export default {
     //   themes: {
     //     light: {
     //       colors: {
-    //         primary: "#6048CA",
+    //         primary: "#7154f2",
     //         secondary: "#006FEE",
     //         background:"#EBE7D9",
     //         foreground: "#212121",
     //         default: "#212121",
-    //         "default-200": "#ccccce"
+    //         "default-200": "#ccccce",
+    //         content1: "#EBE7D9"
     //       }
     //     },
     //     dark: {
@@ -33,7 +34,8 @@ export default {
     //         secondary: "#006FEE",
     //         background: "#212121",
     //         foreground: "#EBE7D9",
-    //         default: "#565660"
+    //         default: "#565660",
+    //         content1: "#212121"
     //       }
     //     },
     //   }

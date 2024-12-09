@@ -41,6 +41,7 @@ function Header() {
     <Navbar className="" maxWidth="xl">
       <NavbarBrand>
         <Image
+          isBlurred
           src={
             theme === 'dark'
               ? './assets/Zling-logo-white.svg'

@@ -1,34 +1,34 @@
-import type { Post } from "../types"
-import { api } from "./api"
+import { Post } from '../types'
+import { api } from './api'
 
 export const postApi = api.injectEndpoints({
   endpoints: builder => ({
     createPost: builder.mutation<Post, { content: string }>({
       query: body => ({
-        url: "/posts",
-        method: "POST",
+        url: '/posts',
+        method: 'POST',
         body,
       }),
     }),
 
     getAllPosts: builder.query<Post[], void>({
       query: () => ({
-        url: "/posts",
-        method: "GET",
+        url: '/posts',
+        method: 'GET',
       }),
     }),
 
     getPostById: builder.query<Post, string>({
       query: id => ({
         url: `/posts/${id}`,
-        method: "GET",
+        method: 'GET',
       }),
     }),
 
     deletePost: builder.mutation<Post, string>({
       query: id => ({
         url: `/posts/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
     }),
   }),

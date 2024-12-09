@@ -1,5 +1,5 @@
 export type User = {
-  id: number
+  id: string
   email: string
   password: string
   name?: string
@@ -17,37 +17,38 @@ export type User = {
 }
 
 export type Follows = {
-  id: number
+  id: string
   follower?: User
-  followerId?: number
+  followerId?: string
   following?: User
-  followingId?: number
+  followingId?: string
 }
 
 export type Post = {
-  id: number
+  id: string
   title: string
   content: string
   author: User
-  authorId: number
+  authorId: string
   likes: Like[]
   comments: Comment[]
   createdAt: Date
+  likedByUser?: boolean
 }
 
 export type Like = {
-  id: number
+  id: string
   User?: User
-  userId?: number
+  userId?: string
   Post?: Post
-  postId?: number
+  postId?: string
 }
 
 export type Comment = {
-  id: number
+  id: string
   content: string
   post: Post
-  postId: number
+  postId: string
   User?: User
-  userId?: number
+  userId?: string
 }

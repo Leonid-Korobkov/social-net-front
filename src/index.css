@@ -4,7 +4,7 @@
 
 @layer components {
   .form-icon {
-    @apply text-xl text-default-400 pointer-events-none flex-shrink-0 self-center;
+    @apply text-xl text-default-200 pointer-events-none flex-shrink-0 self-center;
   }
 }
 
