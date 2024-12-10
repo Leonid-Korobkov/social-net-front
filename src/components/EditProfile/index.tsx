@@ -18,11 +18,7 @@ import { useUpdateUserMutation } from '../../app/services/user.api'
 import { hasErrorField } from '../../utils/hasErrorField'
 import { validateEmailPattern } from '../../utils/validateFieldsForm'
 import { IoMdMail } from 'react-icons/io'
-import {
-  formatDateToISO,
-  formatToClientDate,
-  parseToCalendarDate,
-} from '../../utils/formatToClientDate'
+import { formatDateToISO } from '../../utils/formatToClientDate'
 import { parseDate } from '@internationalized/date'
 
 interface IEditProfile {
