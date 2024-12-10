@@ -156,7 +156,11 @@ function EditProfile({
                         {...field}
                         label="Дата Рождения"
                         value={parsedDate}
-                        onChange={date => field.onChange(date.toString())} // Сохраняем строку
+                        onChange={date => {
+                          if (date) {
+                            field.onChange(date.toString()) // Сохраняем строку только если date не null
+                          }
+                        }}
                         variant="bordered"
                         errorMessage={errors.dateOfBirth?.message || ''}
                         isInvalid={!!errors.dateOfBirth}
