@@ -24,15 +24,19 @@ function Layout() {
     <>
       <Header />
       <Container>
-        <div className="flex-2 p-4">
+        <div className="flex-2 p-4 sticky top-16">
           <NavBar />
         </div>
         <div className="flex-1 p-4">
           <Outlet />
         </div>
-        <div className="flex-2 p-4">
-          <div className="flex-col flex gap-5">{!user && <Profile />}</div>
-        </div>
+        {!user && (
+          <div className="flex-2 p-4 sticky top-16">
+            <div className="flex-col flex gap-5">
+              <Profile />
+            </div>
+          </div>
+        )}
       </Container>
     </>
   )

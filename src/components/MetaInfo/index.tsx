@@ -15,7 +15,7 @@ function MetaInfo({ count, Icon, classNameForIcon }: IMetaInfo) {
       )}
       <p
         className={
-          'text-default-400 text-xl hover:transform hover:scale-125 ease-in duration-100' +
+          'text-default-400 text-xl transition hover:transform hover:scale-125 ease-in-out duration-300' +
           classNameForIcon
         }
       >

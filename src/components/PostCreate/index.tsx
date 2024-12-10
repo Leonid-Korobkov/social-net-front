@@ -53,7 +53,6 @@ function CreatePost() {
           />
         )}
       />
-
       <Button
         color="success"
         className="flex-end"

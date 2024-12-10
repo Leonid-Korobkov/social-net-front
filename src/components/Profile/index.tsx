@@ -29,7 +29,7 @@ function Profile() {
         <Link to={`/users/${id}`}>
           <h4 className="font-bold text-large mb-2">{name}</h4>
         </Link>
-        <p className="text-default-500 flex items-center gap-2">
+        <p className="text-default-500 flex items-center gap-2 font-mono">
           <MdAlternateEmail />
           {email}
         </p>

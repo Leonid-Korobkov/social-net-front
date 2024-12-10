@@ -14,6 +14,7 @@ export type User = {
   comments: Comment[]
   followers: Follows[]
   following: Follows[]
+  isFollowing?: boolean
 }
 
 export type Follows = {
@@ -34,6 +35,7 @@ export type Post = {
   comments: Comment[]
   createdAt: Date
   likedByUser?: boolean
+  isFollowing?: boolean
 }
 
 export type Like = {

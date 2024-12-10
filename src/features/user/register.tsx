@@ -4,7 +4,11 @@ import { SubmitHandler } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
 import { useRegisterUserMutation } from '../../app/services/user.api'
 import { hasErrorField } from '../../utils/hasErrorField'
-import { validatePassword } from '../../utils/validatePassword'
+import {
+  validateEmailPattern,
+  validatePassword,
+} from '../../utils/validateFieldsForm'
+import { RiLockPasswordFill } from 'react-icons/ri'
 
 interface IForm {
   email: string
@@ -60,10 +64,11 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         type="email"
         errorMessage={errors.email?.message || ''}
         isInvalid={errors.email ? true : false}
+        endContent={<IoMdMail className="form-icon" />}
         {...register('email', {
           required: 'Обязательное поле',
           pattern: {
-            value: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            value: validateEmailPattern,
             message: `Некорректный email`,
           },
         })}
@@ -73,6 +78,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         type="password"
         errorMessage={errors.password ? errors.password.message : ''}
         isInvalid={errors.password ? true : false}
+        endContent={<RiLockPasswordFill className="form-icon" />}
         {...register('password', {
           required: 'Обязательное поле',
           validate: validatePassword,

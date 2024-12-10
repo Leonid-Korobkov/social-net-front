@@ -22,6 +22,7 @@ function CurrentPost() {
     createdAt,
     id,
     likedByUser,
+    isFollowing
   } = data
 
   return (
@@ -39,6 +40,7 @@ function CurrentPost() {
         likedByUser={likedByUser}
         createdAt={createdAt}
         refetch={refetch}
+        isFollowing={isFollowing}
       />
       <div className="mt-10">
         <CreateComment />

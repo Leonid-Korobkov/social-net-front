@@ -8,7 +8,10 @@ import {
 } from '../../app/services/user.api'
 import { useNavigate } from 'react-router-dom'
 import { hasErrorField } from '../../utils/hasErrorField'
-import { validatePassword } from '../../utils/validatePassword'
+import {
+  validateEmailPattern,
+  validatePassword,
+} from '../../utils/validateFieldsForm'
 import { RiLockPasswordFill } from 'react-icons/ri'
 
 interface IForm {
@@ -62,7 +65,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
         {...register('email', {
           required: 'Обязательное поле',
           pattern: {
-            value: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            value: validateEmailPattern,
             message: `Некорректный email`,
           },
         })}

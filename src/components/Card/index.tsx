@@ -11,6 +11,7 @@ import {
   ModalFooter,
   useDisclosure,
   Button,
+  Chip,
 } from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaRegComment } from 'react-icons/fa6'
@@ -50,6 +51,7 @@ interface ICard {
   id?: string
   cardFor: 'comment' | 'post' | 'current-post' // карточка комментария, карточка поста, карточка текущего поста
   likedByUser?: boolean
+  isFollowing?: boolean
   refetch?: () => void
 }
 
@@ -65,6 +67,7 @@ function Card({
   likedByUser = false,
   createdAt,
   commentId = '',
+  isFollowing = false,
   refetch,
 }: ICard) {
   const [likePost, likePostStatus] = useCreateLikeMutation()
@@ -152,6 +155,7 @@ function Card({
             description={createdAt && formatToClientDate(createdAt)}
           />
         </Link>
+        {isFollowing && <Chip color="success" variant='flat' className='opacity-65'>Вы подписаны</Chip>}
         {authorId === currentUser?.id && (
           <div className="cursor-pointer" onClick={onOpen}>
             {deletePostStatus.isLoading || deleteCommentStatus.isLoading ? (
@@ -200,6 +204,7 @@ function Card({
         isOpen={isOpen}
         scrollBehavior={'inside'}
         onOpenChange={onOpenChange}
+        backdrop="blur"
       >
         <ModalContent>
           {onClose => (

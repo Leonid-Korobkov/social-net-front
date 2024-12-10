@@ -22,6 +22,7 @@ function Posts() {
             id,
             likes,
             likedByUser,
+            isFollowing,
           }) => (
             <Card
               key={id}
@@ -35,6 +36,7 @@ function Posts() {
               commentsCount={comments.length}
               createdAt={createdAt}
               likesCount={likes.length}
+              isFollowing={isFollowing}
             />
           ),
         )}

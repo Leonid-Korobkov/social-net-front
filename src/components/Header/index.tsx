@@ -22,7 +22,7 @@ import { logout, selectIsAuthenticated } from '../../features/user/user.slice'
 import { useNavigate } from 'react-router-dom'
 import { CiLogout } from 'react-icons/ci'
 
-function Header() {
+function Header({className}: {className?: string}) {
   const { theme, setTheme } = useTheme()
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -41,11 +41,10 @@ function Header() {
     <Navbar className="" maxWidth="xl">
       <NavbarBrand>
         <Image
-          isBlurred
           src={
             theme === 'dark'
-              ? './assets/Zling-logo-white.svg'
-              : './assets/Zling-logo-black.svg'
+              ? '/assets/Zling-logo-white.svg'
+              : '/assets/Zling-logo-black.svg'
           }
           height={70}
         />
@@ -83,6 +82,7 @@ function Header() {
         isOpen={isOpen}
         scrollBehavior={'inside'}
         onOpenChange={onOpenChange}
+        backdrop="blur"
       >
         <ModalContent>
           {onClose => (
