@@ -13,8 +13,6 @@ import UserProfile from './pages/UserProfile'
 import Followers from './pages/Followers'
 import Following from './pages/Following'
 import AuthGuard from './features/user/AuthGuard'
-// in index.js or main.js file
-import '/init'
 
 const container = document.getElementById('root')
 
