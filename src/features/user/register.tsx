@@ -27,7 +27,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
     formState: { errors },
     handleSubmit,
   } = useForm<IForm>({
-    mode: 'onBlur',
+    mode: 'onChange',
     reValidateMode: 'onChange',
   })
 

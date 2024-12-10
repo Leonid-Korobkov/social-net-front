@@ -37,11 +37,13 @@ function EditProfile({
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { id } = useParams<{ id: string }>()
 
-  let parsedDateForDatePicker: CalendarDate | null | string
-  try {
-    parsedDateForDatePicker = parseDate(formatDateToISO(user?.dateOfBirth))
-  } catch (error) {
-    parsedDateForDatePicker = null
+  let parsedDateForDatePicker: CalendarDate | null = null
+  if (user?.dateOfBirth) {
+    try {
+      parsedDateForDatePicker = parseDate(formatDateToISO(user.dateOfBirth))
+    } catch (error) {
+      console.error('Ошибка парсинга даты:', error)
+    }
   }
 
   const {
@@ -143,17 +145,25 @@ function EditProfile({
                 <Controller
                   name="dateOfBirth"
                   control={control}
-                  render={({ field }) => (
-                    <DatePicker
-                      {...field}
-                      label="Дата Рождения"
-                      value={parsedDateForDatePicker}
-                      variant="bordered"
-                      errorMessage={errors.dateOfBirth?.message || ''}
-                      isInvalid={errors.dateOfBirth ? true : false}
-                      showMonthAndYearPickers
-                    />
-                  )}
+                  render={({ field }) => {
+                    // Преобразуем ISO-строку в CalendarDate
+                    const parsedDate = field.value
+                      ? parseDate(formatDateToISO(field.value))
+                      : null
+
+                    return (
+                      <DatePicker
+                        {...field}
+                        label="Дата Рождения"
+                        value={parsedDate}
+                        onChange={date => field.onChange(date.toString())} // Сохраняем строку
+                        variant="bordered"
+                        errorMessage={errors.dateOfBirth?.message || ''}
+                        isInvalid={!!errors.dateOfBirth}
+                        showMonthAndYearPickers
+                      />
+                    )
+                  }}
                 />
                 <Controller
                   name="bio"

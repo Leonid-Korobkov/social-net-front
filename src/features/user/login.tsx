@@ -30,7 +30,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
     formState: { errors },
     handleSubmit,
   } = useForm<IForm>({
-    mode: 'onBlur',
+    mode: 'onChange',
     reValidateMode: 'onChange',
   })
 
