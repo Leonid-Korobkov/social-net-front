@@ -27,7 +27,7 @@ function Layout() {
         <div className="flex-2 p-4 sticky top-16">
           <NavBar />
         </div>
-        <div className="flex-1 p-4">
+        <div className="flex-2 p-4 overflow-auto">
           <Outlet />
         </div>
         {!user && (
