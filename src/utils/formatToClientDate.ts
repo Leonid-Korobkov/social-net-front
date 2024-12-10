@@ -13,7 +13,9 @@ export const formatToClientDate = (date: Date, withTime = true) => {
   })
 }
 
-export const formatDateToISO = (dateString: string | undefined | Date): string => {
+export const formatDateToISO = (
+  dateString: string | undefined | Date,
+): string => {
   if (!dateString) return ''
   const date = new Date(dateString)
   const year = date.getFullYear()
@@ -22,8 +24,3 @@ export const formatDateToISO = (dateString: string | undefined | Date): string =
 
   return `${year}-${month}-${day}`
 }
-
-const dateString = '2005-12-12T00:00:00.000Z'
-const formattedDate = formatDateToISO(dateString)
-
-console.log(formattedDate) // "2005-12-12"

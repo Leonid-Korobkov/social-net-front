@@ -19,7 +19,7 @@ import { hasErrorField } from '../../utils/hasErrorField'
 import { validateEmailPattern } from '../../utils/validateFieldsForm'
 import { IoMdMail } from 'react-icons/io'
 import { formatDateToISO } from '../../utils/formatToClientDate'
-import { parseDate } from '@internationalized/date'
+import { CalendarDate, parseDate } from '@internationalized/date'
 
 interface IEditProfile {
   isOpen: boolean
@@ -36,6 +36,13 @@ function EditProfile({
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { id } = useParams<{ id: string }>()
+
+  let parsedDateForDatePicker: CalendarDate | null | string
+  try {
+    parsedDateForDatePicker = parseDate(formatDateToISO(user?.dateOfBirth))
+  } catch (error) {
+    parsedDateForDatePicker = null
+  }
 
   const {
     register,
@@ -140,7 +147,7 @@ function EditProfile({
                     <DatePicker
                       {...field}
                       label="Дата Рождения"
-                      value={parseDate(formatDateToISO(field.value))}
+                      value={parsedDateForDatePicker}
                       variant="bordered"
                       errorMessage={errors.dateOfBirth?.message || ''}
                       isInvalid={errors.dateOfBirth ? true : false}
