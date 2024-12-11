@@ -1,5 +1,13 @@
 import { Button as NextButton } from '@nextui-org/react'
 
+export type TButtonColors =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+
 type Props = {
   children: React.ReactNode
   icon?: JSX.Element
@@ -7,14 +15,7 @@ type Props = {
   type?: 'button' | 'submit' | 'reset'
   fullWidth?: boolean
   onClick: () => void
-  color?:
-    | 'default'
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'warning'
-    | 'danger'
-    | undefined
+  color?: TButtonColors
 }
 
 export const Button: React.FC<Props> = ({

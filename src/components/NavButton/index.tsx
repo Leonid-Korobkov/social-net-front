@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom'
-import { Button } from '../Button'
+import { Button, TButtonColors } from '../Button'
 
 interface NavButtonProps {
   children: React.ReactNode
   icon?: JSX.Element
   href: string
+  color?: TButtonColors
 }
 
-function NavButton({ children, icon, href }: NavButtonProps) {
+function NavButton({ children, icon, href, color }: NavButtonProps) {
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -21,6 +22,7 @@ function NavButton({ children, icon, href }: NavButtonProps) {
       fullWidth
       icon={icon}
       onClick={handleClick}
+      color={color}
     >
       {children}
     </Button>

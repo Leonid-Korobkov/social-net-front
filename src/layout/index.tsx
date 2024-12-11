@@ -23,15 +23,15 @@ function Layout() {
   return (
     <>
       <Header />
-      <Container>
-        <div className="flex-2 p-4 sticky top-16">
+      <Container className="">
+        <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
           <NavBar />
         </div>
         <div className="flex-2 p-4 overflow-auto flex-grow">
           <Outlet />
         </div>
         {!user && (
-          <div className="flex-2 p-4 sticky top-16">
+          <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
             <div className="flex-col flex gap-5">
               <Profile />
             </div>

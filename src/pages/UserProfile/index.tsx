@@ -101,7 +101,7 @@ function UserProfile() {
           }
         }}
       />
-      <div className="flex items-stretch gap-4">
+      <div className="flex lg:flex-row flex-col items-stretch gap-4">
         <Card className="flex flex-col items-center text-center space-y-4 p-5 flex-2">
           <Image
             src={`${BASE_URL}${user.avatarUrl}`}
@@ -146,11 +146,15 @@ function UserProfile() {
           <ProfileInfo title="Местоположение" info={user.location} />
           <ProfileInfo
             title="Дата рождения"
-            info={user.dateOfBirth ? formatToClientDate(user.dateOfBirth, false) : ''}
+            info={
+              user.dateOfBirth
+                ? formatToClientDate(user.dateOfBirth, false)
+                : ''
+            }
           />
           <ProfileInfo title="Обо мне" info={user.bio} />
 
-          <div className="flex gap-2 justify-center">
+          <div className="flex gap-2 justify-center flex-wrap">
             <CountInfo
               Icon={FaUsers}
               count={user.followers.length}

@@ -1,7 +1,7 @@
 import {
   Button,
   Image,
-  Navbar,
+  Navbar as NextNavbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
@@ -12,22 +12,32 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  NavbarMenuToggle,
+  NavbarMenu,
 } from '@nextui-org/react'
 import { useTheme } from 'next-themes'
-import { FaMoon } from 'react-icons/fa'
+import { FaMoon, FaUser } from 'react-icons/fa'
 import { LuSunMedium } from 'react-icons/lu'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { useDispatch, useSelector } from 'react-redux'
-import { logout, selectIsAuthenticated } from '../../features/user/user.slice'
-import { useNavigate } from 'react-router-dom'
+import {
+  logout,
+  selectCurrent,
+  selectIsAuthenticated,
+} from '../../features/user/user.slice'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CiLogout } from 'react-icons/ci'
+import { useEffect, useState } from 'react'
+import NavBar from '../NavBar'
+import NavButton from '../NavButton'
 
-function Header({className}: {className?: string}) {
+function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme()
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
   const isAuth = useSelector(selectIsAuthenticated)
+  const currentUser = useSelector(selectCurrent)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -37,18 +47,38 @@ function Header({className}: {className?: string}) {
     navigate('/auth')
   }
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [location])
+
   return (
-    <Navbar className="" maxWidth="xl">
-      <NavbarBrand>
-        <Image
-          src={
-            theme === 'dark'
-              ? '/assets/Zling-logo-white.svg'
-              : '/assets/Zling-logo-black.svg'
-          }
-          height={70}
+    <NextNavbar
+      className=""
+      maxWidth="xl"
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
+      <NavbarContent>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          className="lg:hidden"
         />
-      </NavbarBrand>
+        <NavbarBrand>
+          <Link to="/">
+            <Image
+              src={
+                theme === 'dark'
+                  ? '/assets/Zling-logo-white.svg'
+                  : '/assets/Zling-logo-black.svg'
+              }
+              height={60}
+            />
+          </Link>
+        </NavbarBrand>
+      </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
           <Switch
@@ -78,6 +108,16 @@ function Header({className}: {className?: string}) {
           )}
         </NavbarItem>
       </NavbarContent>
+      <NavbarMenu>
+        <NavBar />
+        <NavButton
+          href={`/users/${currentUser?.id}`}
+          icon={<FaUser />}
+          color={'primary'}
+        >
+          Мой профиль
+        </NavButton>
+      </NavbarMenu>
       <Modal
         isOpen={isOpen}
         scrollBehavior={'inside'}
@@ -103,7 +143,7 @@ function Header({className}: {className?: string}) {
           )}
         </ModalContent>
       </Modal>
-    </Navbar>
+    </NextNavbar>
   )
 }
 
