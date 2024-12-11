@@ -6,7 +6,7 @@ import { FaUsers } from 'react-icons/fa'
 function NavBar() {
   return (
     <nav>
-      <ul>
+      <ul className='flex gap-2 flex-col'>
         <li className="flex flex-col gap-5">
           <NavButton href="/" icon={<BsPostcard />}>Посты</NavButton>
         </li>
