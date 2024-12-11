@@ -7,7 +7,7 @@ import { useLazyGetPostByIdQuery } from '../../app/services/post.api'
 
 function CreateComment() {
   const { id } = useParams<{ id: string }>()
-  const [createComment] = useCreateCommentMutation()
+  const [createComment, { isLoading }] = useCreateCommentMutation()
   const [getPostById] = useLazyGetPostByIdQuery()
 
   const {
@@ -59,6 +59,7 @@ function CreateComment() {
         className="flex-end"
         endContent={<IoMdCreate />}
         type="submit"
+        isLoading={isLoading}
       >
         Ответить
       </Button>
