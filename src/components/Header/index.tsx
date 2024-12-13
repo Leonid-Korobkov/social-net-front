@@ -14,29 +14,30 @@ import {
   useDisclosure,
   NavbarMenuToggle,
   NavbarMenu,
+  Dropdown,
+  DropdownTrigger,
+  User,
+  DropdownMenu,
+  DropdownItem,
+  DropdownSection,
 } from '@nextui-org/react'
 import { useTheme } from 'next-themes'
-import { FaMoon, FaUser } from 'react-icons/fa'
+import { FaMoon } from 'react-icons/fa'
 import { LuSunMedium } from 'react-icons/lu'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  logout,
-  selectCurrent,
-  selectIsAuthenticated,
-} from '../../features/user/user.slice'
+import { logout, selectCurrent } from '../../features/user/user.slice'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CiLogout } from 'react-icons/ci'
 import { useEffect, useState } from 'react'
 import NavBar from '../NavBar'
-import NavButton from '../NavButton'
+import { BASE_URL } from '../../constants'
 
 function Header({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme()
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-  const isAuth = useSelector(selectIsAuthenticated)
   const currentUser = useSelector(selectCurrent)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -81,42 +82,71 @@ function Header({ className }: { className?: string }) {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Switch
-            defaultSelected={theme === 'dark'}
-            onChange={e => setTheme(e.target.checked ? 'dark' : 'light')}
-            color="primary"
-            size="md"
-            thumbIcon={({ isSelected, className }) =>
-              isSelected ? (
-                <LuSunMedium className={className} />
-              ) : (
-                <FaMoon className={className} />
-              )
-            }
-          ></Switch>
-        </NavbarItem>
-        <NavbarItem>
-          {isAuth && (
-            <Button
-              color="default"
-              variant="flat"
-              className="gap-2"
-              onClick={onOpen}
-            >
-              <CiLogout /> <span>Выйти</span>
-            </Button>
-          )}
+          <Dropdown placement="bottom-start">
+            <DropdownTrigger>
+              <User
+                as="button"
+                avatarProps={{
+                  isBordered: true,
+                  src: `${BASE_URL}${currentUser?.avatarUrl}`,
+                }}
+                className="transition-transform"
+                description={currentUser?.email}
+                name={currentUser?.name}
+              />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="User Actions" variant="flat">
+              <DropdownSection showDivider>
+                <DropdownItem key="user" className="h-14 gap-2">
+                  <p className="font-light">Вы вошли как</p>
+                  <p className="font-bold">{currentUser?.name}</p>
+                </DropdownItem>
+                <DropdownItem
+                  key="profile"
+                  onPress={() => navigate(`/users/${currentUser?.id}`)}
+                  textValue="Мой профиль"
+                >
+                  Мой профиль
+                </DropdownItem>
+                <DropdownItem
+                  key="theme"
+                  isReadOnly
+                  className="cursor-default"
+                  endContent={
+                    <Switch
+                      defaultSelected={theme === 'dark'}
+                      onChange={e =>
+                        setTheme(e.target.checked ? 'dark' : 'light')
+                      }
+                      color="primary"
+                      size="md"
+                      thumbIcon={({ isSelected, className }) =>
+                        isSelected ? (
+                          <LuSunMedium className={className} />
+                        ) : (
+                          <FaMoon className={className} />
+                        )
+                      }
+                    ></Switch>
+                  }
+                >
+                  Тема
+                </DropdownItem>
+              </DropdownSection>
+              <DropdownItem
+                key="logout"
+                color="danger"
+                endContent={<CiLogout className="text-large" />}
+                onClick={onOpen}
+              >
+                Выйти
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
         <NavBar />
-        <NavButton
-          href={`/users/${currentUser?.id}`}
-          icon={<FaUser />}
-          color={'primary'}
-        >
-          Мой профиль
-        </NavButton>
       </NavbarMenu>
       <Modal
         isOpen={isOpen}

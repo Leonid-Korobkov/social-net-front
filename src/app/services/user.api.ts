@@ -45,6 +45,71 @@ export const userApi = api.injectEndpoints({
         method: 'PUT',
         body,
       }),
+      async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
+        // Создаем FormData из тела запроса для предварительного просмотра изменений
+        const previewChanges: Partial<User> = {}
+        for (const [key, value] of body.entries()) {
+          if (key !== 'avatar') {
+            // Пропускаем файл аватара для оптимистичного обновления
+            previewChanges[key as keyof User] = value as any
+          }
+        }
+
+        // Оптимистичное обновление для getUserById
+        const patchGetUserById = dispatch(
+          api.util.updateQueryData(
+            'getUserById' as never,
+            { id } as never,
+            (draft: User) => {
+              Object.assign(draft, previewChanges)
+            },
+          ),
+        )
+
+        // Оптимистичное обновление для currentUser
+        const patchCurrentUser = dispatch(
+          api.util.updateQueryData(
+            'currentUser' as never,
+            undefined as never,
+            (draft: User) => {
+              if (draft.id === id) {
+                Object.assign(draft, previewChanges)
+              }
+            },
+          ),
+        )
+
+        try {
+          const { data: updatedUser } = await queryFulfilled
+
+          // Обновляем кэш окончательными данными
+          dispatch(
+            api.util.updateQueryData(
+              'getUserById' as never,
+              { id } as never,
+              (draft: User) => {
+                Object.assign(draft, updatedUser)
+              },
+            ),
+          )
+
+          dispatch(
+            api.util.updateQueryData(
+              'currentUser' as never,
+              undefined as never,
+              (draft: User) => {
+                if (draft.id === id) {
+                  Object.assign(draft, updatedUser)
+                }
+              },
+            ),
+          )
+        } catch {
+          // Откатываем оптимистичные обновления при ошибке
+          patchGetUserById.undo()
+          patchCurrentUser.undo()
+        }
+      },
     }),
   }),
 })

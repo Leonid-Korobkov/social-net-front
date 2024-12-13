@@ -20,6 +20,7 @@ import { validateEmailPattern } from '../../utils/validateFieldsForm'
 import { IoMdMail } from 'react-icons/io'
 import { formatDateToISO } from '../../utils/formatToClientDate'
 import { CalendarDate, parseDate } from '@internationalized/date'
+import toast from 'react-hot-toast'
 
 interface IEditProfile {
   isOpen: boolean
@@ -33,6 +34,7 @@ function EditProfile({
   user,
 }: IEditProfile) {
   const [updateUser, { isLoading }] = useUpdateUserMutation()
+
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { id } = useParams<{ id: string }>()
@@ -86,10 +88,30 @@ function EditProfile({
         data.location && formData.append('location', data.location)
         selectedFile && formData.append('avatar', selectedFile)
 
-        await updateUser({ body: formData, id }).unwrap()
+        //updateUser({ body: formData, id }).unwrap()
+        const promise = updateUser({ body: formData, id }).unwrap()
+
+        const toastId = toast.loading('Сохранение...')
+
+        promise
+          .then(() => {
+            toast.success('Профиль обновлен!')
+          })
+          .catch(err => {
+            if (hasErrorField(err)) {
+              setError(err.data.error)
+              toast.error('Не удалось сохранить: ' + err.data.error)
+            } else {
+              setError('Произошла ошибка при обновлении профиля')
+              toast.error('Произошла ошибка при обновлении профиля')
+            }
+          })
+          .finally(() => {
+            toast.dismiss(toastId)
+          })
+
         onClose()
       } catch (err) {
-        console.log(err)
         if (hasErrorField(err)) {
           setError(err.data.error)
         }
@@ -146,10 +168,14 @@ function EditProfile({
                   name="dateOfBirth"
                   control={control}
                   render={({ field }) => {
-                    // Преобразуем ISO-строку в CalendarDate
-                    const parsedDate = field.value
-                      ? parseDate(formatDateToISO(field.value))
-                      : null
+                    let parsedDate = null
+                    if (field.value) {
+                      try {
+                        parsedDate = parseDate(formatDateToISO(field.value))
+                      } catch (error) {
+                        console.error('Ошибка парсинга даты:', error)
+                      }
+                    }
 
                     return (
                       <DatePicker

@@ -101,9 +101,6 @@ function Card({
       likedByUser
         ? await unlikePost({ postId: id }).unwrap()
         : await likePost({ postId: id }).unwrap()
-
-      if (refetch) refetch()
-      await refetchPosts()
     } catch (err) {
       if (hasErrorField(err)) {
         setError(err.data.error)

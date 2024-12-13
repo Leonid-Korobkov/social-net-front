@@ -54,31 +54,15 @@ function UserProfile() {
     try {
       if (id) {
         if (user?.isFollowing) {
-          await unfolowUser({ followingId: id }).unwrap()
+          unfolowUser({ followingId: id }).unwrap()
           setParty(false)
         } else {
-          await followUser({ followingId: id }).unwrap()
+          followUser({ followingId: id }).unwrap()
           setParty(true)
         }
-
-        await triggerGetUserByIdQuery({ id: id ?? '' })
-
-        await triggerCurrentQuery()
       }
     } catch (error) {
       console.log(error)
-    }
-  }
-
-  const handleClose = async () => {
-    try {
-      if (id) {
-        await triggerGetUserByIdQuery({ id: id ?? '' })
-        await triggerCurrentQuery()
-        onClose()
-      }
-    } catch (err) {
-      console.log(err)
     }
   }
 
@@ -168,7 +152,7 @@ function UserProfile() {
           </div>
         </Card>
       </div>
-      <EditProfile isOpen={isOpen} onClose={handleClose} user={user} />
+      <EditProfile isOpen={isOpen} onClose={onClose} user={user} />
     </>
   )
 }
