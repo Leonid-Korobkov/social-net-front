@@ -101,6 +101,8 @@ function Card({
       likedByUser
         ? await unlikePost({ postId: id }).unwrap()
         : await likePost({ postId: id }).unwrap()
+
+      if (refetch) refetch()
     } catch (err) {
       if (hasErrorField(err)) {
         setError(err.data.error)
@@ -152,7 +154,11 @@ function Card({
             description={createdAt && formatToClientDate(createdAt)}
           />
         </Link>
-        {isFollowing && <Chip color="success" variant='flat' className='opacity-65'>Вы подписаны</Chip>}
+        {isFollowing && (
+          <Chip color="success" variant="flat" className="opacity-65">
+            Вы подписаны
+          </Chip>
+        )}
         {authorId === currentUser?.id && (
           <div className="cursor-pointer" onClick={onOpen}>
             {deletePostStatus.isLoading || deleteCommentStatus.isLoading ? (

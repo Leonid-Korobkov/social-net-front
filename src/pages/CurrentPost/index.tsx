@@ -12,7 +12,6 @@ function CurrentPost() {
   if (isLoading) return <Spinner size="lg" color="primary" />
   if (!data) return <h1>Поста не существует</h1>
 
-
   const {
     content,
     author,
@@ -22,7 +21,7 @@ function CurrentPost() {
     createdAt,
     id,
     likedByUser,
-    isFollowing
+    isFollowing,
   } = data
 
   return (
