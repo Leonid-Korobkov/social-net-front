@@ -39,15 +39,6 @@ function EditProfile({
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { id } = useParams<{ id: string }>()
 
-  let parsedDateForDatePicker: CalendarDate | null = null
-  if (user?.dateOfBirth) {
-    try {
-      parsedDateForDatePicker = parseDate(formatDateToISO(user.dateOfBirth))
-    } catch (error) {
-      console.error('Ошибка парсинга даты:', error)
-    }
-  }
-
   const {
     register,
     handleSubmit,

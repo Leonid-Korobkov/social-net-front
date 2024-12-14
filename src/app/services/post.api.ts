@@ -16,6 +16,13 @@ export const postApi = api.injectEndpoints({
         url: '/posts',
         method: 'GET',
       }),
+      providesTags: result =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: 'Posts' as const, id })),
+              { type: 'Posts', id: 'LIST' },
+            ]
+          : [{ type: 'Posts', id: 'LIST' }],
     }),
 
     getPostById: builder.query<Post, string>({
@@ -23,6 +30,7 @@ export const postApi = api.injectEndpoints({
         url: `/posts/${id}`,
         method: 'GET',
       }),
+      providesTags: (result, error, id) => [{ type: 'Post', id }],
     }),
 
     deletePost: builder.mutation<Post, string>({
@@ -30,6 +38,7 @@ export const postApi = api.injectEndpoints({
         url: `/posts/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (result, error, id) => [{ type: 'Posts', id }],
     }),
   }),
 })
@@ -42,7 +51,3 @@ export const {
   useLazyGetPostByIdQuery,
   useDeletePostMutation,
 } = postApi
-
-// export const {
-//   endpoints: { createPost, getAllPosts, getPostById, deletePost },
-// } = postApi

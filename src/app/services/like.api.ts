@@ -9,7 +9,19 @@ export const likeApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
+
       async onQueryStarted({ postId }, { dispatch, queryFulfilled }) {
+        const patchSinglePost = dispatch(
+          api.util.updateQueryData(
+            'getPostById' as never,
+            postId.toString() as never,
+            (draft: Post) => {
+              draft.likedByUser = true
+              draft.likes.push({} as Like)
+            },
+          ),
+        )
+
         // Оптимистичное обновление для getAllPosts
         const patchAllPosts = dispatch(
           api.util.updateQueryData(
@@ -20,20 +32,6 @@ export const likeApi = api.injectEndpoints({
               if (post) {
                 post.likedByUser = true
                 post.likes.push({} as Like)
-              }
-            },
-          ),
-        )
-
-        // Оптимистичное обновление для getPostById
-        const patchSinglePost = dispatch(
-          api.util.updateQueryData(
-            'getPostById' as never,
-            postId as never,
-            (draft: Post) => {
-              if (draft) {
-                draft.likedByUser = true
-                draft.likes.push({} as Like)
               }
             },
           ),
@@ -56,6 +54,20 @@ export const likeApi = api.injectEndpoints({
         body,
       }),
       async onQueryStarted({ postId }, { dispatch, queryFulfilled }) {
+        // Оптимистичное обновление для getPostById
+        const patchSinglePost = dispatch(
+          api.util.updateQueryData(
+            'getPostById' as never,
+            postId.toString() as never,
+            (draft: Post) => {
+              if (draft) {
+                draft.likedByUser = false
+                draft.likes.pop()
+              }
+            },
+          ),
+        )
+
         // Оптимистичное обновление для getAllPosts
         const patchAllPosts = dispatch(
           api.util.updateQueryData(
@@ -66,20 +78,6 @@ export const likeApi = api.injectEndpoints({
               if (post) {
                 post.likedByUser = false
                 post.likes.pop()
-              }
-            },
-          ),
-        )
-
-        // Оптимистичное обновление для getPostById
-        const patchSinglePost = dispatch(
-          api.util.updateQueryData(
-            'getPostById' as never,
-            postId as never,
-            (draft: Post) => {
-              if (draft) {
-                draft.likedByUser = false
-                draft.likes.pop()
               }
             },
           ),
@@ -98,7 +96,3 @@ export const likeApi = api.injectEndpoints({
 })
 
 export const { useCreateLikeMutation, useDeleteLikeMutation } = likeApi
-
-// export const {
-//   endpoints: { createLike, deleteLike },
-// } = likeApi

@@ -20,7 +20,7 @@ import { MdOutlineFavoriteBorder } from 'react-icons/md'
 import { RiDeleteBinLine } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
 import { Spinner } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   useCreateLikeMutation,
   useDeleteLikeMutation,
@@ -68,41 +68,20 @@ function Card({
   createdAt,
   commentId = '',
   isFollowing = false,
-  refetch,
 }: ICard) {
-  const [likePost, likePostStatus] = useCreateLikeMutation()
-  const [unlikePost, unlikePostStatus] = useDeleteLikeMutation()
-  const [triggerGetAllPosts] = useLazyGetAllPostsQuery()
-  const [triggerGetPostById] = useLazyGetPostByIdQuery()
+  const [likePost] = useCreateLikeMutation()
+  const [unlikePost] = useDeleteLikeMutation()
   const [deletePost, deletePostStatus] = useDeletePostMutation()
   const [deleteComment, deleteCommentStatus] = useDeleteCommentMutation()
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const currentUser = useSelector(selectCurrent)
 
-  const refetchPosts = async () => {
-    switch (cardFor) {
-      case 'post':
-        await triggerGetAllPosts().unwrap()
-        break
-      case 'current-post':
-        await triggerGetAllPosts().unwrap()
-        break
-      case 'comment':
-        await triggerGetPostById(id).unwrap()
-        break
-      default:
-        throw new Error('Неверный аргумент cardFor')
-    }
-  }
-
   const handleClick = async () => {
     try {
       likedByUser
-        ? await unlikePost({ postId: id }).unwrap()
-        : await likePost({ postId: id }).unwrap()
-
-      if (refetch) refetch()
+        ? unlikePost({ postId: id }).unwrap()
+        : likePost({ postId: id }).unwrap()
     } catch (err) {
       if (hasErrorField(err)) {
         setError(err.data.error)
@@ -119,22 +98,18 @@ function Card({
       switch (cardFor) {
         case 'post':
           await deletePost(id).unwrap()
-          await refetchPosts()
           break
         case 'current-post':
           await deletePost(id).unwrap()
           navigate('/')
           break
         case 'comment':
-          await deleteComment(commentId).unwrap()
-          await refetchPosts()
+          await deleteComment({ commentId, postId: id }).unwrap()
           break
         default:
           throw new Error('Неверный аргумент cardFor')
       }
-      if (refetch) refetch()
     } catch (err) {
-      console.log(err)
       if (hasErrorField(err)) {
         setError(err.data.error)
       } else {
@@ -181,13 +156,6 @@ function Card({
               <MetaInfo
                 classNameForIcon={likedByUser ? 'text-danger' : ''}
                 count={likesCount}
-                // Icon={
-                //   likePostStatus.isLoading || unlikePostStatus.isLoading
-                //     ? Spinner
-                //     : likedByUser
-                //       ? FcDislike
-                //       : MdOutlineFavoriteBorder
-                // }
                 Icon={likedByUser ? FcDislike : MdOutlineFavoriteBorder}
               />
             </div>

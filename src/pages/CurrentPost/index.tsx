@@ -7,7 +7,7 @@ import { Spinner } from '@nextui-org/react'
 
 function CurrentPost() {
   const params = useParams<{ id: string }>()
-  const { data, refetch, isLoading } = useGetPostByIdQuery(params?.id ?? '')
+  const { data, isLoading } = useGetPostByIdQuery(params?.id ?? '')
 
   if (isLoading) return <Spinner size="lg" color="primary" />
   if (!data) return <h1>Поста не существует</h1>
@@ -38,7 +38,6 @@ function CurrentPost() {
         id={id}
         likedByUser={likedByUser}
         createdAt={createdAt}
-        refetch={refetch}
         isFollowing={isFollowing}
       />
       <div className="mt-10">
@@ -56,7 +55,6 @@ function CurrentPost() {
                 authorId={comment.userId ?? ''}
                 commentId={comment.id}
                 id={id}
-                refetch={refetch}
               />
             ))
           : null}

@@ -1,4 +1,4 @@
-import { Comment } from '../types'
+import { Comment, Post } from '../types'
 import { api } from './api'
 
 export const commentApi = api.injectEndpoints({
@@ -9,19 +9,24 @@ export const commentApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: (result, error, { postId }) => [
+        { type: 'Post', id: postId },
+      ],
     }),
 
-    deleteComment: builder.mutation<void, string>({
-      query: id => ({
-        url: `/comments/${id}`,
+    deleteComment: builder.mutation<
+      void,
+      { commentId: string; postId: string }
+    >({
+      query: ({ commentId }) => ({
+        url: `/comments/${commentId}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (result, error, { postId }) => [
+        { type: 'Post', id: postId },
+      ],
     }),
   }),
 })
 
 export const { useCreateCommentMutation, useDeleteCommentMutation } = commentApi
-
-// export const {
-//   endpoints: { createComment, deleteComment },
-// } = commentApi

@@ -30,6 +30,7 @@ export const userApi = api.injectEndpoints({
         url: '/current',
         method: 'GET',
       }),
+      providesTags: [{ type: 'CurrentUser', id: 'LIST' }],
     }),
 
     getUserById: builder.query<User, { id: string }>({
@@ -37,6 +38,7 @@ export const userApi = api.injectEndpoints({
         url: `/users/${id}`,
         method: 'GET',
       }),
+      providesTags: (result, error, { id }) => [{ type: 'User', id }],
     }),
 
     updateUser: builder.mutation<User, { body: FormData; id: string }>({
@@ -123,7 +125,3 @@ export const {
   useLazyGetUserByIdQuery,
   useUpdateUserMutation,
 } = userApi
-
-// export const {
-//   endpoints: { login, registerUser, currentUser, getUserById, updateUser },
-// } = userApi

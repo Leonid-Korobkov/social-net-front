@@ -19,6 +19,7 @@ const baseQueryWithRetry = retry(baseQuery, { maxRetries: 1 })
 
 export const api = createApi({
   reducerPath: 'api',
+  tagTypes: ['CurrentUser', 'User', 'Post', 'Posts'],
   baseQuery: baseQueryWithRetry,
   refetchOnMountOrArgChange: true,
   endpoints: () => ({}),

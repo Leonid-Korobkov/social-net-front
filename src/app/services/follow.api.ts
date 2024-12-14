@@ -1,4 +1,4 @@
-import { Follows, Post, User } from '../types'
+import { Follows, User } from '../types'
 import { api } from './api'
 
 export const followApi = api.injectEndpoints({
@@ -10,34 +10,6 @@ export const followApi = api.injectEndpoints({
         body,
       }),
       async onQueryStarted({ followingId }, { dispatch, queryFulfilled }) {
-        // Оптимистичное обновление для getAllPosts
-        const patchAllPosts = dispatch(
-          api.util.updateQueryData(
-            'getAllPosts' as never,
-            undefined as never,
-            (draft: Post[]) => {
-              draft.forEach(post => {
-                if (post.authorId === followingId) {
-                  post.isFollowing = true
-                }
-              })
-            },
-          ),
-        )
-
-        // Оптимистичное обновление для getPostById
-        const patchSinglePost = dispatch(
-          api.util.updateQueryData(
-            'getPostById' as never,
-            followingId as never,
-            (draft: Post) => {
-              if (draft && draft.authorId === followingId) {
-                draft.isFollowing = true
-              }
-            },
-          ),
-        )
-
         // Оптимистичное обновление для getUserById
         const patchUser = dispatch(
           api.util.updateQueryData(
@@ -45,6 +17,18 @@ export const followApi = api.injectEndpoints({
             { id: followingId } as never,
             (draft: User) => {
               draft.isFollowing = true
+              draft.followers.push({} as Follows) // Увеличиваем счетчик подписчиков
+            },
+          ),
+        )
+
+        // Оптимистичное обновление для currentUser
+        const patchCurrentUser = dispatch(
+          api.util.updateQueryData(
+            'currentUser' as never,
+            undefined as never,
+            (draft: User) => {
+              draft.following.push({} as Follows) // Увеличиваем счетчик подписок
             },
           ),
         )
@@ -53,9 +37,8 @@ export const followApi = api.injectEndpoints({
           await queryFulfilled
         } catch {
           // Откатываем изменения при ошибке
-          patchAllPosts.undo()
-          patchSinglePost.undo()
           patchUser.undo()
+          patchCurrentUser.undo()
         }
       },
     }),
@@ -67,34 +50,6 @@ export const followApi = api.injectEndpoints({
         body,
       }),
       async onQueryStarted({ followingId }, { dispatch, queryFulfilled }) {
-        // Оптимистичное обновление для getAllPosts
-        const patchAllPosts = dispatch(
-          api.util.updateQueryData(
-            'getAllPosts' as never,
-            undefined as never,
-            (draft: Post[]) => {
-              draft.forEach(post => {
-                if (post.authorId === followingId) {
-                  post.isFollowing = false
-                }
-              })
-            },
-          ),
-        )
-
-        // Оптимистичное обновление для getPostById
-        const patchSinglePost = dispatch(
-          api.util.updateQueryData(
-            'getPostById' as never,
-            followingId as never,
-            (draft: Post) => {
-              if (draft && draft.authorId === followingId) {
-                draft.isFollowing = false
-              }
-            },
-          ),
-        )
-
         // Оптимистичное обновление для getUserById
         const patchUser = dispatch(
           api.util.updateQueryData(
@@ -102,6 +57,18 @@ export const followApi = api.injectEndpoints({
             { id: followingId } as never,
             (draft: User) => {
               draft.isFollowing = false
+              draft.followers.pop() // Уменьшаем счетчик подписчиков
+            },
+          ),
+        )
+
+        // Оптимистичное обновление для currentUser
+        const patchCurrentUser = dispatch(
+          api.util.updateQueryData(
+            'currentUser' as never,
+            undefined as never,
+            (draft: User) => {
+              draft.following.pop() // Уменьшаем счетчик подписок
             },
           ),
         )
@@ -110,9 +77,8 @@ export const followApi = api.injectEndpoints({
           await queryFulfilled
         } catch {
           // Откатываем изменения при ошибке
-          patchAllPosts.undo()
-          patchSinglePost.undo()
           patchUser.undo()
+          patchCurrentUser.undo()
         }
       },
     }),
@@ -120,7 +86,3 @@ export const followApi = api.injectEndpoints({
 })
 
 export const { useCreateFollowMutation, useDeleteFollowMutation } = followApi
-
-// export const {
-//   endpoints: { createFollow, deleteFollow },
-// } = followApi
