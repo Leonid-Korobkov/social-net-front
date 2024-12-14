@@ -3,13 +3,30 @@ import { useGetPostByIdQuery } from '../../app/services/post.api'
 import Card from '../../components/Card'
 import GoBack from '../../components/GoBack'
 import CreateComment from '../../components/CommentCreate'
-import { Spinner } from '@nextui-org/react'
-
+import CardSkeleton from '../../components/CardSkeleton'
+import CreateCommentSkeleton from '../../components/CommentCreateSkeleton'
+import CardCommentSkeleton from '../../components/CardCommentSkeleton'
 function CurrentPost() {
   const params = useParams<{ id: string }>()
   const { data, isLoading } = useGetPostByIdQuery(params?.id ?? '')
 
-  if (isLoading) return <Spinner size="lg" color="primary" />
+  if (isLoading) {
+    return (
+      <>
+        <GoBack />
+        <CardSkeleton />
+        <div className="mt-10">
+          <CreateCommentSkeleton />
+        </div>
+        <div className="mt-10">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <CardCommentSkeleton key={index} />
+          ))}
+        </div>
+      </>
+    )
+  }
+
   if (!data) return <h1>Поста не существует</h1>
 
   const {

@@ -1,16 +1,24 @@
 import { useGetAllPostsQuery } from '../../app/services/post.api'
 import Card from '../../components/Card'
+import CardSkeleton from '../../components/CardSkeleton'
 import CreatePost from '../../components/PostCreate'
 
 function Posts() {
-  const { data } = useGetAllPostsQuery()
+  const { data, isLoading } = useGetAllPostsQuery()
 
   return (
     <>
       <div className="mb-10 w-full">
         <CreatePost />
       </div>
-      {data &&
+      {isLoading ? (
+        <div className="mt-10">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <CardSkeleton key={index} />
+          ))}
+        </div>
+      ) : (
+        data &&
         data.length > 0 &&
         data.map(
           ({
@@ -39,7 +47,8 @@ function Posts() {
               isFollowing={isFollowing}
             />
           ),
-        )}
+        )
+      )}
     </>
   )
 }
