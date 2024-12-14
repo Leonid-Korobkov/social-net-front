@@ -6,9 +6,14 @@ import CreateComment from '../../components/CommentCreate'
 import CardSkeleton from '../../components/CardSkeleton'
 import CreateCommentSkeleton from '../../components/CommentCreateSkeleton'
 import CardCommentSkeleton from '../../components/CardCommentSkeleton'
+import { useEffect } from 'react'
 function CurrentPost() {
   const params = useParams<{ id: string }>()
   const { data, isLoading } = useGetPostByIdQuery(params?.id ?? '')
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [params.id])
 
   if (isLoading) {
     return (

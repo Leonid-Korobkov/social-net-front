@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { selectIsAuthenticated, selectUser } from '../features/user/user.slice'
 import { useEffect } from 'react'
 import Profile from '../components/Profile'
+// import { ScrollRestoration } from 'react-router-dom'
 
 function Layout() {
   const isAuth = useSelector(selectIsAuthenticated)
@@ -22,6 +23,7 @@ function Layout() {
 
   return (
     <>
+      {/* <ScrollRestoration /> */}
       <Header />
       <Container className="">
         <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
