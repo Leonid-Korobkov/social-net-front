@@ -77,7 +77,13 @@ function EditProfile({
           )
         data.bio && formData.append('bio', data.bio)
         data.location && formData.append('location', data.location)
-        selectedFile && formData.append('avatar', selectedFile)
+        selectedFile &&
+          formData.append(
+            'avatar',
+            new File([selectedFile], `${data.email}_${Date.now()}.png`, {
+              type: selectedFile.type,
+            }),
+          )
 
         //updateUser({ body: formData, id }).unwrap()
         const promise = updateUser({ body: formData, id }).unwrap()
