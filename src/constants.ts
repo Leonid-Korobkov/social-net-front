@@ -1,4 +1,4 @@
 export const BASE_URL =
   process.env.NODE_ENV === 'production'
-    ? 'https://social-net-back.onrender.com'
+    ? 'https://zling-api.up.railway.app'
     : import.meta.env.VITE_BASE_URL
