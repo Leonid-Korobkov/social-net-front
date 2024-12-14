@@ -13,7 +13,7 @@ function Posts() {
     if (savedPosition) {
       window.scrollTo({
         top: parseInt(savedPosition),
-        behavior: 'smooth'
+        behavior: 'smooth',
       })
       sessionStorage.removeItem('scrollPosition')
     }
@@ -50,22 +50,20 @@ function Posts() {
             likedByUser,
             isFollowing,
           }) => (
-            <Link to={`/posts/${id}`} onClick={handleCardClick}>
-              <Card
-                key={id}
-                id={id}
-                authorId={authorId}
-                avatarUrl={author.avatarUrl || ''}
-                cardFor={'post'}
-                content={content}
-                name={author.name || ''}
-                likedByUser={likedByUser}
-                commentsCount={comments.length}
-                createdAt={createdAt}
-                likesCount={likes.length}
-                isFollowing={isFollowing}
-              />
-            </Link>
+            <Card
+              key={id}
+              id={id}
+              authorId={authorId}
+              avatarUrl={author.avatarUrl || ''}
+              cardFor={'post'}
+              content={content}
+              name={author.name || ''}
+              likedByUser={likedByUser}
+              commentsCount={comments.length}
+              createdAt={createdAt}
+              likesCount={likes.length}
+              isFollowing={isFollowing}
+            />
           ),
         )
       )}
