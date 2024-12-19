@@ -3,11 +3,14 @@ import { useState } from 'react'
 import { IoLogIn, IoPeople } from 'react-icons/io5'
 import Login from '../../features/user/login'
 import Register from '../../features/user/register'
-import Header from '../../components/Header'
+import Header from '../../components/shared/Header'
+import { useGetAllPostsQuery } from '../../app/services/post.api'
+import { hasErrorField } from '../../utils/hasErrorField'
 
 function Auth() {
   const [selected, setSelected] = useState('login')
   const [isRegisterSuccess, setRegisterSuccess] = useState(false)
+  const { error } = useGetAllPostsQuery()
 
   return (
     <>
@@ -67,6 +70,20 @@ function Auth() {
                 </Tabs>
               </CardBody>
             </Card>
+            {error && (
+              <div className="flex items-center justify-center pt-4">
+                <Alert
+                  color="danger"
+                  title="Ошибка"
+                  // @ts-ignore
+                  description={
+                    hasErrorField(error)
+                      ? error.data.error
+                      : 'Произошла неизвестная ошибка'
+                  }
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

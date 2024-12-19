@@ -1,8 +1,7 @@
 import { useGetAllPostsQuery } from '../../app/services/post.api'
-import Card from '../../components/Card'
-import CardSkeleton from '../../components/CardSkeleton'
-import CreatePost from '../../components/PostCreate'
-import { Link } from 'react-router-dom'
+import Card from '../../components/shared/Card'
+import CardSkeleton from '../../components/ui/CardSkeleton'
+import CreatePost from '../../components/shared/PostCreate'
 import { useEffect } from 'react'
 
 function Posts() {
@@ -63,6 +62,7 @@ function Posts() {
               createdAt={createdAt}
               likesCount={likes.length}
               isFollowing={isFollowing}
+              onClick={handleCardClick}
             />
           ),
         )

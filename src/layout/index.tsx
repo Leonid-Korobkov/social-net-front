@@ -1,13 +1,12 @@
 import { Outlet, useNavigate } from 'react-router-dom'
-import Container from '../components/Container'
-import Header from '../components/Header'
-import NavBar from '../components/NavBar'
+import Container from '../components/shared/Container'
+import Header from '../components/shared/Header'
+import NavBar from '../components/shared/NavBar'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { useSelector } from 'react-redux'
 import { selectIsAuthenticated, selectUser } from '../features/user/user.slice'
 import { useEffect } from 'react'
-import Profile from '../components/Profile'
-// import { ScrollRestoration } from 'react-router-dom'
+import Profile from '../components/shared/Profile'
 
 function Layout() {
   const isAuth = useSelector(selectIsAuthenticated)

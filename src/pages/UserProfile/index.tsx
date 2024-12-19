@@ -17,16 +17,16 @@ import {
   useCreateFollowMutation,
   useDeleteFollowMutation,
 } from '../../app/services/follow.api'
-import GoBack from '../../components/GoBack'
-import ProfileInfo from '../../components/ProfileInfo'
+import GoBack from '../../components/shared/GoBack'
+import ProfileInfo from '../../components/shared/ProfileInfo'
 import { formatToClientDate } from '../../utils/formatToClientDate'
-import CountInfo from '../../components/CountInfo'
+import CountInfo from '../../components/ui/CountInfo'
 import { FiUsers } from 'react-icons/fi'
 import { FaUsers } from 'react-icons/fa'
 
 import Confetti from 'react-confetti'
 import { useWindowSize } from '../../hooks/useWindowSize'
-import EditProfile from '../../components/EditProfile'
+import EditProfile from '../../components/shared/EditProfile'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -93,7 +93,7 @@ function UserProfile() {
             width={200}
             height={200}
             isBlurred
-            className="border-4 border-white"
+            className="object-cover border-4 border-white"
           />
           <div className="flex flex-col text-2xl font-bold gap-4 items-center">
             {user.name}

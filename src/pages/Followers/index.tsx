@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../features/user/user.slice'
 import { Link } from 'react-router-dom'
 import { Card, CardBody } from '@nextui-org/react'
-import User from '../../components/User'
+import User from '../../components/ui/User'
 
 function Followers() {
   const currentUser = useSelector(selectCurrent)

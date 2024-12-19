@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom'
 import { useGetPostByIdQuery } from '../../app/services/post.api'
-import Card from '../../components/Card'
-import GoBack from '../../components/GoBack'
-import CreateComment from '../../components/CommentCreate'
-import CardSkeleton from '../../components/CardSkeleton'
-import CreateCommentSkeleton from '../../components/CommentCreateSkeleton'
-import CardCommentSkeleton from '../../components/CardCommentSkeleton'
+import Card from '../../components/shared/Card'
+import GoBack from '../../components/shared/GoBack'
+import CreateComment from '../../components/shared/CommentCreate'
+import CardSkeleton from '../../components/ui/CardSkeleton'
+import CreateCommentSkeleton from '../../components/ui/CommentCreateSkeleton'
+import CardCommentSkeleton from '../../components/ui/CardCommentSkeleton'
 import { useEffect } from 'react'
 function CurrentPost() {
   const params = useParams<{ id: string }>()

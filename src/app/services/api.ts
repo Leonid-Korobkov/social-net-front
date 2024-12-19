@@ -15,12 +15,42 @@ const baseQuery = fetchBaseQuery({
   },
 })
 
-const baseQueryWithRetry = retry(baseQuery, { maxRetries: 1 })
+// Создаем обертку для обработки ошибок
+const baseQueryWithErrorHandling = async (
+  args: any,
+  api: any,
+  extraOptions: any,
+) => {
+  try {
+    const result = await baseQuery(args, api, extraOptions)
+
+    if (result.error) {
+      // Обрабатываем ошибки от сервера
+      if (result.error.status === 500) {
+        return {
+          error: {
+            status: 500,
+            data: { error: 'Ошибка сервера. Пожалуйста, попробуйте позже.' },
+          },
+        }
+      }
+    }
+
+    return result
+  } catch (error) {
+    return {
+      error: {
+        status: 'FETCH_ERROR',
+        data: { error: 'Не удалось подключиться к серверу' },
+      },
+    }
+  }
+}
 
 export const api = createApi({
   reducerPath: 'api',
   tagTypes: ['CurrentUser', 'User', 'Post', 'Posts'],
-  baseQuery: baseQueryWithRetry,
+  baseQuery: baseQueryWithErrorHandling,
   refetchOnMountOrArgChange: true,
   endpoints: () => ({}),
 })
