@@ -19,7 +19,7 @@ import { hasErrorField } from '../../../utils/hasErrorField'
 import { validateEmailPattern } from '../../../utils/validateFieldsForm'
 import { IoMdMail } from 'react-icons/io'
 import { formatDateToISO } from '../../../utils/formatToClientDate'
-import { parseDate } from '@internationalized/date'
+import { parseDate, getLocalTimeZone, today } from '@internationalized/date'
 import toast from 'react-hot-toast'
 
 interface IEditProfile {
@@ -179,6 +179,10 @@ function EditProfile({
                         {...field}
                         label="Дата Рождения"
                         value={parsedDate}
+                        maxValue={today(getLocalTimeZone())}
+                        minValue={today(getLocalTimeZone()).subtract({
+                          years: 120,
+                        })}
                         onChange={date => {
                           if (date) {
                             field.onChange(date.toString()) // Сохраняем строку только если date не null
