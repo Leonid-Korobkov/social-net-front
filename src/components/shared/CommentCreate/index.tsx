@@ -3,12 +3,12 @@ import { IoMdCreate } from 'react-icons/io'
 import { useForm, Controller } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCreateCommentMutation } from '../../../app/services/comment.api'
-import { useLazyGetPostByIdQuery } from '../../../app/services/post.api'
+import toast from 'react-hot-toast'
+import { hasErrorField } from '../../../utils/hasErrorField'
 
 function CreateComment() {
   const { id } = useParams<{ id: string }>()
   const [createComment, { isLoading }] = useCreateCommentMutation()
-  const [getPostById] = useLazyGetPostByIdQuery()
 
   const {
     handleSubmit,
@@ -19,13 +19,35 @@ function CreateComment() {
 
   const onSubmit = handleSubmit(async data => {
     try {
-      if (id) {
-        await createComment({ content: data.comment, postId: id }).unwrap()
-        await getPostById(id).unwrap()
-        setValue('comment', '')
-      }
-    } catch (error) {
-      console.error('err', error)
+      const toastId = toast.loading('Создание комментария...')
+      const promise = createComment({
+        content: data.comment,
+        postId: id,
+      }).unwrap()
+
+      promise
+        .then(() => {
+          toast.success('Комментарий успешно создан!')
+          setValue('comment', '')
+          // Скролл к комментарию
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          })
+        })
+        .catch(err => {
+          if (hasErrorField(err)) {
+            toast.error('Не удалось сохранить: ' + err.data.error)
+          } else {
+            toast.error('Произошла ошибка при создании комментария')
+          }
+        })
+        .finally(() => {
+          toast.dismiss(toastId)
+        })
+    } catch (err) {
+      console.error(err, errors)
+      toast.error('Ошибка при создании поста')
     }
   })
 

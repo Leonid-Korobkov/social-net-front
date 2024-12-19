@@ -8,11 +8,7 @@ import { useDisclosure } from '@nextui-org/react'
 import { BASE_URL } from '../../constants'
 import { CiEdit } from 'react-icons/ci'
 import { resetUser, selectCurrent } from '../../features/user/user.slice'
-import {
-  useGetUserByIdQuery,
-  useLazyCurrentUserQuery,
-  useLazyGetUserByIdQuery,
-} from '../../app/services/user.api'
+import { useGetUserByIdQuery } from '../../app/services/user.api'
 import {
   useCreateFollowMutation,
   useDeleteFollowMutation,
@@ -35,8 +31,6 @@ function UserProfile() {
   const { data: user } = useGetUserByIdQuery({ id: id ?? '' }, { skip: !id })
   const [followUser] = useCreateFollowMutation()
   const [unfolowUser] = useDeleteFollowMutation()
-  const [triggerGetUserByIdQuery] = useLazyGetUserByIdQuery()
-  const [triggerCurrentQuery] = useLazyCurrentUserQuery()
 
   const [party, setParty] = useState(false)
   const size = useWindowSize()
@@ -55,7 +49,6 @@ function UserProfile() {
       if (id) {
         if (user?.isFollowing) {
           unfolowUser({ followingId: id }).unwrap()
-          setParty(false)
         } else {
           followUser({ followingId: id }).unwrap()
           setParty(true)

@@ -13,6 +13,7 @@ import UserProfile from './pages/UserProfile'
 import Followers from './pages/Followers'
 import Following from './pages/Following'
 import AuthGuard from './features/user/AuthGuard'
+import ErrorPage from './pages/Error'
 
 const container = document.getElementById('root')
 
@@ -20,30 +21,37 @@ const router = createBrowserRouter([
   {
     path: '/auth',
     element: <Auth />,
+    errorElement: <ErrorPage />,
   },
   {
     path: '/',
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '',
         element: <Posts />,
+        errorElement: <ErrorPage />,
       },
       {
         path: 'posts/:id',
         element: <CurrentPost />,
+        errorElement: <ErrorPage />,
       },
       {
         path: 'users/:id',
         element: <UserProfile />,
+        errorElement: <ErrorPage />,
       },
       {
         path: 'followers',
         element: <Followers />,
+        errorElement: <ErrorPage />,
       },
       {
         path: 'following',
         element: <Following />,
+        errorElement: <ErrorPage />,
       },
     ],
   },

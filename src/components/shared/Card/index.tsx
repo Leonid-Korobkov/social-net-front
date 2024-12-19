@@ -15,8 +15,6 @@ import {
 } from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaRegComment } from 'react-icons/fa6'
-import { FcDislike } from 'react-icons/fc'
-import { MdOutlineFavoriteBorder } from 'react-icons/md'
 import { RiDeleteBinLine } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
 import { Spinner } from '@nextui-org/react'
@@ -34,6 +32,8 @@ import User from '../../ui/User'
 import Typography from '../../ui/Typography'
 import MetaInfo from '../../ui/MetaInfo'
 import RawHTML from '../../ui/EscapeHtml'
+import { toast } from 'react-hot-toast'
+import AnimatedLike from '../../ui/AnimatedLike'
 
 interface ICard {
   avatarUrl: string
@@ -92,32 +92,82 @@ function Card({
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
   const handleDelete = async () => {
+    onClick?.()
+    const toastId = toast.loading('Удаление...')
     try {
       switch (cardFor) {
-        case 'post':
-          await deletePost(id).unwrap()
+        case 'post': {
+          const promise = deletePost(id).unwrap()
+          promise
+            .then(() => {
+              toast.success('Пост успешно удален!')
+            })
+            .catch(err => {
+              if (hasErrorField(err)) {
+                toast.error(err.data.error)
+              } else {
+                toast.error('Произошла ошибка при удалении')
+              }
+            })
+            .finally(() => {
+              toast.dismiss(toastId)
+            })
           break
-        case 'current-post':
-          await deletePost(id).unwrap()
-          navigate('/')
+        }
+        case 'current-post': {
+          const promise = deletePost(id).unwrap()
+          promise
+            .then(() => {
+              toast.success('Пост успешно удален!')
+              navigate('/')
+            })
+            .catch(err => {
+              if (hasErrorField(err)) {
+                toast.error(err.data.error)
+              } else {
+                toast.error('Произошла ошибка при удалении')
+              }
+            })
+            .finally(() => {
+              toast.dismiss(toastId)
+            })
           break
-        case 'comment':
-          await deleteComment({ commentId, postId: id }).unwrap()
+        }
+        case 'comment': {
+          const promise = deleteComment({ commentId, postId: id }).unwrap()
+          promise
+            .then(() => {
+              toast.success('Комментарий успешно удален!')
+            })
+            .catch(err => {
+              if (hasErrorField(err)) {
+                toast.error(err.data.error)
+              } else {
+                toast.error('Произошла ошибка при удалении')
+              }
+            })
+            .finally(() => {
+              toast.dismiss(toastId)
+            })
           break
+        }
         default:
           throw new Error('Неверный аргумент cardFor')
       }
     } catch (err) {
+      toast.dismiss(toastId)
       if (hasErrorField(err)) {
         setError(err.data.error)
+        toast.error(err.data.error)
       } else {
         setError(err as string)
+        toast.error('Произошла ошибка при удалении')
       }
     }
   }
 
   return (
-    <NextUiCard className="mb-5" onClick={onClick}>
+    <NextUiCard className="mb-5">
       <CardHeader className="justify-between items-center bg-transparent">
         <Link to={`/users/${authorId}`}>
           <User
@@ -150,17 +200,15 @@ function Card({
       {cardFor !== 'comment' && (
         <CardFooter className="gap-3">
           <div className="flex gap-5 items-center">
-            <div onClick={handleClick}>
-              <MetaInfo
-                classNameForIcon={likedByUser ? 'text-danger' : ''}
-                count={likesCount}
-                Icon={likedByUser ? FcDislike : MdOutlineFavoriteBorder}
-              />
-            </div>
+            <AnimatedLike
+              isLiked={likedByUser}
+              count={likesCount}
+              onClick={handleClick}
+            />
             {cardFor === 'current-post' ? (
               <MetaInfo count={commentsCount} Icon={FaRegComment} />
             ) : (
-              <Link to={`/posts/${id}`}>
+              <Link to={`/posts/${id}`} onClick={onClick}>
                 <MetaInfo count={commentsCount} Icon={FaRegComment} />
               </Link>
             )}

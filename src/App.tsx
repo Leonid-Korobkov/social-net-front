@@ -2,14 +2,12 @@
 import type { NavigateOptions } from 'react-router-dom'
 
 import {
-  BrowserRouter,
   useNavigate,
   useHref,
   Routes,
   Route,
 } from 'react-router-dom'
 import { NextUIProvider } from '@nextui-org/system'
-import { Link } from '@nextui-org/link'
 
 import Posts from './pages/Posts'
 

@@ -9,6 +9,7 @@ export const postApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['Posts'],
     }),
 
     getAllPosts: builder.query<Post[], void>({

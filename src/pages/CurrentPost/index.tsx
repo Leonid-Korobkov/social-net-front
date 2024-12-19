@@ -7,6 +7,8 @@ import CardSkeleton from '../../components/ui/CardSkeleton'
 import CreateCommentSkeleton from '../../components/ui/CommentCreateSkeleton'
 import CardCommentSkeleton from '../../components/ui/CardCommentSkeleton'
 import { useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+
 function CurrentPost() {
   const params = useParams<{ id: string }>()
   const { data, isLoading } = useGetPostByIdQuery(params?.id ?? '')
@@ -66,20 +68,29 @@ function CurrentPost() {
         <CreateComment />
       </div>
       <div className="mt-10">
-        {data.comments
-          ? data.comments.map(comment => (
-              <Card
-                cardFor="comment"
-                key={comment.id}
-                avatarUrl={comment.User?.avatarUrl ?? ''}
-                content={comment.content}
-                name={comment.User?.name ?? ''}
-                authorId={comment.userId ?? ''}
-                commentId={comment.id}
-                id={id}
-              />
-            ))
-          : null}
+        <AnimatePresence mode="popLayout">
+          {data.comments
+            ? data.comments.map(comment => (
+                <motion.div
+                  key={comment.id}
+                  initial="hidden"
+                  animate="show"
+                  exit="exit"
+                  layout
+                >
+                  <Card
+                    cardFor="comment"
+                    avatarUrl={comment.User?.avatarUrl ?? ''}
+                    content={comment.content}
+                    name={comment.User?.name ?? ''}
+                    authorId={comment.userId ?? ''}
+                    commentId={comment.id}
+                    id={id}
+                  />
+                </motion.div>
+              ))
+            : null}
+        </AnimatePresence>
       </div>
     </>
   )

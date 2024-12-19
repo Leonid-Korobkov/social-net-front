@@ -1,10 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { useSelector } from 'react-redux'
-import { Card, CardHeader, CardBody, Image } from '@nextui-org/react'
+import { Card, CardHeader, CardBody } from '@nextui-org/react'
 import { selectCurrent } from '../../../features/user/user.slice'
 import { Link } from 'react-router-dom'
 import { BASE_URL } from '../../../constants'
 import { MdAlternateEmail } from 'react-icons/md'
+import ImageWithSkeleton from '../../ui/ImageWithSkeleton'
 
 function Profile() {
   const current = useSelector(selectCurrent)
@@ -17,12 +18,10 @@ function Profile() {
   return (
     <Card className="py-4 w-[302px]">
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-        <Image
-          isBlurred
+        <ImageWithSkeleton
           alt="Изображение профиля"
-          className="object-cover rounded-xl"
           src={`${BASE_URL}${avatarUrl}`}
-          width={370}
+          className="w-full"
         />
       </CardHeader>
       <CardBody className="overflow-visible py-2">

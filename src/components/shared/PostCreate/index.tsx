@@ -1,18 +1,15 @@
 import { Controller, useForm } from 'react-hook-form'
-import {
-  useCreatePostMutation,
-  useLazyGetAllPostsQuery,
-} from '../../../app/services/post.api'
+import { useCreatePostMutation } from '../../../app/services/post.api'
 import { Button, Textarea } from '@nextui-org/react'
 import { IoMdCreate } from 'react-icons/io'
+import { toast } from 'react-hot-toast'
+import { hasErrorField } from '../../../utils/hasErrorField'
 
 function CreatePost() {
   const [createPost, { isLoading }] = useCreatePostMutation()
-  const [triggerAllPosts] = useLazyGetAllPostsQuery()
 
   const {
     handleSubmit,
-    register,
     control,
     formState: { errors },
     setValue,
@@ -22,11 +19,27 @@ function CreatePost() {
 
   const onSubmit = handleSubmit(async data => {
     try {
-      await createPost({ content: data.text }).unwrap()
-      setValue('text', '')
-      await triggerAllPosts().unwrap()
+      const toastId = toast.loading('Создание поста...')
+      const promise = createPost({ content: data.text }).unwrap()
+
+      promise
+        .then(() => {
+          toast.success('Пост успешно создан!')
+          setValue('text', '')
+        })
+        .catch(err => {
+          if (hasErrorField(err)) {
+            toast.error('Не удалось сохранить: ' + err.data.error)
+          } else {
+            toast.error('Произошла ошибка при создании поста')
+          }
+        })
+        .finally(() => {
+          toast.dismiss(toastId)
+        })
     } catch (err) {
       console.error(err, errors)
+      toast.error('Ошибка при создании поста')
     }
   })
 
