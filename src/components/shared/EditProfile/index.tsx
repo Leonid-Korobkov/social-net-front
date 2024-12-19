@@ -164,6 +164,32 @@ function EditProfile({
                 <Controller
                   name="dateOfBirth"
                   control={control}
+                  rules={{
+                    validate: {
+                      // Не больше текущего дня
+                      dateOfBirth: value => {
+                        if (value) {
+                          const date = new Date(value)
+                          const now = new Date()
+                          if (date > now) {
+                            return 'Дата рождения не может быть в будущем'
+                          }
+                        }
+                        return true
+                      },
+                      // Не больше 120 лет
+                      dateOfBirthAge: value => {
+                        if (value) {
+                          const date = new Date(value)
+                          const now = new Date()
+                          if (now.getFullYear() - date.getFullYear() > 120) {
+                            return 'Дата рождения не может быть больше 120 лет'
+                          }
+                        }
+                        return true
+                      },
+                    },
+                  }}
                   render={({ field }) => {
                     let parsedDate = null
                     if (field.value) {
@@ -190,7 +216,7 @@ function EditProfile({
                         }}
                         variant="bordered"
                         errorMessage={errors.dateOfBirth?.message || ''}
-                        isInvalid={!!errors.dateOfBirth}
+                        isInvalid={errors.dateOfBirth ? true : false}
                         showMonthAndYearPickers
                       />
                     )
