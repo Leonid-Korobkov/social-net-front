@@ -12,19 +12,18 @@ interface IMetaInfo {
 function MetaInfo({ count, Icon, classNameForIcon, isLiked }: IMetaInfo) {
   return (
     <div className="flex items-center gap-2 cursor-pointer">
-      {count > 0 && (
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2 }}
-            className="select-none font-semibold text-default-400 text-l"
-          >
-            {count}
-          </motion.div>
-        </AnimatePresence>
-      )}
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={count}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.15 }}
+          className="select-none font-semibold text-default-400 text-l"
+        >
+          {count}
+        </motion.p>
+      </AnimatePresence>
       <div
         className={
           'text-default-400 text-xl transition hover:transform hover:scale-125 ease-in-out duration-300' +
