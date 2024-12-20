@@ -7,11 +7,7 @@ import { MdOutlinePersonAddDisabled } from 'react-icons/md'
 import { useDisclosure } from '@nextui-org/react'
 import { BASE_URL } from '../../constants'
 import { CiEdit } from 'react-icons/ci'
-import {
-  resetUser,
-  selectCurrent,
-  setLoading,
-} from '../../features/user/user.slice'
+import { resetUser, selectCurrent } from '../../features/user/user.slice'
 import { useGetUserByIdQuery } from '../../app/services/user.api'
 import {
   useCreateFollowMutation,
@@ -45,10 +41,12 @@ function UserProfile() {
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    dispatch(resetUser())
-    dispatch(setLoading(true))
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(resetUser())
+    },
+    [],
+  )
 
   const handleFollow = async () => {
     try {

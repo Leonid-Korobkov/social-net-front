@@ -11,7 +11,6 @@ import Profile from '../components/shared/Profile'
 function Layout() {
   const isAuth = useSelector(selectIsAuthenticated)
   const user = useSelector(selectUser)
-  const loading = useSelector((state: any) => state.auth.loading)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -30,7 +29,7 @@ function Layout() {
         <div className="flex-2 p-4 overflow-auto flex-grow pb-20 lg:pb-4">
           <Outlet />
         </div>
-        {user === null && !loading && (
+        {!user && (
           <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
             <div className="flex-col flex gap-5">
               <Profile />
