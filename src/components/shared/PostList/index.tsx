@@ -50,7 +50,6 @@ function PostList({
                     initial="hidden"
                     animate="show"
                     exit="exit"
-                    layout
                   >
                     <Card
                       id={id}
