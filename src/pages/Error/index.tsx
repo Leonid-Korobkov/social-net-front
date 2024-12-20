@@ -1,11 +1,13 @@
-import { useRouteError } from 'react-router-dom'
+import { useNavigate, useRouteError } from 'react-router-dom'
 import { Button, Card } from '@nextui-org/react'
 import { BiError } from 'react-icons/bi'
 
 function ErrorPage() {
   const error = useRouteError() as { statusText?: string; message?: string }
+  const navigate = useNavigate()
   // Сделайть перезагрузку страницы
   const reloadPage = () => {
+    navigate('/')
     window.location.reload()
   }
 

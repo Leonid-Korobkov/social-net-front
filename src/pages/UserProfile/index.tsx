@@ -23,12 +23,16 @@ import { FaUsers } from 'react-icons/fa'
 import Confetti from 'react-confetti'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import EditProfile from '../../components/shared/EditProfile'
+import PostList from '../../components/shared/PostList'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const currentUser = useSelector(selectCurrent)
-  const { data: user } = useGetUserByIdQuery({ id: id ?? '' }, { skip: !id })
+  const { data: user, isLoading } = useGetUserByIdQuery(
+    { id: id ?? '' },
+    { skip: !id },
+  )
   const [followUser] = useCreateFollowMutation()
   const [unfolowUser] = useDeleteFollowMutation()
 
@@ -55,7 +59,7 @@ function UserProfile() {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -119,6 +123,10 @@ function UserProfile() {
           </div>
         </Card>
         <Card className="flex flex-col space-y-2 p-5 flex-1">
+          <ProfileInfo
+            title="Зарегистрирован"
+            info={formatToClientDate(user.createdAt, false)}
+          />
           <ProfileInfo title="Почта" info={user.email} />
           <ProfileInfo title="Местоположение" info={user.location} />
           <ProfileInfo
@@ -145,6 +153,12 @@ function UserProfile() {
           </div>
         </Card>
       </div>
+      <PostList
+        className="w-full mt-4"
+        data={user.posts || []}
+        isLoading={isLoading}
+        handleCardClick={() => {}}
+      />
       <EditProfile isOpen={isOpen} onClose={onClose} user={user} />
     </>
   )

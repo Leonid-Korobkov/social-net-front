@@ -75,11 +75,19 @@ function Card({
   const navigate = useNavigate()
   const currentUser = useSelector(selectCurrent)
 
-  const handleClick = async () => {
+  const handleLike = async () => {
     try {
-      likedByUser
-        ? unlikePost({ postId: id }).unwrap()
-        : likePost({ postId: id }).unwrap()
+      if (likedByUser) {
+        unlikePost({
+          postId: id,
+          userId: authorId,
+        }).unwrap()
+      } else {
+        likePost({
+          postId: id,
+          userId: authorId,
+        }).unwrap()
+      }
     } catch (err) {
       if (hasErrorField(err)) {
         setError(err.data.error)
@@ -203,7 +211,7 @@ function Card({
             <AnimatedLike
               isLiked={likedByUser}
               count={likesCount}
-              onClick={handleClick}
+              onClick={handleLike}
             />
             {cardFor === 'current-post' ? (
               <MetaInfo count={commentsCount} Icon={FaRegComment} />

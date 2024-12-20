@@ -113,9 +113,9 @@ function Header({ className }: { className?: string }) {
                   className="cursor-default"
                   endContent={
                     <Switch
-                      defaultSelected={resolvedTheme === 'dark'}
+                      defaultSelected={resolvedTheme === 'light'}
                       onChange={e =>
-                        setTheme(e.target.checked ? 'dark' : 'light')
+                        setTheme(e.target.checked ? 'light' : 'dark')
                       }
                       color="primary"
                       size="md"

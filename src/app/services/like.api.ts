@@ -1,16 +1,30 @@
-import { Like, Post } from '../types'
+import { Like, Post, User } from '../types'
 import { api } from './api'
 
 export const likeApi = api.injectEndpoints({
   endpoints: builder => ({
-    createLike: builder.mutation<Like, { postId: string }>({
-      query: body => ({
+    createLike: builder.mutation<Like, { postId: string; userId: string }>({
+      query: ({ postId }) => ({
         url: '/like',
         method: 'POST',
-        body,
+        body: { postId },
       }),
+      async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
+        const userIdString = userId.toString()
+        const patchUserProfile = dispatch(
+          api.util.updateQueryData(
+            'getUserById' as never,
+            { id: userIdString } as never,
+            (draft: User) => {
+              const post = draft.posts.find(p => p.id === postId)
+              if (post) {
+                post.likedByUser = true
+                post.likes.push({} as Like)
+              }
+            },
+          ),
+        )
 
-      async onQueryStarted({ postId }, { dispatch, queryFulfilled }) {
         const patchSinglePost = dispatch(
           api.util.updateQueryData(
             'getPostById' as never,
@@ -22,7 +36,6 @@ export const likeApi = api.injectEndpoints({
           ),
         )
 
-        // Оптимистичное обновление для getAllPosts
         const patchAllPosts = dispatch(
           api.util.updateQueryData(
             'getAllPosts' as never,
@@ -40,21 +53,35 @@ export const likeApi = api.injectEndpoints({
         try {
           await queryFulfilled
         } catch {
-          // Откатываем изменения при ошибке
           patchAllPosts.undo()
           patchSinglePost.undo()
+          patchUserProfile.undo()
         }
       },
     }),
 
-    deleteLike: builder.mutation<void, { postId: string }>({
-      query: body => ({
+    deleteLike: builder.mutation<void, { postId: string; userId: string }>({
+      query: ({ postId }) => ({
         url: `/unlike`,
         method: 'DELETE',
-        body,
+        body: { postId },
       }),
-      async onQueryStarted({ postId }, { dispatch, queryFulfilled }) {
-        // Оптимистичное обновление для getPostById
+      async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
+        const userIdString = userId.toString()
+        const patchUserProfile = dispatch(
+          api.util.updateQueryData(
+            'getUserById' as never,
+            { id: userIdString } as never,
+            (draft: User) => {
+              const post = draft.posts.find(p => p.id === postId)
+              if (post) {
+                post.likedByUser = false
+                post.likes.pop()
+              }
+            },
+          ),
+        )
+
         const patchSinglePost = dispatch(
           api.util.updateQueryData(
             'getPostById' as never,
@@ -68,7 +95,6 @@ export const likeApi = api.injectEndpoints({
           ),
         )
 
-        // Оптимистичное обновление для getAllPosts
         const patchAllPosts = dispatch(
           api.util.updateQueryData(
             'getAllPosts' as never,
@@ -86,9 +112,9 @@ export const likeApi = api.injectEndpoints({
         try {
           await queryFulfilled
         } catch {
-          // Откатываем изменения при ошибке
           patchAllPosts.undo()
           patchSinglePost.undo()
+          patchUserProfile.undo()
         }
       },
     }),
