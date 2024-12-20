@@ -63,6 +63,10 @@ function UserProfile() {
     }
   }
 
+  function handleEditProfile() {
+    onOpen()
+  }
+
   if (!user) {
     return null
   }
@@ -113,7 +117,7 @@ function UserProfile() {
             ) : (
               <Button
                 endContent={<CiEdit />}
-                onClick={() => onOpen()}
+                onPressStart={handleEditProfile}
                 variant="ghost"
                 color="warning"
               >

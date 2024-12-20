@@ -13,12 +13,12 @@ function NavBar() {
           </NavButton>
         </li>
         <li className="flex flex-col gap-5">
-          <NavButton href="following" icon={<FiUsers />}>
+          <NavButton href="/following" icon={<FiUsers />}>
             Подписки
           </NavButton>
         </li>
         <li className="flex flex-col gap-5">
-          <NavButton href="followers" icon={<FaUsers />}>
+          <NavButton href="/followers" icon={<FaUsers />}>
             Подписчики
           </NavButton>
         </li>

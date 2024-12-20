@@ -1,5 +1,6 @@
-import { useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { Button, TButtonColors } from '../../ui/Button'
+import { useState } from 'react'
 
 interface NavButtonProps {
   children: React.ReactNode
@@ -9,23 +10,26 @@ interface NavButtonProps {
 }
 
 function NavButton({ children, icon, href, color }: NavButtonProps) {
-  const navigate = useNavigate()
-
-  const handleClick = () => {
-    navigate(href)
-  }
+  const [isActive, setIsActive] = useState(false)
 
   return (
-    <Button
-      className="flex justify-start text-xl"
-      type="button"
-      fullWidth
-      icon={icon}
-      onClick={handleClick}
-      color={color}
+    <NavLink
+      to={href}
+      className={({ isActive }) => {
+        setIsActive(isActive)
+        return ''
+      }}
     >
-      {children}
-    </Button>
+      <Button
+        className="flex justify-start text-xl pointer-events-none"
+        type="button"
+        fullWidth
+        icon={icon}
+        color={isActive ? 'secondary' : color}
+      >
+        {children}
+      </Button>
+    </NavLink>
   )
 }
 

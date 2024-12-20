@@ -14,7 +14,7 @@ type Props = {
   className?: string
   type?: 'button' | 'submit' | 'reset'
   fullWidth?: boolean
-  onClick: () => void
+  onClick?: (e: React.MouseEvent) => void
   color?: TButtonColors
 }
 

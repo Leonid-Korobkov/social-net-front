@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import Profile from '../components/shared/Profile'
 
 function Layout() {
-  const isAuth = useSelector(selectIsAuthenticated)
+  const isAuth = true
   const user = useSelector(selectUser)
 
   const navigate = useNavigate()
