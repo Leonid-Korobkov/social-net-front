@@ -47,6 +47,10 @@ export const userApi = api.injectEndpoints({
         method: 'PUT',
         body,
       }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'User', id },
+        { type: 'CurrentUser', id },
+      ],
       async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
         // Создаем FormData из тела запроса для предварительного просмотра изменений
         const previewChanges: Partial<User> = {}
