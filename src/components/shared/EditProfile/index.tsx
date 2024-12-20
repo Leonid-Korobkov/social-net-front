@@ -10,7 +10,7 @@ import {
   ModalHeader,
   Textarea,
 } from '@nextui-org/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { User } from '../../../app/types'
 import { useParams } from 'react-router-dom'
@@ -43,6 +43,7 @@ function EditProfile({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<User>({
     mode: 'onChange',
@@ -55,6 +56,12 @@ function EditProfile({
       location: user?.location,
     },
   })
+
+  useEffect(() => {
+    if (user) {
+      reset(user)
+    }
+  }, [user, reset])
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files !== null) {

@@ -46,12 +46,6 @@ const slice = createSlice({
         },
       )
       .addMatcher(
-        userApi.endpoints.updateUser.matchFulfilled,
-        (state, action) => {
-          state.current = action.payload
-        },
-      )
-      .addMatcher(
         userApi.endpoints.getUserById.matchFulfilled,
         (state, action) => {
           state.user = action.payload

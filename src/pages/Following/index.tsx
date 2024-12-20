@@ -11,7 +11,7 @@ function Following() {
     return null
   }
 
-  return currentUser.following.length > 0 ? (
+  return currentUser.following?.length > 0 ? (
     <div className="gap-5 flex flex-col">
       {currentUser.following.map(user => {
         // Проверяем наличие following перед использованием
@@ -22,11 +22,12 @@ function Following() {
         return (
           <Link to={`/users/${user.following.id}`} key={user.following.id}>
             <Card>
-              <CardBody className="block">
+              <CardBody>
                 <User
                   name={user.following.name ?? ''}
                   avatarUrl={user.following.avatarUrl ?? ''}
                   description={user.following.email ?? ''}
+                  className="!justify-start"
                 />
               </CardBody>
             </Card>

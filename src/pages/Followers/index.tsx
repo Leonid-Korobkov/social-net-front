@@ -11,7 +11,7 @@ function Followers() {
     return null
   }
 
-  return currentUser.followers.length > 0 ? (
+  return currentUser.followers?.length > 0 ? (
     <div className="gap-5 flex flex-col">
       {currentUser.followers.map(user => {
         // Проверяем наличие follower перед использованием
@@ -22,11 +22,12 @@ function Followers() {
         return (
           <Link to={`/users/${user.follower.id}`} key={user.follower.id}>
             <Card>
-              <CardBody className="block">
+              <CardBody>
                 <User
                   name={user.follower.name ?? ''}
                   avatarUrl={user.follower.avatarUrl ?? ''}
                   description={user.follower.email ?? ''}
+                  className="flex items-center justify-between"
                 />
               </CardBody>
             </Card>

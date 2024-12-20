@@ -13,8 +13,6 @@ function Layout() {
   const user = useSelector(selectUser)
   const loading = useSelector((state: any) => state.auth.loading)
   const navigate = useNavigate()
-  console.log(loading)
-
 
   useEffect(() => {
     if (!isAuth) {

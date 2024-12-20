@@ -49,7 +49,7 @@ export const userApi = api.injectEndpoints({
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: 'User', id },
-        { type: 'CurrentUser', id },
+        { type: 'CurrentUser', id: 'LIST' },
       ],
       async onQueryStarted({ id, body }, { dispatch, queryFulfilled }) {
         // Создаем FormData из тела запроса для предварительного просмотра изменений
