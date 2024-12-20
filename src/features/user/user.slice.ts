@@ -9,6 +9,7 @@ interface InitialState {
   users: User[] | null
   current: User | null
   token?: string
+  loading: boolean
 }
 
 const initialState: InitialState = {
@@ -16,6 +17,7 @@ const initialState: InitialState = {
   isAuthenticated: false,
   users: null,
   current: null,
+  loading: true,
 }
 
 const slice = createSlice({
@@ -25,6 +27,9 @@ const slice = createSlice({
     logout: () => initialState,
     resetUser: state => {
       state.user = null
+    },
+    setLoading: (state, action) => {
+      state.loading = action.payload
     },
   },
   extraReducers: builder => {
@@ -44,12 +49,13 @@ const slice = createSlice({
         userApi.endpoints.getUserById.matchFulfilled,
         (state, action) => {
           state.user = action.payload
+          state.loading = false
         },
       )
   },
 })
 
-export const { logout, resetUser } = slice.actions
+export const { logout, resetUser, setLoading } = slice.actions
 export default slice.reducer
 
 // Селекторы для получения данных из стейта

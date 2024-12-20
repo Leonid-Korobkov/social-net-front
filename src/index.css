@@ -2,8 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
+html,
+body {
+  margin: 0;
+  min-width: 320px;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+#root {
+  height: 100vh;
   overflow-y: scroll;
+  position: relative;
 }
 
 @layer components {
