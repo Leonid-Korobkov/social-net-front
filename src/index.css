@@ -5,6 +5,9 @@
 html {
   overflow-y: scroll;
 }
+main {
+  overflow-x: hidden;
+}
 
 /* html,
 body {
