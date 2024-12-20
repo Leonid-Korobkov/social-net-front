@@ -27,7 +27,7 @@ function Followers() {
                   name={user.follower.name ?? ''}
                   avatarUrl={user.follower.avatarUrl ?? ''}
                   description={user.follower.email ?? ''}
-                  className="flex items-center justify-between"
+                  className="!justify-start"
                 />
               </CardBody>
             </Card>

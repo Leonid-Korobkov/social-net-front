@@ -36,7 +36,8 @@
     "react-router-dom": "^7.0.2",
     "reactjs-tiptap-editor": "^0.1.9",
     "sass": "^1.82.0",
-    "tailwind-merge": "^2.5.5"
+    "tailwind-merge": "^2.5.5",
+    "vite-plugin-pwa": "^0.21.1"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",
