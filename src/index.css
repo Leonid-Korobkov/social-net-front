@@ -2,12 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
+html {
+  overflow-y: scroll;
+}
+
+/* html,
 body {
   margin: 0;
   min-width: 320px;
   height: 100vh;
   overflow: hidden;
+  overflow-y: scroll;
   position: relative;
 }
 
@@ -16,7 +21,7 @@ body {
   overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
-}
+} */
 
 @layer components {
   .form-icon {
