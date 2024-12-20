@@ -103,7 +103,7 @@ function UserProfile() {
                 color={user?.isFollowing ? 'default' : 'primary'}
                 variant="flat"
                 className="gap-2"
-                onClick={handleFollow}
+                onPressStart={handleFollow}
                 endContent={
                   user?.isFollowing ? (
                     <MdOutlinePersonAddDisabled />

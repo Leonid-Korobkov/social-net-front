@@ -12,8 +12,6 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  NavbarMenuToggle,
-  NavbarMenu,
   Dropdown,
   DropdownTrigger,
   User,
@@ -30,7 +28,6 @@ import { logout, selectCurrent } from '../../../features/user/user.slice'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CiLogout } from 'react-icons/ci'
 import { useEffect, useState } from 'react'
-import NavBar from '../NavBar'
 import { BASE_URL } from '../../../constants'
 
 function Header({ className }: { className?: string }) {
@@ -62,10 +59,6 @@ function Header({ className }: { className?: string }) {
       onMenuOpenChange={setIsMenuOpen}
     >
       <NavbarContent>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          className="lg:hidden"
-        />
         <NavbarBrand>
           <Link to="/">
             <Image
@@ -144,9 +137,6 @@ function Header({ className }: { className?: string }) {
           </Dropdown>
         </NavbarItem>
       </NavbarContent>
-      <NavbarMenu>
-        <NavBar />
-      </NavbarMenu>
       <Modal
         isOpen={isOpen}
         scrollBehavior={'inside'}

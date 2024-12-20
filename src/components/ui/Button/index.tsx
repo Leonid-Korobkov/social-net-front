@@ -18,7 +18,7 @@ type Props = {
   color?: TButtonColors
 }
 
-export const Button: React.FC<Props> = ({
+export const  Button: React.FC<Props> = ({
   children,
   icon,
   className,
