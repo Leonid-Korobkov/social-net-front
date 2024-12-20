@@ -105,7 +105,7 @@ function Card({
     try {
       switch (cardFor) {
         case 'post': {
-          const promise = deletePost(id).unwrap()
+          const promise = deletePost({ id, userId: authorId }).unwrap()
           promise
             .then(() => {
               toast.success('Пост успешно удален!')
@@ -123,7 +123,7 @@ function Card({
           break
         }
         case 'current-post': {
-          const promise = deletePost(id).unwrap()
+          const promise = deletePost({ id, userId: authorId }).unwrap()
           promise
             .then(() => {
               toast.success('Пост успешно удален!')
@@ -142,7 +142,10 @@ function Card({
           break
         }
         case 'comment': {
-          const promise = deleteComment({ commentId, postId: id }).unwrap()
+          const promise = deleteComment({
+            commentId,
+            postId: id,
+          }).unwrap()
           promise
             .then(() => {
               toast.success('Комментарий успешно удален!')

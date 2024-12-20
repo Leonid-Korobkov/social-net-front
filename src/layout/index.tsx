@@ -24,7 +24,7 @@ function Layout() {
     <>
       {/* <ScrollRestoration /> */}
       <Header />
-      <Container className="">
+      <Container>
         <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
           <NavBar />
         </div>

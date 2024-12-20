@@ -34,12 +34,15 @@ export const postApi = api.injectEndpoints({
       providesTags: (result, error, id) => [{ type: 'Post', id }],
     }),
 
-    deletePost: builder.mutation<Post, string>({
-      query: id => ({
+    deletePost: builder.mutation<Post, { id: string; userId?: string }>({
+      query: ({ id, userId }) => ({
         url: `/posts/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Posts', id }],
+      invalidatesTags: (result, error, { id, userId }) => [
+        { type: 'User', id: userId },
+        { type: 'Posts', id },
+      ],
     }),
   }),
 })
