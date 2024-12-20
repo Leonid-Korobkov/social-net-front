@@ -155,12 +155,20 @@ function EditProfile({
                     minLength: { value: 3, message: 'Минимум 3 символа' },
                   })}
                 />
-                <input
+                <Controller
                   name="avatarUrl"
-                  placeholder="Выберете файл"
-                  type="file"
-                  onChange={handleFileChange}
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      name="avatarUrl"
+                      placeholder="Выберете файл"
+                      type="file"
+                      accept=".png, .jpg, .jpeg, .gif, .webp"
+                      onChange={handleFileChange}
+                    />
+                  )}
                 />
+
                 <Controller
                   name="dateOfBirth"
                   control={control}

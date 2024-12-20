@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Card, Image } from '@nextui-org/react'
+import { Button, Card, Image, Spinner } from '@nextui-org/react'
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md'
 import { MdOutlinePersonAddDisabled } from 'react-icons/md'
 import { useDisclosure } from '@nextui-org/react'
@@ -67,6 +67,17 @@ function UserProfile() {
 
   function handleEditProfile() {
     onOpen()
+  }
+
+  if (isLoading) {
+    return (
+      <Spinner
+        size="lg"
+        color="primary"
+        label="Загрузка профиля..."
+        labelColor="primary"
+      />
+    )
   }
 
   if (!user) {
