@@ -16,7 +16,7 @@ function Auth() {
     <>
       <div className="flex items-center justify-start min-h-dvh flex-col">
         <Header />
-        <div className="flex items-center justify-center w-full h-full flex-col ">
+        <div className="flex flex-1 items-center justify-center w-full h-full flex-col ">
           <div className="flex flex-col w-full max-w-[390px] ">
             <Card className="min-h-[450px] m-5">
               <Alert

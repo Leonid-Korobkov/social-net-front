@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Card, Image, Spinner } from '@nextui-org/react'
+import { Button, Card, Image, Modal, ModalContent } from '@nextui-org/react'
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md'
 import { MdOutlinePersonAddDisabled } from 'react-icons/md'
 import { useDisclosure } from '@nextui-org/react'
@@ -50,6 +50,8 @@ function UserProfile() {
     [],
   )
 
+  const [isImageOpen, setImageOpen] = useState(false)
+
   const handleFollow = async () => {
     try {
       if (id) {
@@ -67,6 +69,10 @@ function UserProfile() {
 
   function handleEditProfile() {
     onOpen()
+  }
+
+  const handleImageClick = () => {
+    setImageOpen(true)
   }
 
   if (isLoading) {
@@ -105,7 +111,8 @@ function UserProfile() {
             width={200}
             height={200}
             isBlurred
-            className="object-cover border-4 border-white"
+            className="object-cover border-4 border-white cursor-pointer"
+            onClick={handleImageClick}
           />
           <div className="flex flex-col text-2xl font-bold gap-4 items-center">
             {user.name}
@@ -175,6 +182,22 @@ function UserProfile() {
         handleCardClick={() => {}}
       />
       <EditProfile isOpen={isOpen} onClose={onClose} user={user} />
+      <Modal
+        closeButton={true}
+        aria-labelledby="modal-title"
+        isOpen={isImageOpen}
+        onClose={() => setImageOpen(false)}
+      >
+        <ModalContent>
+          <Image
+            src={`${BASE_URL}${user.avatarUrl}`}
+            alt={user.name}
+            width="100%"
+            height="auto"
+            className="object-cover"
+          />
+        </ModalContent>
+      </Modal>
     </motion.div>
   )
 }
