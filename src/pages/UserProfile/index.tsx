@@ -25,6 +25,7 @@ import { useWindowSize } from '../../hooks/useWindowSize'
 import EditProfile from '../../components/shared/EditProfile'
 import PostList from '../../components/shared/PostList'
 import UserProfileSkeleton from '../../components/ui/UserProfileSkeleton'
+import { motion } from 'framer-motion'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -77,7 +78,12 @@ function UserProfile() {
   }
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0 }}
+    >
       <GoBack />
       <Confetti
         width={size.width}
@@ -169,7 +175,7 @@ function UserProfile() {
         handleCardClick={() => {}}
       />
       <EditProfile isOpen={isOpen} onClose={onClose} user={user} />
-    </>
+    </motion.div>
   )
 }
 

@@ -38,7 +38,7 @@ function Layout() {
         <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
           <NavBar />
         </div>
-        <div className="flex-2 p-4 overflow-auto lg:pb-4 h-full w-full">
+        <div className="flex-2 p-4 overflow-auto pb-20 lg:pb-4 h-full w-full">
           <Outlet />
         </div>
         {!isUserProfilePage && (

@@ -62,7 +62,6 @@ function Header({ className }: { className?: string }) {
       maxWidth="xl"
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      shouldHideOnScroll
     >
       <NavbarContent>
         <NavbarBrand>

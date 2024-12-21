@@ -14,7 +14,7 @@ function Auth() {
 
   return (
     <>
-      <div className="flex items-center justify-start h-screen flex-col">
+      <div className="flex items-center justify-start min-h-dvh flex-col">
         <Header />
         <div className="flex items-center justify-center w-full h-full flex-col ">
           <div className="flex flex-col w-full max-w-[390px] ">
@@ -71,7 +71,7 @@ function Auth() {
               </CardBody>
             </Card>
             {error && 'status' in error && error.status !== 401 && (
-              <div className="flex items-center justify-center pt-4">
+              <div className="flex items-center justify-center p-4">
                 <Alert
                   color="danger"
                   title="Ошибка"

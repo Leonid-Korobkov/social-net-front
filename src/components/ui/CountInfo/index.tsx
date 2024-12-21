@@ -13,7 +13,6 @@ function CountInfo({ Icon, count, title, isLoading }: CountInfoProps) {
   return (
     <Card className="p-3">
       <div className="flex items-center gap-2">
-        <Icon className="text-xl" />
         {isLoading ? (
           <div className="flex flex-col gap-1">
             <Skeleton className="h-4 w-16 rounded-lg" />
@@ -21,8 +20,11 @@ function CountInfo({ Icon, count, title, isLoading }: CountInfoProps) {
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <p className="font-bold text-primary">{count}</p>
-            <p className="text-sm text-default-500">{title}</p>
+            <p className="font-bold text-primary text-xl">{count}</p>
+            <div className="flex items-center gap-2">
+              <Icon className="text-xl" />
+              <p className="text-sm text-default-500">{title}</p>
+            </div>
           </div>
         )}
       </div>

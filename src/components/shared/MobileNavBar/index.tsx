@@ -45,7 +45,7 @@ function MobileNavBar() {
   ]
 
   return (
-    <nav className="sticky bottom-0 left-0 right-0 bg-background border-t border-divider lg:hidden z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-divider lg:hidden z-50">
       <div className="flex justify-around items-center h-16">
         {navItems.map(({ path, icon: Icon, label }) => (
           <Link
