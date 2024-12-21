@@ -24,7 +24,11 @@ import { FaMoon } from 'react-icons/fa'
 import { LuSunMedium } from 'react-icons/lu'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { useDispatch, useSelector } from 'react-redux'
-import { logout, selectCurrent } from '../../../features/user/user.slice'
+import {
+  logout,
+  selectCurrent,
+  selectIsAuthenticated,
+} from '../../../features/user/user.slice'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CiLogout } from 'react-icons/ci'
 import { useEffect, useState } from 'react'
@@ -35,6 +39,7 @@ function Header({ className }: { className?: string }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
   const currentUser = useSelector(selectCurrent)
+  const isAuth = useSelector(selectIsAuthenticated)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -74,67 +79,83 @@ function Header({ className }: { className?: string }) {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Dropdown placement="bottom-start">
-            <DropdownTrigger>
-              <User
-                as="button"
-                avatarProps={{
-                  isBordered: true,
-                  src: `${BASE_URL}${currentUser?.avatarUrl}`,
-                }}
-                className="transition-transform"
-                description={currentUser?.email}
-                name={currentUser?.name}
-              />
-            </DropdownTrigger>
-            <DropdownMenu aria-label="User Actions" variant="flat">
-              <DropdownSection showDivider>
-                <DropdownItem key="user" className="h-14 gap-2">
-                  <p className="font-light">Вы вошли как</p>
-                  <p className="font-bold">{currentUser?.name}</p>
-                </DropdownItem>
+          {isAuth ? (
+            <Dropdown placement="bottom-start">
+              <DropdownTrigger>
+                <User
+                  as="button"
+                  avatarProps={{
+                    isBordered: true,
+                    src: `${BASE_URL}${currentUser?.avatarUrl}`,
+                  }}
+                  className="transition-transform [&>span]:order-1 [&>div]:items-end"
+                  description={currentUser?.email}
+                  name={currentUser?.name}
+                />
+              </DropdownTrigger>
+              <DropdownMenu aria-label="User Actions" variant="flat">
+                <DropdownSection showDivider>
+                  <DropdownItem key="user" className="h-14 gap-2">
+                    <p className="font-light">Вы вошли как</p>
+                    <p className="font-bold">{currentUser?.name}</p>
+                  </DropdownItem>
+                  <DropdownItem
+                    key="profile"
+                    onPress={() => navigate(`/users/${currentUser?.id}`)}
+                    textValue="Мой профиль"
+                  >
+                    Мой профиль
+                  </DropdownItem>
+                  <DropdownItem
+                    key="theme"
+                    isReadOnly
+                    className="cursor-default"
+                    endContent={
+                      <Switch
+                        defaultSelected={resolvedTheme === 'light'}
+                        onChange={e =>
+                          setTheme(e.target.checked ? 'light' : 'dark')
+                        }
+                        color="primary"
+                        size="md"
+                        thumbIcon={({ isSelected, className }) =>
+                          isSelected ? (
+                            <LuSunMedium className={className} />
+                          ) : (
+                            <FaMoon className={className} />
+                          )
+                        }
+                      ></Switch>
+                    }
+                  >
+                    Тема
+                  </DropdownItem>
+                </DropdownSection>
                 <DropdownItem
-                  key="profile"
-                  onPress={() => navigate(`/users/${currentUser?.id}`)}
-                  textValue="Мой профиль"
+                  key="logout"
+                  color="danger"
+                  endContent={<CiLogout className="text-large" />}
+                  onPressStart={onOpen}
                 >
-                  Мой профиль
+                  Выйти
                 </DropdownItem>
-                <DropdownItem
-                  key="theme"
-                  isReadOnly
-                  className="cursor-default"
-                  endContent={
-                    <Switch
-                      defaultSelected={resolvedTheme === 'light'}
-                      onChange={e =>
-                        setTheme(e.target.checked ? 'light' : 'dark')
-                      }
-                      color="primary"
-                      size="md"
-                      thumbIcon={({ isSelected, className }) =>
-                        isSelected ? (
-                          <LuSunMedium className={className} />
-                        ) : (
-                          <FaMoon className={className} />
-                        )
-                      }
-                    ></Switch>
-                  }
-                >
-                  Тема
-                </DropdownItem>
-              </DropdownSection>
-              <DropdownItem
-                key="logout"
-                color="danger"
-                endContent={<CiLogout className="text-large" />}
-                onPressStart={onOpen}
-              >
-                Выйти
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+              </DropdownMenu>
+            </Dropdown>
+          ) : (
+            <Switch
+              defaultSelected={resolvedTheme === 'light'}
+              onChange={e => setTheme(e.target.checked ? 'light' : 'dark')}
+              color="primary"
+              size="md"
+              thumbIcon={({ isSelected, className }) =>
+                isSelected ? (
+                  <LuSunMedium className={className} />
+                ) : (
+                  <FaMoon className={className} />
+                )
+              }
+            ></Switch>
+          )}
         </NavbarItem>
       </NavbarContent>
       <Modal
