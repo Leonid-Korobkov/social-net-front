@@ -14,6 +14,13 @@ function MobileNavBar() {
     return location.pathname === path
   }
 
+  const handleClick = (e: React.MouseEvent, path: string) => {
+    if (location.pathname === path) {
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   const navItems = [
     {
       path: '/',
@@ -44,21 +51,11 @@ function MobileNavBar() {
           <Link
             key={path}
             to={path}
+            onClick={e => handleClick(e, path)}
             className={`flex flex-col items-center gap-1 ${
               isActive(path) ? 'text-secondary' : 'text-foreground'
             }`}
           >
-            {/* <Button
-              startContent={<Icon />}
-              size="sm"
-              color={isActive(path) ? 'secondary' : 'default'}
-              variant="flat"
-              className="flex p-2 min-h-[50px] gap-1 [&>svg]:w-[16px] [&>svg]:h-[16px] flex-col text-xs pointer-events-none"
-              type="button"
-              fullWidth={true}
-            >
-              {label}
-            </Button> */}
             <Icon className="text-xl" />
             <span className="text-xs">{label}</span>
           </Link>

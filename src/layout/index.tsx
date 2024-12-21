@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux'
 import { selectIsAuthenticated } from '../features/user/user.slice'
 import { useEffect } from 'react'
 import Profile from '../components/shared/Profile'
+import { match } from 'node:assert'
 
 function Layout() {
   const isAuth = useSelector(selectIsAuthenticated)
@@ -29,7 +30,7 @@ function Layout() {
   return (
     <>
       <ScrollRestoration
-        getKey={location => {
+        getKey={(location, matches) => {
           // Используем полный путь для всех маршрутов
           return location.pathname
         }}

@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { Button, TButtonColors } from '../../ui/Button'
 
 interface NavButtonProps {
@@ -9,8 +9,17 @@ interface NavButtonProps {
 }
 
 function NavButton({ children, icon, href, color }: NavButtonProps) {
+  const location = useLocation()
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (location.pathname === href) {
+      e.preventDefault()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <NavLink to={href}>
+    <NavLink to={href} onClick={handleClick}>
       {({ isActive }) => (
         <Button
           className="flex justify-start text-xl pointer-events-none"
