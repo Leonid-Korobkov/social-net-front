@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { store } from './app/store'
 import './index.css'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom'
 import ThemeProvider from './components/shared/ThemeProvider'
 import Auth from './pages/Auth'
 import Layout from './layout'

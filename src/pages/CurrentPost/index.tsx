@@ -13,10 +13,6 @@ function CurrentPost() {
   const params = useParams<{ id: string }>()
   const { data, isLoading } = useGetPostByIdQuery(params?.id ?? '')
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [params.id])
-
   if (isLoading) {
     return (
       <>
@@ -68,29 +64,36 @@ function CurrentPost() {
         <CreateComment />
       </div>
       <div className="mt-10">
-        <AnimatePresence mode="popLayout">
-          {data.comments
-            ? data.comments.map(comment => (
-                <motion.div
-                  key={comment.id}
-                  initial="hidden"
-                  animate="show"
-                  exit="exit"
-                  layout
-                >
-                  <Card
-                    cardFor="comment"
-                    avatarUrl={comment.User?.avatarUrl ?? ''}
-                    content={comment.content}
-                    name={comment.User?.name ?? ''}
-                    authorId={comment.userId ?? ''}
-                    commentId={comment.id}
-                    id={id}
-                  />
-                </motion.div>
-              ))
-            : null}
-        </AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <AnimatePresence mode="popLayout">
+            {data.comments
+              ? data.comments.map(comment => (
+                  <motion.div
+                    key={comment.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, bounce: 0 }}
+                    layout="position"
+                  >
+                    <Card
+                      cardFor="comment"
+                      avatarUrl={comment.User?.avatarUrl ?? ''}
+                      content={comment.content}
+                      name={comment.User?.name ?? ''}
+                      authorId={comment.userId ?? ''}
+                      commentId={comment.id}
+                      id={id}
+                    />
+                  </motion.div>
+                ))
+              : null}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </>
   )

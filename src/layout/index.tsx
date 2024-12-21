@@ -1,4 +1,9 @@
-import { Outlet, useNavigate, useLocation } from 'react-router-dom'
+import {
+  Outlet,
+  useNavigate,
+  useLocation,
+  ScrollRestoration,
+} from 'react-router-dom'
 import Container from '../components/shared/Container'
 import Header from '../components/shared/Header'
 import NavBar from '../components/shared/NavBar'
@@ -23,6 +28,12 @@ function Layout() {
 
   return (
     <>
+      <ScrollRestoration
+        getKey={location => {
+          // Используем полный путь для всех маршрутов
+          return location.pathname
+        }}
+      />
       <Header />
       <Container>
         <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">

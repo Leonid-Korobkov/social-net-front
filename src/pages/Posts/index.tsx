@@ -9,32 +9,12 @@ import PostList from '../../components/shared/PostList'
 function Posts() {
   const { data, isLoading } = useGetAllPostsQuery()
 
-  useEffect(() => {
-    const savedPosition = sessionStorage.getItem('scrollPosition')
-    if (savedPosition) {
-      window.scrollTo({
-        top: parseInt(savedPosition),
-        behavior: 'smooth',
-      })
-      sessionStorage.removeItem('scrollPosition')
-    }
-  }, [])
-
-  const handleCardClick = () => {
-    const scrollPosition = window.scrollY
-    sessionStorage.setItem('scrollPosition', scrollPosition.toString())
-  }
-
   return (
     <>
       <div className="mb-10 w-full">
         <CreatePost />
       </div>
-      <PostList
-        data={data || []}
-        isLoading={isLoading}
-        handleCardClick={handleCardClick}
-      />
+      <PostList data={data || []} isLoading={isLoading} />
     </>
   )
 }
