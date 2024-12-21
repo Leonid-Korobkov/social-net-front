@@ -24,6 +24,7 @@ import Confetti from 'react-confetti'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import EditProfile from '../../components/shared/EditProfile'
 import PostList from '../../components/shared/PostList'
+import UserProfileSkeleton from '../../components/ui/UserProfileSkeleton'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -68,14 +69,7 @@ function UserProfile() {
   }
 
   if (isLoading) {
-    return (
-      <Spinner
-        size="lg"
-        color="primary"
-        label="Загрузка профиля..."
-        labelColor="primary"
-      />
-    )
+    return <UserProfileSkeleton />
   }
 
   if (!user) {

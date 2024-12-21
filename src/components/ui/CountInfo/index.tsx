@@ -1,27 +1,32 @@
-import { Chip } from '@nextui-org/react'
+import { Card } from '@nextui-org/react'
 import { IconType } from 'react-icons'
+import { Skeleton } from '@nextui-org/react'
 
-interface ICountInfo {
-  title: string
-  count: number
+interface CountInfoProps {
   Icon: IconType
+  count: number
+  title: string
+  isLoading?: boolean
 }
 
-function CountInfo({ title, count, Icon }: ICountInfo) {
+function CountInfo({ Icon, count, title, isLoading }: CountInfoProps) {
   return (
-    <div className="flex flex-col items-center space-x-2 p-4">
-      <span className="text-4xl font-semibold text-primary">{count}</span>
-      <Chip
-        radius="sm"
-        startContent={<Icon />}
-        variant="light"
-        classNames={{
-          content: 'text-md drop-shadow shadow-black uppercase !p-2',
-        }}
-      >
-        {title}
-      </Chip>
-    </div>
+    <Card className="p-3">
+      <div className="flex items-center gap-2">
+        <Icon className="text-xl" />
+        {isLoading ? (
+          <div className="flex flex-col gap-1">
+            <Skeleton className="h-4 w-16 rounded-lg" />
+            <Skeleton className="h-3 w-12 rounded-lg" />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center">
+            <p className="font-bold text-primary">{count}</p>
+            <p className="text-sm text-default-500">{title}</p>
+          </div>
+        )}
+      </div>
+    </Card>
   )
 }
 

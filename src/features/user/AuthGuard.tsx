@@ -14,7 +14,7 @@ function AuthGuard({ children }: AuthGuardProps) {
         <Spinner
           size="lg"
           color="primary"
-          label="Loading..."
+          label="Загрузка..."
           labelColor="primary"
         />
       </div>

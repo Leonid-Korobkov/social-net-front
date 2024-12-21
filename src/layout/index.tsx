@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux'
 import { selectIsAuthenticated } from '../features/user/user.slice'
 import { useEffect } from 'react'
 import Profile from '../components/shared/Profile'
-import { match } from 'node:assert'
 
 function Layout() {
   const isAuth = useSelector(selectIsAuthenticated)
@@ -31,16 +30,15 @@ function Layout() {
     <>
       <ScrollRestoration
         getKey={(location, matches) => {
-          // Используем полный путь для всех маршрутов
           return location.pathname
         }}
       />
       <Header />
-      <Container>
+      <Container className="flex-grow">
         <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
           <NavBar />
         </div>
-        <div className="flex-2 p-4 overflow-auto flex-grow pb-20 lg:pb-4">
+        <div className="flex-2 p-4 overflow-auto lg:pb-4 h-full w-full">
           <Outlet />
         </div>
         {!isUserProfilePage && (

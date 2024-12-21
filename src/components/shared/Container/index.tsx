@@ -5,7 +5,7 @@ interface ContainerProps {
 
 function Container({ children, className }: ContainerProps) {
   return (
-    <div className={`lg:flex max-w-screen-xl mx-auto items-start ${className}`}>
+    <div className={`lg:flex max-w-screen-xl mx-auto w-full items-start justify-between ${className}`}>
       {children}
     </div>
   )
