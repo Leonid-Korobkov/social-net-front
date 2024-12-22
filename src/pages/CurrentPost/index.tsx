@@ -7,7 +7,7 @@ import CardSkeleton from '../../components/ui/CardSkeleton'
 import CreateCommentSkeleton from '../../components/ui/CommentCreateSkeleton'
 import CardCommentSkeleton from '../../components/ui/CardCommentSkeleton'
 import { AnimatePresence, motion } from 'framer-motion'
-import OpenGraphMeta from '../../components/OpenGraphMeta'
+import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL, BASE_URL } from '../../constants'
 
 function CurrentPost() {

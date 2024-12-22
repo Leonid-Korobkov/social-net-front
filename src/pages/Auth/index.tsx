@@ -6,7 +6,7 @@ import Register from '../../features/user/register'
 import Header from '../../components/shared/Header'
 import { useGetAllPostsQuery } from '../../app/services/post.api'
 import { hasErrorField } from '../../utils/hasErrorField'
-import OpenGraphMeta from '../../components/OpenGraphMeta'
+import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'
 
 function Auth() {

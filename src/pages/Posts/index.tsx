@@ -5,7 +5,7 @@ import CreatePost from '../../components/shared/PostCreate'
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PostList from '../../components/shared/PostList'
-import OpenGraphMeta from '../../components/OpenGraphMeta'
+import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'
 
 function Posts() {

@@ -26,7 +26,7 @@ import EditProfile from '../../components/shared/EditProfile'
 import PostList from '../../components/shared/PostList'
 import UserProfileSkeleton from '../../components/ui/UserProfileSkeleton'
 import { motion } from 'framer-motion'
-import OpenGraphMeta from '../../components/OpenGraphMeta'
+import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()

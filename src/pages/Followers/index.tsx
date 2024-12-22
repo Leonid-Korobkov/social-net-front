@@ -3,7 +3,7 @@ import { selectCurrent } from '../../features/user/user.slice'
 import { Link } from 'react-router-dom'
 import { Card, CardBody } from '@nextui-org/react'
 import User from '../../components/ui/User'
-import OpenGraphMeta from '../../components/OpenGraphMeta'
+import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'
 
 function Followers() {

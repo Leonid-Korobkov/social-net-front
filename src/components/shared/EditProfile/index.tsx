@@ -21,6 +21,7 @@ import { IoMdMail } from 'react-icons/io'
 import { formatDateToISO } from '../../../utils/formatToClientDate'
 import { parseDate, getLocalTimeZone, today } from '@internationalized/date'
 import toast from 'react-hot-toast'
+import ImageUpload from '../ImageUpload'
 
 interface IEditProfile {
   isOpen: boolean
@@ -63,12 +64,6 @@ function EditProfile({
     }
   }, [user, reset])
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files !== null) {
-      setSelectedFile(event.target.files[0])
-    }
-  }
-
   const onSubmit = async (data: User) => {
     if (id) {
       try {
@@ -92,7 +87,6 @@ function EditProfile({
             }),
           )
 
-        //updateUser({ body: formData, id }).unwrap()
         const promise = updateUser({ body: formData, id }).unwrap()
 
         const toastId = toast.loading('Сохранение...')
@@ -124,7 +118,7 @@ function EditProfile({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} backdrop="blur">
+    <Modal isOpen={isOpen} onClose={onClose} backdrop="blur" placement="top">
       <ModalContent>
         {onClose => (
           <>
@@ -136,6 +130,14 @@ function EditProfile({
                 className="flex flex-col gap-4"
                 onSubmit={handleSubmit(onSubmit)}
               >
+                <ImageUpload
+                  onChange={file => setSelectedFile(file)}
+                  currentImageUrl={user?.avatarUrl}
+                  className="mb-2"
+                  onError={message => {
+                    toast.error(message)
+                  }}
+                />
                 <Input
                   label="Email"
                   type="email"
@@ -147,7 +149,7 @@ function EditProfile({
                     required: 'Обязательное поле',
                     pattern: {
                       value: validateEmailPattern,
-                      message: `Некорректный email`,
+                      message: `Некорректный email`,
                     },
                   })}
                 />
@@ -162,26 +164,12 @@ function EditProfile({
                     minLength: { value: 3, message: 'Минимум 3 символа' },
                   })}
                 />
-                <Controller
-                  name="avatarUrl"
-                  control={control}
-                  render={({ field }) => (
-                    <input
-                      name="avatarUrl"
-                      placeholder="Выберете файл"
-                      type="file"
-                      accept=".png, .jpg, .jpeg, .gif, .webp"
-                      onChange={handleFileChange}
-                    />
-                  )}
-                />
 
                 <Controller
                   name="dateOfBirth"
                   control={control}
                   rules={{
                     validate: {
-                      // Не больше текущего дня
                       dateOfBirth: value => {
                         if (value) {
                           const date = new Date(value)
@@ -192,7 +180,6 @@ function EditProfile({
                         }
                         return true
                       },
-                      // Не больше 120 лет
                       dateOfBirthAge: value => {
                         if (value) {
                           const date = new Date(value)
@@ -226,7 +213,7 @@ function EditProfile({
                         })}
                         onChange={date => {
                           if (date) {
-                            field.onChange(date.toString()) // Сохраняем строку только если date не null
+                            field.onChange(date.toString())
                           }
                         }}
                         variant="bordered"

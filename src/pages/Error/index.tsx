@@ -1,7 +1,7 @@
 import { useNavigate, useRouteError } from 'react-router-dom'
 import { Button, Card } from '@nextui-org/react'
 import { BiError } from 'react-icons/bi'
-import OpenGraphMeta from '../../components/OpenGraphMeta'
+import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'
 
 function ErrorPage() {

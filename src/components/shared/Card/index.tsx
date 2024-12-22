@@ -15,7 +15,7 @@ import {
 } from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaRegComment } from 'react-icons/fa6'
-import { RiDeleteBinLine } from 'react-icons/ri'
+import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
 import { Spinner } from '@nextui-org/react'
 import { useState } from 'react'
@@ -190,7 +190,7 @@ function Card({
         </Link>
         {isFollowing && (
           <Chip color="success" variant="flat" className="opacity-65">
-            Вы подписаны
+            <RiUserFollowFill />
           </Chip>
         )}
         {authorId === currentUser?.id && (
