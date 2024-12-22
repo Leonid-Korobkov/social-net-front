@@ -6,6 +6,8 @@ import Register from '../../features/user/register'
 import Header from '../../components/shared/Header'
 import { useGetAllPostsQuery } from '../../app/services/post.api'
 import { hasErrorField } from '../../utils/hasErrorField'
+import OpenGraphMeta from '../../components/OpenGraphMeta'
+import { APP_URL } from '../../constants'
 
 function Auth() {
   const [selected, setSelected] = useState('login')
@@ -14,6 +16,14 @@ function Auth() {
 
   return (
     <>
+      <OpenGraphMeta
+        title={`${selected === 'login' ? 'Вход' : 'Регистрация'} | Zling`}
+        description="Войдите или зарегистрируйтесь в социальной сети Zling"
+        url={`${APP_URL}/auth`}
+        image=""
+        siteName="Zling"
+        type="website"
+      />
       <div className="flex items-center justify-start min-h-dvh flex-col">
         <Header />
         <div className="flex flex-1 items-center justify-center w-full h-full flex-col ">

@@ -6,8 +6,9 @@ import CreateComment from '../../components/shared/CommentCreate'
 import CardSkeleton from '../../components/ui/CardSkeleton'
 import CreateCommentSkeleton from '../../components/ui/CommentCreateSkeleton'
 import CardCommentSkeleton from '../../components/ui/CardCommentSkeleton'
-import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import OpenGraphMeta from '../../components/OpenGraphMeta'
+import { APP_URL, BASE_URL } from '../../constants'
 
 function CurrentPost() {
   const params = useParams<{ id: string }>()
@@ -46,6 +47,14 @@ function CurrentPost() {
 
   return (
     <>
+      <OpenGraphMeta
+        title={author?.name ?? 'Пост'}
+        description={content.slice(0, 20)}
+        url={`${APP_URL}/posts/${id}`}
+        image={author?.avatarUrl ?? ''}
+        siteName="Zling"
+        type="article"
+      />
       <GoBack />
       <Card
         cardFor="current-post"

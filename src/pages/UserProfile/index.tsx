@@ -5,7 +5,7 @@ import { Button, Card, Image, Modal, ModalContent } from '@nextui-org/react'
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md'
 import { MdOutlinePersonAddDisabled } from 'react-icons/md'
 import { useDisclosure } from '@nextui-org/react'
-import { BASE_URL } from '../../constants'
+import { BASE_URL, APP_URL } from '../../constants'
 import { CiEdit } from 'react-icons/ci'
 import { resetUser, selectCurrent } from '../../features/user/user.slice'
 import { useGetUserByIdQuery } from '../../app/services/user.api'
@@ -26,6 +26,7 @@ import EditProfile from '../../components/shared/EditProfile'
 import PostList from '../../components/shared/PostList'
 import UserProfileSkeleton from '../../components/ui/UserProfileSkeleton'
 import { motion } from 'framer-motion'
+import OpenGraphMeta from '../../components/OpenGraphMeta'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -84,121 +85,131 @@ function UserProfile() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      exit={{ opacity: 0 }}
-    >
-      <GoBack />
-      <Confetti
-        width={size.width}
-        height={size.height}
-        recycle={false}
-        run={party}
-        onConfettiComplete={Confetti => {
-          setParty(false)
-          if (Confetti) {
-            Confetti.reset()
-          }
-        }}
+    <>
+      <OpenGraphMeta
+        title={`${user.name} | Профиль пользователя | Zling`}
+        description={`Профиль пользователя ${user.name} в Zling`}
+        url={`${APP_URL}/users/${id}`}
+        image={user.avatarUrl ?? ''}
+        siteName="Zling"
+        type="profile"
       />
-      <div className="flex lg:flex-row flex-col items-stretch gap-4">
-        <Card className="flex flex-col items-center text-center space-y-4 p-5 flex-2">
-          <Image
-            src={`${BASE_URL}${user.avatarUrl}`}
-            alt={user.name}
-            width={200}
-            height={200}
-            isBlurred
-            className="object-cover border-4 border-white cursor-pointer"
-            onClick={handleImageClick}
-          />
-          <div className="flex flex-col text-2xl font-bold gap-4 items-center">
-            {user.name}
-            {currentUser?.id !== user.id ? (
-              <Button
-                color={user?.isFollowing ? 'default' : 'primary'}
-                variant="flat"
-                className="gap-2"
-                onPressStart={handleFollow}
-                endContent={
-                  user?.isFollowing ? (
-                    <MdOutlinePersonAddDisabled />
-                  ) : (
-                    <MdOutlinePersonAddAlt1 />
-                  )
-                }
-              >
-                {user?.isFollowing ? 'Отписаться' : 'Подписаться'}
-              </Button>
-            ) : (
-              <Button
-                endContent={<CiEdit />}
-                onPressStart={handleEditProfile}
-                variant="ghost"
-                color="warning"
-              >
-                Редактировать
-              </Button>
-            )}
-          </div>
-        </Card>
-        <Card className="flex flex-col space-y-2 p-5 flex-1">
-          <ProfileInfo
-            title="Зарегистрирован"
-            info={formatToClientDate(user.createdAt, false)}
-          />
-          <ProfileInfo title="Почта" info={user.email} />
-          <ProfileInfo title="Местоположение" info={user.location} />
-          <ProfileInfo
-            title="Дата рождения"
-            info={
-              user.dateOfBirth
-                ? formatToClientDate(user.dateOfBirth, false)
-                : ''
-            }
-          />
-          <ProfileInfo title="Обо мне" info={user.bio} />
-
-          <div className="flex gap-2 justify-center flex-wrap">
-            <CountInfo
-              Icon={FaUsers}
-              count={user.followers.length}
-              title="Подписчики"
-            />
-            <CountInfo
-              Icon={FiUsers}
-              count={user.following.length}
-              title="Подписки"
-            />
-          </div>
-        </Card>
-      </div>
-      <PostList
-        className="w-full mt-4"
-        data={user.posts || []}
-        isLoading={isLoading}
-        handleCardClick={() => {}}
-      />
-      <EditProfile isOpen={isOpen} onClose={onClose} user={user} />
-      <Modal
-        closeButton={true}
-        aria-labelledby="modal-title"
-        isOpen={isImageOpen}
-        onClose={() => setImageOpen(false)}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        exit={{ opacity: 0 }}
       >
-        <ModalContent>
-          <Image
-            src={`${BASE_URL}${user.avatarUrl}`}
-            alt={user.name}
-            width="100%"
-            height="auto"
-            className="object-cover"
-          />
-        </ModalContent>
-      </Modal>
-    </motion.div>
+        <GoBack />
+        <Confetti
+          width={size.width}
+          height={size.height}
+          recycle={false}
+          run={party}
+          onConfettiComplete={Confetti => {
+            setParty(false)
+            if (Confetti) {
+              Confetti.reset()
+            }
+          }}
+        />
+        <div className="flex lg:flex-row flex-col items-stretch gap-4">
+          <Card className="flex flex-col items-center text-center space-y-4 p-5 flex-2">
+            <Image
+              src={`${BASE_URL}${user.avatarUrl}`}
+              alt={user.name}
+              width={200}
+              height={200}
+              isBlurred
+              className="object-cover border-4 border-white cursor-pointer"
+              onClick={handleImageClick}
+            />
+            <div className="flex flex-col text-2xl font-bold gap-4 items-center">
+              {user.name}
+              {currentUser?.id !== user.id ? (
+                <Button
+                  color={user?.isFollowing ? 'default' : 'primary'}
+                  variant="flat"
+                  className="gap-2"
+                  onPressStart={handleFollow}
+                  endContent={
+                    user?.isFollowing ? (
+                      <MdOutlinePersonAddDisabled />
+                    ) : (
+                      <MdOutlinePersonAddAlt1 />
+                    )
+                  }
+                >
+                  {user?.isFollowing ? 'Отписаться' : 'Подписаться'}
+                </Button>
+              ) : (
+                <Button
+                  endContent={<CiEdit />}
+                  onPressStart={handleEditProfile}
+                  variant="ghost"
+                  color="warning"
+                >
+                  Редактировать
+                </Button>
+              )}
+            </div>
+          </Card>
+          <Card className="flex flex-col space-y-2 p-5 flex-1">
+            <ProfileInfo
+              title="Зарегистрирован"
+              info={formatToClientDate(user.createdAt, false)}
+            />
+            <ProfileInfo title="Почта" info={user.email} />
+            <ProfileInfo title="Местоположение" info={user.location} />
+            <ProfileInfo
+              title="Дата рождения"
+              info={
+                user.dateOfBirth
+                  ? formatToClientDate(user.dateOfBirth, false)
+                  : ''
+              }
+            />
+            <ProfileInfo title="Обо мне" info={user.bio} />
+
+            <div className="flex gap-2 justify-center flex-wrap">
+              <CountInfo
+                Icon={FaUsers}
+                count={user.followers.length}
+                title="Подписчики"
+              />
+              <CountInfo
+                Icon={FiUsers}
+                count={user.following.length}
+                title="Подписки"
+              />
+            </div>
+          </Card>
+        </div>
+        <PostList
+          className="w-full mt-4"
+          data={user.posts || []}
+          isLoading={isLoading}
+          handleCardClick={() => {}}
+        />
+        <EditProfile isOpen={isOpen} onClose={onClose} user={user} />
+        <Modal
+          closeButton={true}
+          aria-labelledby="modal-title"
+          isOpen={isImageOpen}
+          onClose={() => setImageOpen(false)}
+        >
+          <ModalContent>
+            <Image
+              src={`${BASE_URL}${user.avatarUrl}`}
+              alt={user.name}
+              width="100%"
+              height="auto"
+              className="object-cover"
+            />
+          </ModalContent>
+        </Modal>
+      </motion.div>
+    </>
   )
 }
 
