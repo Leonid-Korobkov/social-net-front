@@ -94,6 +94,7 @@ function EditProfile({
         promise
           .then(() => {
             toast.success('Профиль обновлен!')
+            setSelectedFile(null)
           })
           .catch(err => {
             if (hasErrorField(err)) {

@@ -27,13 +27,14 @@ import { selectCurrent } from '../../../features/user/user.slice'
 import { useDeletePostMutation } from '../../../app/services/post.api'
 import { useDeleteCommentMutation } from '../../../app/services/comment.api'
 import { hasErrorField } from '../../../utils/hasErrorField'
-import { formatToClientDate } from '../../../utils/formatToClientDate'
 import User from '../../ui/User'
 import Typography from '../../ui/Typography'
 import MetaInfo from '../../ui/MetaInfo'
 import RawHTML from '../../ui/EscapeHtml'
 import { toast } from 'react-hot-toast'
 import AnimatedLike from '../../ui/AnimatedLike'
+import { formatDistance, Locale } from 'date-fns'
+import * as locales from 'date-fns/locale'
 
 interface ICard {
   avatarUrl: string
@@ -50,6 +51,20 @@ interface ICard {
   isFollowing?: boolean
   refetch?: () => void
   onClick?: () => void
+}
+
+// Функция для получения локали
+const getLocale = (): Locale => {
+  try {
+    const userLocale = (navigator.language || navigator.languages[0] || 'ru')
+      .split('-')
+      .join('')
+
+    return locales[userLocale as keyof typeof locales] || locales.ru
+  } catch (error) {
+    console.error('Ошибка при определении локали:', error)
+    return locales.ru
+  }
 }
 
 function Card({
@@ -185,7 +200,13 @@ function Card({
             name={name}
             className="text-small font-semibold leading-none text-default-600"
             avatarUrl={avatarUrl}
-            description={createdAt && formatToClientDate(createdAt)}
+            description={
+              createdAt &&
+              formatDistance(new Date(createdAt), new Date(), {
+                addSuffix: true,
+                locale: getLocale(),
+              })
+            }
           />
         </Link>
         {isFollowing && (

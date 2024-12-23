@@ -3,6 +3,7 @@ import { BsPostcard } from 'react-icons/bs'
 import { FiUsers } from 'react-icons/fi'
 import { FaUsers } from 'react-icons/fa'
 import { CgProfile } from 'react-icons/cg'
+import { IoSearch } from 'react-icons/io5'
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
 
@@ -26,6 +27,11 @@ function MobileNavBar() {
       path: '/',
       icon: BsPostcard,
       label: 'Посты',
+    },
+    {
+      path: '/search',
+      icon: IoSearch,
+      label: 'Поиск',
     },
     {
       path: '/following',

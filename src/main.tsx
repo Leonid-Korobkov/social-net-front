@@ -3,10 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { store } from './app/store'
 import './index.css'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ThemeProvider from './components/shared/ThemeProvider'
 import Auth from './pages/Auth'
 import Layout from './layout'
@@ -15,6 +12,7 @@ import CurrentPost from './pages/CurrentPost'
 import UserProfile from './pages/UserProfile'
 import Followers from './pages/Followers'
 import Following from './pages/Following'
+import Search from './pages/Search'
 import AuthGuard from './features/user/AuthGuard'
 import ErrorPage from './pages/Error'
 
@@ -34,6 +32,11 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <Posts />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: 'search',
+        element: <Search />,
         errorElement: <ErrorPage />,
       },
       {
