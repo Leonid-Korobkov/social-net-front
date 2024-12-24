@@ -4,7 +4,7 @@ import { BASE_URL } from '../../../constants'
 interface IUser {
   name: string
   avatarUrl: string
-  description?: string
+  description?: string | React.ReactNode
   className?: string
 }
 

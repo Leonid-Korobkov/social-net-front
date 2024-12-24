@@ -12,9 +12,10 @@ import {
   useDisclosure,
   Button,
   Chip,
+  Tooltip,
 } from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaRegComment } from 'react-icons/fa6'
+import { FaCircleInfo, FaRegComment } from 'react-icons/fa6'
 import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
 import { Spinner } from '@nextui-org/react'
@@ -33,8 +34,17 @@ import MetaInfo from '../../ui/MetaInfo'
 import RawHTML from '../../ui/EscapeHtml'
 import { toast } from 'react-hot-toast'
 import AnimatedLike from '../../ui/AnimatedLike'
-import { formatDistance, Locale } from 'date-fns'
+import {
+  formatDistance,
+  formatDuration,
+  formatRelative,
+  Locale,
+  subDays,
+} from 'date-fns'
 import * as locales from 'date-fns/locale'
+import { formatToClientDate } from '../../../utils/formatToClientDate'
+import { IconBase } from 'react-icons'
+import { useWindowSize } from '../../../hooks/useWindowSize'
 
 interface ICard {
   avatarUrl: string
@@ -89,6 +99,10 @@ function Card({
   const [error, setError] = useState('')
   const navigate = useNavigate()
   const currentUser = useSelector(selectCurrent)
+
+  const size = useWindowSize()
+
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
   const handleLike = async () => {
     try {
@@ -201,11 +215,61 @@ function Card({
             className="text-small font-semibold leading-none text-default-600"
             avatarUrl={avatarUrl}
             description={
-              createdAt &&
-              formatDistance(new Date(createdAt), new Date(), {
-                addSuffix: true,
-                locale: getLocale(),
-              })
+              <div className="flex items-center gap-1">
+                {formatDistance(
+                  new Date(createdAt?.toString() || ''),
+                  new Date(),
+                  {
+                    addSuffix: true,
+                    locale: getLocale(),
+                  },
+                )}
+                {window.matchMedia('(hover: hover) and (pointer: fine)')
+                  .matches ? (
+                  <Tooltip
+                    showArrow
+                    color="foreground"
+                    content={`Дата создания - ${formatToClientDate(new Date(createdAt?.toString() || ''))}`}
+                    className="pointer-events-none"
+                  >
+                    <div>
+                      <FaCircleInfo
+                        size={15}
+                        opacity={0.5}
+                        onClick={e => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                        className="cursor-help"
+                      />
+                    </div>
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    showArrow
+                    color="foreground"
+                    content={`Дата создания - ${formatToClientDate(new Date(createdAt?.toString() || ''))}`}
+                    isOpen={isTooltipVisible}
+                    className="pointer-events-none"
+                  >
+                    <div>
+                      <FaCircleInfo
+                        size={15}
+                        opacity={0.5}
+                        onClick={e => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setIsTooltipVisible(true)
+                          setTimeout(() => {
+                            setIsTooltipVisible(false)
+                          }, 2000)
+                        }}
+                        className="cursor-pointer"
+                      />
+                    </div>
+                  </Tooltip>
+                )}
+              </div>
             }
           />
         </Link>
