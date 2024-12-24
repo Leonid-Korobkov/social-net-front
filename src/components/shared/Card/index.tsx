@@ -216,17 +216,15 @@ function Card({
             avatarUrl={avatarUrl}
             description={
               <div className="flex items-center gap-1">
-                {formatDistance(
-                  new Date(createdAt?.toString() || ''),
-                  new Date(),
-                  {
+                {createdAt &&
+                  formatDistance(new Date(createdAt), new Date(), {
                     addSuffix: true,
                     locale: getLocale(),
-                  },
-                )}
+                  })}
                 {window.matchMedia('(hover: hover) and (pointer: fine)')
                   .matches ? (
                   <Tooltip
+                    delay={500}
                     showArrow
                     color="foreground"
                     content={`Дата создания - ${formatToClientDate(new Date(createdAt?.toString() || ''))}`}
