@@ -221,52 +221,54 @@ function Card({
                     addSuffix: true,
                     locale: getLocale(),
                   })}
-                {window.matchMedia('(hover: hover) and (pointer: fine)')
-                  .matches ? (
-                  <Tooltip
-                    delay={500}
-                    showArrow
-                    color="foreground"
-                    content={`Дата создания - ${formatToClientDate(new Date(createdAt?.toString() || ''))}`}
-                    className="pointer-events-none"
-                  >
-                    <div>
-                      <FaCircleInfo
-                        size={15}
-                        opacity={0.5}
-                        onClick={e => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                        }}
-                        className="cursor-help"
-                      />
-                    </div>
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    showArrow
-                    color="foreground"
-                    content={`Дата создания - ${formatToClientDate(new Date(createdAt?.toString() || ''))}`}
-                    isOpen={isTooltipVisible}
-                    className="pointer-events-none"
-                  >
-                    <div>
-                      <FaCircleInfo
-                        size={15}
-                        opacity={0.5}
-                        onClick={e => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          setIsTooltipVisible(true)
-                          setTimeout(() => {
-                            setIsTooltipVisible(false)
-                          }, 2000)
-                        }}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  </Tooltip>
-                )}
+                {cardFor !== 'comment' ? (
+                  window.matchMedia('(hover: hover) and (pointer: fine)')
+                    .matches ? (
+                    <Tooltip
+                      delay={500}
+                      showArrow
+                      color="foreground"
+                      content={`Дата создания - ${formatToClientDate(new Date(createdAt?.toString() || ''))}`}
+                      className="pointer-events-none"
+                    >
+                      <div>
+                        <FaCircleInfo
+                          size={15}
+                          opacity={0.5}
+                          onClick={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          className="cursor-help"
+                        />
+                      </div>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      showArrow
+                      color="foreground"
+                      content={`Дата создания - ${formatToClientDate(new Date(createdAt?.toString() || ''))}`}
+                      isOpen={isTooltipVisible}
+                      className="pointer-events-none"
+                    >
+                      <div>
+                        <FaCircleInfo
+                          size={15}
+                          opacity={0.5}
+                          onClick={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setIsTooltipVisible(true)
+                            setTimeout(() => {
+                              setIsTooltipVisible(false)
+                            }, 2000)
+                          }}
+                          className="cursor-pointer"
+                        />
+                      </div>
+                    </Tooltip>
+                  )
+                ) : null}
               </div>
             }
           />
