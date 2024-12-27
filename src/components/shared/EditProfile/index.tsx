@@ -263,6 +263,7 @@ function EditProfile({
                 <Input
                   label="Местоположение"
                   labelPlacement="outside"
+                  placeholder='Например: "Москва, Россия"'
                   type="text"
                   errorMessage={errors.location?.message || ''}
                   isInvalid={errors.location ? true : false}

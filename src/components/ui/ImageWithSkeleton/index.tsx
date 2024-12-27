@@ -90,7 +90,9 @@ function ImageWithSkeleton({
       {/* </motion.div> */}
 
       {error && (
-        <div className="w-full h-[200px] flex items-center justify-center bg-default-100 rounded-xl">
+        <div
+          className={`object-cover rounded-xl aspect-square !${className} flex items-center justify-center bg-default-100`}
+        >
           <p className="text-default-500">Ошибка загрузки изображения</p>
         </div>
       )}
