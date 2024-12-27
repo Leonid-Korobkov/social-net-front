@@ -107,7 +107,7 @@ function ImageUpload({
   }, [preview])
 
   const displayImage =
-    preview || (currentImageUrl ? `${BASE_URL}${currentImageUrl}` : null)
+    preview ||  (currentImageUrl ? `${currentImageUrl}` : null)
 
   return (
     <div className={`flex flex-col items-center gap-4 ${className}`}>

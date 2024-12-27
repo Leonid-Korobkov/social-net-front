@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, Card, Image, Modal, ModalContent } from '@nextui-org/react'
+import {
+  Button,
+  Card,
+  Modal,
+  ModalContent,
+  Image as NextImage,
+} from '@nextui-org/react'
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md'
 import { MdOutlinePersonAddDisabled } from 'react-icons/md'
 import { useDisclosure } from '@nextui-org/react'
-import { BASE_URL, APP_URL } from '../../constants'
+import { APP_URL } from '../../constants'
 import { CiEdit } from 'react-icons/ci'
 import { resetUser, selectCurrent } from '../../features/user/user.slice'
 import { useGetUserByIdQuery } from '../../app/services/user.api'
@@ -28,6 +34,8 @@ import PostList from '../../components/shared/PostList'
 import UserProfileSkeleton from '../../components/ui/UserProfileSkeleton'
 import { motion } from 'framer-motion'
 import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
+import Image from '../../components/ui/Image'
+import { Post } from '../../app/types'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -37,6 +45,8 @@ function UserProfile() {
     { id: id ?? '' },
     { skip: !id },
   )
+  const [posts, setPosts] = useState<Post[]>([])
+
   const [followUser] = useCreateFollowMutation()
   const [unfolowUser] = useDeleteFollowMutation()
 
@@ -76,6 +86,17 @@ function UserProfile() {
   const handleImageClick = () => {
     setImageOpen(true)
   }
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      const newPosts = [...user.posts]
+      newPosts.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
+      setPosts(newPosts)
+    }
+  }, [user, isLoading])
 
   if (isLoading) {
     return <UserProfileSkeleton />
@@ -133,12 +154,10 @@ function UserProfile() {
         <div className="flex lg:flex-row flex-col items-stretch gap-4">
           <Card className="flex flex-col items-center text-center space-y-4 p-5 flex-2">
             <Image
-              src={`${BASE_URL}${user.avatarUrl}`}
-              alt={user.name}
-              width={200}
-              height={200}
+              alt={`Изображение профиля ${user.name}`}
+              src={`${user.avatarUrl}`}
               isBlurred
-              className="object-cover border-4 border-white cursor-pointer"
+              className="w-[200px] h-[200px] border-4 border-white rounded-xl cursor-pointer"
               onClick={handleImageClick}
             />
             <div className="flex flex-col text-2xl font-bold gap-4 items-center">
@@ -204,7 +223,7 @@ function UserProfile() {
         </div>
         <PostList
           className="w-full mt-4"
-          data={user.posts || []}
+          data={posts || []}
           isLoading={isLoading}
           handleCardClick={() => {}}
         />
@@ -214,14 +233,15 @@ function UserProfile() {
           aria-labelledby="modal-title"
           isOpen={isImageOpen}
           onClose={() => setImageOpen(false)}
+          size="5xl"
         >
           <ModalContent>
-            <Image
-              src={`${BASE_URL}${user.avatarUrl}`}
+            <NextImage
+              src={`${user.avatarUrl}`}
               alt={user.name}
               width="100%"
               height="auto"
-              className="object-cover"
+              className="object-cover z-0"
             />
           </ModalContent>
         </Modal>

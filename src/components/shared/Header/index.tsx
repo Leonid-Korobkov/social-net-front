@@ -32,7 +32,7 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CiLogout } from 'react-icons/ci'
 import { useEffect, useState } from 'react'
-import { BASE_URL } from '../../../constants'
+import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 
 function Header({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme()
@@ -42,6 +42,11 @@ function Header({ className }: { className?: string }) {
   const isAuth = useSelector(selectIsAuthenticated)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  const { getOptimizedUrl } = useCloudinaryImage({
+    src: currentUser?.avatarUrl,
+    width: 200,
+  })
 
   const handleLogout = () => {
     dispatch(logout())
@@ -86,7 +91,7 @@ function Header({ className }: { className?: string }) {
                   as="button"
                   avatarProps={{
                     isBordered: true,
-                    src: `${BASE_URL}${currentUser?.avatarUrl}`,
+                    src: getOptimizedUrl(),
                   }}
                   className="transition-transform [&>span]:order-1 [&>div]:items-end"
                   description={currentUser?.email}

@@ -10,8 +10,8 @@ function CardSkeleton() {
   return (
     <Card className="mb-5">
       <CardHeader className="justify-between items-center bg-transparent">
-        <div className="flex gap-3 items-center">
-          <Skeleton className="rounded-full w-12 h-12" /> {/* Аватар */}
+        <div className="flex gap-2 items-center">
+          <Skeleton className="rounded-full w-10 h-10" /> {/* Аватар */}
           <div className="flex flex-col gap-2">
             <Skeleton className="h-3 w-24 rounded-lg" /> {/* Имя */}
             <Skeleton className="h-3 w-16 rounded-lg" /> {/* Дата */}

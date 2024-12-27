@@ -1,5 +1,5 @@
 import { User as NextUiUser } from '@nextui-org/react'
-import { BASE_URL } from '../../../constants'
+import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 
 interface IUser {
   name: string
@@ -14,13 +14,18 @@ function User({
   avatarUrl = '',
   className = '',
 }: IUser) {
+  const { getOptimizedUrl } = useCloudinaryImage({
+    src: avatarUrl,
+    width: 200,
+  })
+
   return (
     <NextUiUser
       name={name}
       className={className}
       description={description}
       avatarProps={{
-        src: `${BASE_URL}${avatarUrl}`,
+        src: getOptimizedUrl(),
       }}
     />
   )

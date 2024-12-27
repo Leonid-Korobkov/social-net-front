@@ -18,10 +18,12 @@ import { useUpdateUserMutation } from '../../../app/services/user.api'
 import { hasErrorField } from '../../../utils/hasErrorField'
 import { validateEmailPattern } from '../../../utils/validateFieldsForm'
 import { IoMdMail } from 'react-icons/io'
+import { IoCloseOutline } from 'react-icons/io5'
 import { formatDateToISO } from '../../../utils/formatToClientDate'
 import { parseDate, getLocalTimeZone, today } from '@internationalized/date'
 import toast from 'react-hot-toast'
 import ImageUpload from '../ImageUpload'
+import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 
 interface IEditProfile {
   isOpen: boolean
@@ -39,6 +41,9 @@ function EditProfile({
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { id } = useParams<{ id: string }>()
+  const { getOptimizedUrl } = useCloudinaryImage({
+    src: user?.avatarUrl,
+  })
 
   const {
     register,
@@ -68,17 +73,16 @@ function EditProfile({
     if (id) {
       try {
         const formData = new FormData()
-        data.name && formData.append('name', data.name)
-        data.email &&
-          data.email !== user?.email &&
-          formData.append('email', data.email)
-        data.dateOfBirth &&
-          formData.append(
-            'dateOfBirth',
-            new Date(data.dateOfBirth).toISOString(),
-          )
-        data.bio && formData.append('bio', data.bio)
-        data.location && formData.append('location', data.location)
+        formData.append('name', data.name || '')
+        if (data.email !== user?.email) {
+          formData.append('email', data.email || '')
+        }
+        formData.append(
+          'dateOfBirth',
+          data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : '',
+        )
+        formData.append('bio', data.bio || '')
+        formData.append('location', data.location || '')
         selectedFile &&
           formData.append(
             'avatar',
@@ -133,7 +137,7 @@ function EditProfile({
               >
                 <ImageUpload
                   onChange={file => setSelectedFile(file)}
-                  currentImageUrl={user?.avatarUrl}
+                  currentImageUrl={getOptimizedUrl()}
                   className="mb-2"
                   onError={message => {
                     toast.error(message)
@@ -141,6 +145,7 @@ function EditProfile({
                 />
                 <Input
                   label="Email"
+                  labelPlacement="outside"
                   type="email"
                   errorMessage={errors.email?.message || ''}
                   isInvalid={errors.email ? true : false}
@@ -156,6 +161,7 @@ function EditProfile({
                 />
                 <Input
                   label="Имя"
+                  labelPlacement="outside"
                   type="text"
                   errorMessage={errors.name?.message || ''}
                   isInvalid={errors.name ? true : false}
@@ -207,6 +213,7 @@ function EditProfile({
                       <DatePicker
                         {...field}
                         label="Дата Рождения"
+                        labelPlacement="outside"
                         value={parsedDate}
                         maxValue={today(getLocalTimeZone())}
                         minValue={today(getLocalTimeZone()).subtract({
@@ -217,10 +224,22 @@ function EditProfile({
                             field.onChange(date.toString())
                           }
                         }}
+                        endContent={
+                          field.value && (
+                            <div className="flex items-center">
+                              <IoCloseOutline
+                                className="text-xl text-default-400 cursor-pointer hover:text-default-foreground hover:scale-125 transition-transform"
+                                onClick={() => field.onChange(null)}
+                              />
+                            </div>
+                          )
+                        }
                         variant="bordered"
                         errorMessage={errors.dateOfBirth?.message || ''}
                         isInvalid={errors.dateOfBirth ? true : false}
                         showMonthAndYearPickers
+                        selectorButtonPlacement="start"
+                        description="Формат даты: ММ.ДД.ГГГГ"
                       />
                     )
                   }}
@@ -232,8 +251,8 @@ function EditProfile({
                     <Textarea
                       {...field}
                       label="Ваша биография"
+                      labelPlacement="outside"
                       placeholder="Кратко о себе"
-                      labelPlacement="inside"
                       errorMessage={errors.bio?.message || ''}
                       isInvalid={errors.bio ? true : false}
                       variant="bordered"
@@ -243,6 +262,7 @@ function EditProfile({
                 />
                 <Input
                   label="Местоположение"
+                  labelPlacement="outside"
                   type="text"
                   errorMessage={errors.location?.message || ''}
                   isInvalid={errors.location ? true : false}
