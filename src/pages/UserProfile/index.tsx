@@ -36,6 +36,7 @@ import { motion } from 'framer-motion'
 import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import Image from '../../components/ui/Image'
 import { Post } from '../../app/types'
+import { BsPostcardFill } from 'react-icons/bs'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -191,6 +192,23 @@ function UserProfile() {
             </div>
           </Card>
           <Card className="flex flex-col space-y-2 p-5 flex-1">
+            <Card className="flex gap-2 justify-center flex-row flex-wrap mb-2">
+              <CountInfo
+                Icon={BsPostcardFill}
+                count={user.posts.length}
+                title="Публикации"
+              />
+              <CountInfo
+                Icon={FaUsers}
+                count={user.followers.length}
+                title="Подписчики"
+              />
+              <CountInfo
+                Icon={FiUsers}
+                count={user.following.length}
+                title="Подписки"
+              />
+            </Card>
             <ProfileInfo
               title="Зарегистрирован"
               info={formatToClientDate(user.createdAt, false)}
@@ -206,19 +224,6 @@ function UserProfile() {
               }
             />
             <ProfileInfo title="Обо мне" info={user.bio} />
-
-            <div className="flex gap-2 justify-center flex-wrap">
-              <CountInfo
-                Icon={FaUsers}
-                count={user.followers.length}
-                title="Подписчики"
-              />
-              <CountInfo
-                Icon={FiUsers}
-                count={user.following.length}
-                title="Подписки"
-              />
-            </div>
           </Card>
         </div>
         <PostList

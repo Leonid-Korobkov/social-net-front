@@ -11,7 +11,7 @@ interface CountInfoProps {
 
 function CountInfo({ Icon, count, title, isLoading }: CountInfoProps) {
   return (
-    <Card className="p-3">
+    <div className="p-3">
       <div className="flex items-center gap-2">
         {isLoading ? (
           <div className="flex flex-col gap-1">
@@ -28,7 +28,7 @@ function CountInfo({ Icon, count, title, isLoading }: CountInfoProps) {
           </div>
         )}
       </div>
-    </Card>
+    </div>
   )
 }
 
