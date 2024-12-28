@@ -3,6 +3,7 @@ import { FaUsers } from 'react-icons/fa'
 import { FiUsers } from 'react-icons/fi'
 import CountInfo from '../CountInfo'
 import CardSkeleton from '../CardSkeleton'
+import { BsPostcardFill } from 'react-icons/bs'
 
 function UserProfileSkeleton() {
   return (
@@ -22,6 +23,16 @@ function UserProfileSkeleton() {
 
         {/* Правая карточка с информацией */}
         <Card className="flex flex-col space-y-4 p-5 flex-1">
+          {/* Блок с подписчиками и подписками */}
+          <Card className="flex gap-2 justify-center flex-row flex-wrap mb-2">
+            <CountInfo
+              Icon={BsPostcardFill}
+              title="Публикации"
+              isLoading
+            />
+            <CountInfo Icon={FaUsers} title="Подписчики" isLoading />
+            <CountInfo Icon={FiUsers} title="Подписки" isLoading />
+          </Card>
           {/* Информационные поля */}
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="flex flex-col gap-1">
@@ -29,12 +40,7 @@ function UserProfileSkeleton() {
               <Skeleton className="h-4 w-full rounded-lg" />
             </div>
           ))}
-
-          {/* Блок с подписчиками и подписками */}
-          <div className="flex gap-2 justify-center flex-wrap">
-            <CountInfo Icon={FaUsers} count={0} title="Подписчики" isLoading />
-            <CountInfo Icon={FiUsers} count={0} title="Подписки" isLoading />
-          </div>
+          <div className="flex gap-2 justify-center flex-wrap"></div>
         </Card>
       </div>
 

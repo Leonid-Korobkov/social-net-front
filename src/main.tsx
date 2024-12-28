@@ -50,12 +50,12 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
-        path: 'followers',
+        path: 'users/:id/followers',
         element: <Followers />,
         errorElement: <ErrorPage />,
       },
       {
-        path: 'following',
+        path: 'users/:id/following',
         element: <Following />,
         errorElement: <ErrorPage />,
       },

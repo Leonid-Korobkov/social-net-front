@@ -1,34 +1,48 @@
-import { Card } from '@nextui-org/react'
+import { Link } from 'react-router-dom'
+import MetaInfo from '../MetaInfo'
 import { IconType } from 'react-icons'
-import { Skeleton } from '@nextui-org/react'
+import { Spinner, Skeleton } from '@nextui-org/react'
 
-interface CountInfoProps {
+interface ICountInfo {
   Icon: IconType
-  count: number
+  count?: number
   title: string
   isLoading?: boolean
+  userId?: string
+  type?: 'followers' | 'following'
 }
 
-function CountInfo({ Icon, count, title, isLoading }: CountInfoProps) {
-  return (
+function CountInfo({
+  Icon,
+  count,
+  title,
+  isLoading,
+  userId,
+  type,
+}: ICountInfo) {
+  const content = (
     <div className="p-3">
-      <div className="flex items-center gap-2">
-        {isLoading ? (
-          <div className="flex flex-col gap-1">
-            <Skeleton className="h-4 w-16 rounded-lg" />
-            <Skeleton className="h-3 w-12 rounded-lg" />
-          </div>
-        ) : (
-          <div className="flex flex-col items-center">
-            <p className="font-bold text-primary text-xl">{count}</p>
-            <div className="flex items-center gap-2">
-              <Icon className="text-xl" />
-              <p className="text-sm text-default-500">{title}</p>
-            </div>
-          </div>
-        )}
+      <div className="flex flex-col items-center">
+        {count ? count : <Skeleton className="h-6 w-6 rounded-lg" />}
+        <div className="flex items-center gap-2">
+          <Icon className="text-xl" />
+          {title ? title : <Skeleton className="h-4 w-16 rounded-lg" />}
+        </div>
       </div>
     </div>
+  )
+
+  if (!userId) {
+    return content
+  }
+
+  return (
+    <Link
+      className="transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+      to={`/users/${userId}/${type}`}
+    >
+      {content}
+    </Link>
   )
 }
 

@@ -202,11 +202,15 @@ function UserProfile() {
                 Icon={FaUsers}
                 count={user.followers.length}
                 title="Подписчики"
+                userId={user.id}
+                type="followers"
               />
               <CountInfo
                 Icon={FiUsers}
                 count={user.following.length}
                 title="Подписки"
+                userId={user.id}
+                type="following"
               />
             </Card>
             <ProfileInfo

@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, matchPath } from 'react-router-dom'
 import { BsPostcard } from 'react-icons/bs'
 import { FiUsers } from 'react-icons/fi'
 import { FaUsers } from 'react-icons/fa'
@@ -12,7 +12,15 @@ function MobileNavBar() {
   const currentUser = useSelector(selectCurrent)
 
   const isActive = (path: string) => {
-    return location.pathname === path
+    const match = matchPath(path, location.pathname)
+    const userProfileMatch = matchPath('/users/:id', location.pathname)
+    
+    // Для профиля пользователя проверяем точное совпадение
+    if (path === `/users/${currentUser?.id}`) {
+      return userProfileMatch && !location.pathname.includes('/following') && !location.pathname.includes('/followers')
+    }
+    
+    return !!match
   }
 
   const handleClick = (e: React.MouseEvent, path: string) => {
@@ -34,12 +42,12 @@ function MobileNavBar() {
       label: 'Поиск',
     },
     {
-      path: '/following',
+      path: `/users/${currentUser?.id}/following`,
       icon: FiUsers,
       label: 'Подписки',
     },
     {
-      path: '/followers',
+      path: `/users/${currentUser?.id}/followers`,
       icon: FaUsers,
       label: 'Подписчики',
     },

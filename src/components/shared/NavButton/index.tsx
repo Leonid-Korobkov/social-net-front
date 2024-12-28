@@ -6,9 +6,10 @@ interface NavButtonProps {
   icon?: JSX.Element
   href: string
   color?: TButtonColors
+  isActive?: boolean | null
 }
 
-function NavButton({ children, icon, href, color }: NavButtonProps) {
+function NavButton({ children, icon, href, color, isActive }: NavButtonProps) {
   const location = useLocation()
 
   const handleClick = (e: React.MouseEvent) => {
@@ -20,7 +21,7 @@ function NavButton({ children, icon, href, color }: NavButtonProps) {
 
   return (
     <NavLink to={href} onClick={handleClick}>
-      {({ isActive }) => (
+      {() => (
         <Button
           className="flex justify-start text-xl pointer-events-none"
           type="button"

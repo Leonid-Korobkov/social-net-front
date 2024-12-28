@@ -6,9 +6,27 @@ import { IoSearch } from 'react-icons/io5'
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
 import NavButton from '../NavButton'
+import { useLocation, matchPath } from 'react-router-dom'
 
 function NavBar() {
   const currentUser = useSelector(selectCurrent)
+  const location = useLocation()
+
+  const isActive = (path: string) => {
+    const match = matchPath(path, location.pathname)
+    const userProfileMatch = matchPath('/users/:id', location.pathname)
+
+    // Для профиля пользователя проверяем точное совпадение
+    if (path === `/users/${currentUser?.id}`) {
+      return (
+        userProfileMatch &&
+        !location.pathname.includes('/following') &&
+        !location.pathname.includes('/followers')
+      )
+    }
+
+    return !!match
+  }
 
   const navItems = [
     {
@@ -22,12 +40,12 @@ function NavBar() {
       label: 'Поиск',
     },
     {
-      path: '/following',
+      path: `users/${currentUser?.id}/following`,
       icon: FiUsers,
       label: 'Подписки',
     },
     {
-      path: '/followers',
+      path: `users/${currentUser?.id}/followers`,
       icon: FaUsers,
       label: 'Подписчики',
     },
@@ -43,7 +61,7 @@ function NavBar() {
       <ul className="flex gap-2 flex-col">
         {navItems.map(({ path, icon: Icon, label }) => (
           <li className="flex flex-col gap-5" key={path}>
-            <NavButton href={path} icon={<Icon />}>
+            <NavButton href={path} icon={<Icon />} isActive={isActive(path)}>
               {label}
             </NavButton>
           </li>
