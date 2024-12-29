@@ -1,5 +1,6 @@
-import { Spinner } from '@nextui-org/react'
+import { Image, Spinner } from '@nextui-org/react'
 import { useCurrentUserQuery } from '../../app/services/user.api'
+import { useTheme } from 'next-themes'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -7,16 +8,28 @@ interface AuthGuardProps {
 
 function AuthGuard({ children }: AuthGuardProps) {
   const { isLoading } = useCurrentUserQuery()
+  const { resolvedTheme } = useTheme()
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-dvh">
-        <Spinner
-          size="lg"
-          color="primary"
-          label="Загрузка..."
-          labelColor="primary"
+      <div className="flex items-center justify-center min-h-dvh flex-col">
+        <img
+          src={
+            resolvedTheme === 'dark'
+              ? '/assets/Zling-logo-white.svg'
+              : '/assets/Zling-logo-black.svg'
+          }
+          alt="Zling"
+          className="h-[100px]"
         />
+        <div className="text-xl">Загрузка...</div>
+        {/* <Spinner
+          size="lg"
+          color="secondary"
+          label="Загрузка..."
+          labelColor="secondary"
+          
+        /> */}
       </div>
     )
   }

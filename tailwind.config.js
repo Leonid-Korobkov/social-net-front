@@ -19,23 +19,14 @@ export default {
     //   themes: {
     //     light: {
     //       colors: {
-    //         primary: "#7154f2",
+    //         primary: "#9353D3",
     //         secondary: "#006FEE",
-    //         background:"#EBE7D9",
-    //         foreground: "#212121",
-    //         default: "#212121",
-    //         "default-200": "#ccccce",
-    //         content1: "#EBE7D9"
     //       }
     //     },
     //     dark: {
     //       colors: {
-    //         primary: "#3D2996",
-    //         secondary: "#006FEE",
-    //         background: "#212121",
-    //         foreground: "#EBE7D9",
-    //         default: "#565660",
-    //         content1: "#212121"
+    //         primary: "#7827C8",
+    //         secondary: "#006FEE"
     //       }
     //     },
     //   }

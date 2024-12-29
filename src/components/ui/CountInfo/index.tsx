@@ -23,7 +23,11 @@ function CountInfo({
   const content = (
     <div className="p-3">
       <div className="flex flex-col items-center">
-        {count ? count : <Skeleton className="h-6 w-6 rounded-lg" />}
+        {count ? (
+          <p className="font-bold text-xl">{count}</p>
+        ) : (
+          <Skeleton className="h-6 w-6 rounded-lg" />
+        )}
         <div className="flex items-center gap-2">
           <Icon className="text-xl" />
           {title ? title : <Skeleton className="h-4 w-16 rounded-lg" />}
