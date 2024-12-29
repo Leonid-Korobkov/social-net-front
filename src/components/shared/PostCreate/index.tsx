@@ -67,7 +67,7 @@ function CreatePost() {
         )}
       />
       <Button
-        color="primary"
+        color="secondary"
         className="flex-end"
         endContent={<IoMdCreate />}
         type="submit"
