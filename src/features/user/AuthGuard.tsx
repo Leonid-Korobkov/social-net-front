@@ -10,7 +10,7 @@ function AuthGuard({ children }: AuthGuardProps) {
   const { isLoading } = useCurrentUserQuery()
   const { resolvedTheme } = useTheme()
 
-  if (true) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-dvh flex-col">
         <img
