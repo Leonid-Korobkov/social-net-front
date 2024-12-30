@@ -18,7 +18,7 @@ function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const isUserProfilePage = location.pathname.includes('/users/')
+  const isUserProfilePage = location.pathname.match(/^\/users\/[^/]+$/)
 
   useEffect(() => {
     if (!isAuth) {
