@@ -10,7 +10,7 @@ function AuthGuard({ children }: AuthGuardProps) {
   const { isLoading } = useCurrentUserQuery()
   const { resolvedTheme } = useTheme()
 
-  if (isLoading) {
+  if (true) {
     return (
       <div className="flex items-center justify-center min-h-dvh flex-col">
         <img
@@ -20,9 +20,8 @@ function AuthGuard({ children }: AuthGuardProps) {
               : '/assets/Zling-logo-black.svg'
           }
           alt="Zling"
-          className="h-[100px]"
+          className="h-[100px] animate-spinner-ease-spin"
         />
-        <div className="text-xl">Загрузка...</div>
         {/* <Spinner
           size="lg"
           color="secondary"
