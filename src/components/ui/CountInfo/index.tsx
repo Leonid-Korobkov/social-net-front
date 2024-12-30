@@ -24,9 +24,9 @@ function CountInfo({
     <div className="p-3">
       <div className="flex flex-col items-center">
         {count ? (
-          count
-        ) : count === 0 ? (
           <p className="font-bold text-xl">{count}</p>
+        ) : count === 0 ? (
+          <p className="font-bold text-xl">0</p>
         ) : (
           <Skeleton className="h-6 w-6 rounded-lg" />
         )}
