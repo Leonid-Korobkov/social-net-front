@@ -24,19 +24,15 @@ function CountInfo({
     <div className="p-3">
       <div className="flex flex-col items-center">
         {count ? (
+          count
+        ) : count === 0 ? (
           <p className="font-bold text-xl">{count}</p>
         ) : (
           <Skeleton className="h-6 w-6 rounded-lg" />
         )}
         <div className="flex items-center gap-2">
           <Icon className="text-xl" />
-          {title ? (
-            title
-          ) : +title === 0 ? (
-            '0'
-          ) : (
-            <Skeleton className="h-4 w-16 rounded-lg" />
-          )}
+          {title ? title : <Skeleton className="h-4 w-16 rounded-lg" />}
         </div>
       </div>
     </div>
