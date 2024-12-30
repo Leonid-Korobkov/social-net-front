@@ -30,7 +30,13 @@ function CountInfo({
         )}
         <div className="flex items-center gap-2">
           <Icon className="text-xl" />
-          {title ? title : <Skeleton className="h-4 w-16 rounded-lg" />}
+          {title ? (
+            title
+          ) : +title === 0 ? (
+            '0'
+          ) : (
+            <Skeleton className="h-4 w-16 rounded-lg" />
+          )}
         </div>
       </div>
     </div>
