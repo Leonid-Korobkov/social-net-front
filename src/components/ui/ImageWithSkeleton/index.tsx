@@ -85,6 +85,13 @@ function ImageWithSkeleton({
             onLoad={handleLoad}
             onError={handleError}
           />
+          <img
+            src={getOptimizedUrl()}
+            alt={alt}
+            className={`absolute z-0 inset-0 w-full h-full object-cover aspect-square filter blur-xl scale-105 saturate-150 opacity-70 translate-y-1 rounded-large`}
+          />
+          
+          
         </picture>
       )}
       {/* </motion.div> */}

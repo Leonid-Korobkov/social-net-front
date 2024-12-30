@@ -26,7 +26,7 @@ function Profile() {
           alt="Изображение профиля"
           src={`${avatarUrl}`}
           className="w-full"
-          isBlurred
+          // isBlurred
         />
       </CardHeader>
       <CardBody className="overflow-visible py-2">

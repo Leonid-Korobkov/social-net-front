@@ -157,7 +157,7 @@ function UserProfile() {
             <Image
               alt={`Изображение профиля ${user.name}`}
               src={`${user.avatarUrl}`}
-              isBlurred
+              // isBlurred
               className="w-[200px] h-[200px] border-4 border-white rounded-xl cursor-pointer"
               onClick={handleImageClick}
             />
