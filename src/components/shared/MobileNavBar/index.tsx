@@ -1,4 +1,4 @@
-import { Link, useLocation, matchPath } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { BsPostcard } from 'react-icons/bs'
 import { FiUsers } from 'react-icons/fi'
 import { FaUsers } from 'react-icons/fa'
@@ -6,22 +6,13 @@ import { CgProfile } from 'react-icons/cg'
 import { IoSearch } from 'react-icons/io5'
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
+import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
 
 function MobileNavBar() {
   const location = useLocation()
   const currentUser = useSelector(selectCurrent)
 
-  const isActive = (path: string) => {
-    const match = matchPath(path, location.pathname)
-    const userProfileMatch = matchPath('/users/:id', location.pathname)
-    
-    // Для профиля пользователя проверяем точное совпадение
-    if (path === `/users/${currentUser?.id}`) {
-      return userProfileMatch && !location.pathname.includes('/following') && !location.pathname.includes('/followers')
-    }
-    
-    return !!match
-  }
+  const isActive = useActiveNavLink
 
   const handleClick = (e: React.MouseEvent, path: string) => {
     if (location.pathname === path) {

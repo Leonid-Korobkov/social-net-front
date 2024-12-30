@@ -7,26 +7,13 @@ import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
 import NavButton from '../NavButton'
 import { useLocation, matchPath } from 'react-router-dom'
+import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
 
 function NavBar() {
   const currentUser = useSelector(selectCurrent)
   const location = useLocation()
 
-  const isActive = (path: string) => {
-    const match = matchPath(path, location.pathname)
-    const userProfileMatch = matchPath('/users/:id', location.pathname)
-
-    // Для профиля пользователя проверяем точное совпадение
-    if (path === `/users/${currentUser?.id}`) {
-      return (
-        userProfileMatch &&
-        !location.pathname.includes('/following') &&
-        !location.pathname.includes('/followers')
-      )
-    }
-
-    return !!match
-  }
+  const isActive = useActiveNavLink
 
   const navItems = [
     {
