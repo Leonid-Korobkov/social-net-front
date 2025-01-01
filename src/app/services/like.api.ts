@@ -9,7 +9,7 @@ export const likeApi = api.injectEndpoints({
         method: 'POST',
         body: { postId },
       }),
-      invalidatesTags: ['Post', 'Posts'],
+      invalidatesTags: ['Post', 'Posts', 'User'],
       async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
         const userIdString = userId.toString()
         const patchUserProfile = dispatch(
