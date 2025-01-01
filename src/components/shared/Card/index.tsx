@@ -220,6 +220,7 @@ function Card({
         <Link
           to={`/users/${authorId}`}
           title={`Переход на страницу автора ${name}`}
+          className='flex-1'
         >
           <User
             name={name}
@@ -298,7 +299,7 @@ function Card({
               key="likes"
               color="primary"
               startContent={<AiOutlineLike />}
-              onClick={() => setIsLikesModalOpen(true)}
+              onPressStart={() => setIsLikesModalOpen(true)}
             >
               Просмотр лайков
             </DropdownItem>
@@ -308,7 +309,7 @@ function Card({
                 className="text-danger"
                 color="danger"
                 startContent={<RiDeleteBinLine />}
-                onClick={onOpen}
+                onPressStart={onOpen}
               >
                 Удалить
               </DropdownItem>
@@ -358,19 +359,28 @@ function Card({
                 Понравилось
               </ModalHeader>
               <ModalBody className="flex flex-col gap-2">
-                {likes?.map(like => (
-                  <Link key={like.id} to={`/users/${like.userId}`}>
-                    <Divider className="mb-2" />
-                    <User
-                      name={like.user?.name || 'Аноним'}
-                      avatarUrl={like.user?.avatarUrl || ''}
-                      description={formatToClientDate(
-                        new Date(like.createdAt?.toString() || ''),
-                      )}
-                      className="cursor-pointer"
-                    />{' '}
-                  </Link>
-                ))}
+                {likes.length !== 0 ? (
+                  likes?.map(like => (
+                    <Link key={like.id} to={`/users/${like.userId}`}>
+                      <Divider className="mb-2" />
+                      <User
+                        name={like.user?.name || 'Аноним'}
+                        avatarUrl={like.user?.avatarUrl || ''}
+                        description={
+                          <div className="flex items-center gap-1">
+                            <AiOutlineLike />
+                            {formatToClientDate(
+                              new Date(like.createdAt?.toString() || ''),
+                            )}
+                          </div>
+                        }
+                        className="cursor-pointer"
+                      />{' '}
+                    </Link>
+                  ))
+                ) : (
+                  <p>Нет лайков</p>
+                )}
               </ModalBody>
               <ModalFooter>
                 <Button color="primary" onPress={onClose}>

@@ -12,6 +12,7 @@ export const likeCommentApi = api.injectEndpoints({
         method: 'POST',
         body: { commentId },
       }),
+      invalidatesTags: ['Post', 'Posts'],
       async onQueryStarted(
         { commentId, isLiked, postId },
         { dispatch, queryFulfilled },

@@ -9,6 +9,7 @@ export const likeApi = api.injectEndpoints({
         method: 'POST',
         body: { postId },
       }),
+      invalidatesTags: ['Post', 'Posts'],
       async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
         const userIdString = userId.toString()
         const patchUserProfile = dispatch(
@@ -66,6 +67,7 @@ export const likeApi = api.injectEndpoints({
         method: 'DELETE',
         body: { postId },
       }),
+      invalidatesTags: ['Post', 'Posts'],
       async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
         const userIdString = userId.toString()
         const patchUserProfile = dispatch(
