@@ -9,10 +9,30 @@ import CardCommentSkeleton from '../../components/ui/CardCommentSkeleton'
 import { AnimatePresence, motion } from 'framer-motion'
 import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'
+import { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 function CurrentPost() {
+  const [searchParams] = useSearchParams()
+  const commentId = searchParams.get('comment')
   const params = useParams<{ id: string }>()
   const { data, isLoading } = useGetPostByIdQuery(params?.id ?? '')
+
+  useEffect(() => {
+    if (commentId && !isLoading && data?.comments) {
+      const commentElement = document.getElementById(`comment-${commentId}`)
+      if (commentElement) {
+        setTimeout(() => {
+          commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          // Опционально: добавить подсветку комментария
+          commentElement.classList.add('highlight')
+          setTimeout(() => {
+            commentElement.classList.remove('highlight')
+          }, 2000)
+        }, 500)
+      }
+    }
+  }, [commentId, isLoading, data])
 
   if (isLoading) {
     return (
@@ -84,6 +104,7 @@ function CurrentPost() {
               ? data.comments.map(comment => (
                   <motion.div
                     key={comment.id}
+                    id={`comment-${comment.id}`} // Add id for scrolling
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}

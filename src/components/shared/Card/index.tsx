@@ -20,7 +20,7 @@ import {
   Divider,
 } from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaCircleInfo, FaRegComment, FaEllipsisVertical } from 'react-icons/fa6'
+import { FaCircleInfo, FaRegComment, FaEllipsisVertical, FaShareFromSquare } from 'react-icons/fa6'
 import { AiOutlineLike } from 'react-icons/ai'
 import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
@@ -214,6 +214,25 @@ function Card({
     }
   }
 
+  const handleShare = () => {
+    const baseUrl = window.location.origin
+    let shareUrl = ''
+    
+    if (cardFor === 'comment') {
+      shareUrl = `${baseUrl}/posts/${id}?comment=${commentId}`
+    } else {
+      shareUrl = `${baseUrl}/posts/${id}`
+    }
+
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        toast.success('Ссылка скопирована в буфер обмена')
+      })
+      .catch(() => {
+        toast.error('Не удалось скопировать ссылку')
+      })
+  }
+
   return (
     <NextUiCard className="mb-5">
       <CardHeader className="justify-between items-center bg-transparent">
@@ -302,6 +321,14 @@ function Card({
               onPressStart={() => setIsLikesModalOpen(true)}
             >
               Просмотр лайков
+            </DropdownItem>
+            <DropdownItem
+              key="share"
+              color="primary"
+              startContent={<FaShareFromSquare />}
+              onPressStart={handleShare}
+            >
+              Поделиться
             </DropdownItem>
             {authorId === currentUser?.id ? (
               <DropdownItem
