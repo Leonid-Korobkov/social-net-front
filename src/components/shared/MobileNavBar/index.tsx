@@ -59,7 +59,8 @@ function MobileNavBar() {
             onClick={e => handleClick(e, path)}
             className={`flex flex-col items-center gap-1 ${
               isActive(path) ? 'text-secondary' : 'text-foreground'
-            }`}
+              }`}
+            title={label}
           >
             <Icon className="text-xl" />
             <span className="text-xs">{label}</span>

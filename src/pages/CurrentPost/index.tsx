@@ -8,7 +8,7 @@ import CreateCommentSkeleton from '../../components/ui/CommentCreateSkeleton'
 import CardCommentSkeleton from '../../components/ui/CardCommentSkeleton'
 import { AnimatePresence, motion } from 'framer-motion'
 import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
-import { APP_URL, BASE_URL } from '../../constants'
+import { APP_URL } from '../../constants'
 
 function CurrentPost() {
   const params = useParams<{ id: string }>()
@@ -68,6 +68,7 @@ function CurrentPost() {
         likedByUser={likedByUser}
         createdAt={createdAt}
         isFollowing={isFollowing}
+        likes={likes}
       />
       <div className="mt-10">
         <CreateComment />
@@ -91,12 +92,16 @@ function CurrentPost() {
                   >
                     <Card
                       cardFor="comment"
-                      avatarUrl={comment.User?.avatarUrl ?? ''}
+                      avatarUrl={comment.user?.avatarUrl ?? ''}
                       content={comment.content}
-                      name={comment.User?.name ?? ''}
+                      name={comment.user?.name ?? ''}
                       authorId={comment.userId ?? ''}
                       commentId={comment.id}
                       id={id}
+                      createdAt={comment.createdAt}
+                      likedByUser={comment.likedByUser}
+                      likesCount={comment.likes.length}
+                      likes={comment.likes}
                     />
                   </motion.div>
                 ))

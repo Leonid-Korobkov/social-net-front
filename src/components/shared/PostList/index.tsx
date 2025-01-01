@@ -65,6 +65,7 @@ function PostList({
                       createdAt={createdAt}
                       likesCount={likes.length}
                       isFollowing={isFollowing}
+                      likes={likes}
                       onClick={handleCardClick}
                     />
                   </motion.div>

@@ -40,10 +40,11 @@ export type Post = {
 
 export type Like = {
   id: string
-  User?: User
+  user?: User
   userId?: string
-  Post?: Post
+  post?: Post
   postId?: string
+  createdAt: Date
 }
 
 export type Comment = {
@@ -51,6 +52,18 @@ export type Comment = {
   content: string
   post: Post
   postId: string
-  User?: User
+  user?: User
   userId?: string
+  likes: CommentLike[]
+  likedByUser?: boolean
+  createdAt: Date
+}
+
+export type CommentLike = {
+  id: string
+  Comment?: Comment
+  commentId?: string
+  user?: User
+  userId?: string
+  createdAt: Date
 }
