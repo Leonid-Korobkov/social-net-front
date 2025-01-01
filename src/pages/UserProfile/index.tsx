@@ -168,7 +168,7 @@ function UserProfile() {
                   color={user?.isFollowing ? 'default' : 'primary'}
                   variant="flat"
                   className="gap-2"
-                  onPressStart={handleFollow}
+                  onPress={handleFollow}
                   endContent={
                     user?.isFollowing ? (
                       <MdOutlinePersonAddDisabled />
@@ -182,7 +182,7 @@ function UserProfile() {
               ) : (
                 <Button
                   endContent={<CiEdit />}
-                  onPressStart={handleEditProfile}
+                  onPress={handleEditProfile}
                   variant="ghost"
                   color="warning"
                 >

@@ -13,7 +13,7 @@ import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 function CurrentPost() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const commentId = searchParams.get('comment')
   const params = useParams<{ id: string }>()
   const { data, isLoading } = useGetPostByIdQuery(params?.id ?? '')
@@ -27,9 +27,10 @@ function CurrentPost() {
           // Опционально: добавить подсветку комментария
           commentElement.classList.add('highlight')
           setTimeout(() => {
+            setSearchParams('')
             commentElement.classList.remove('highlight')
           }, 2000)
-        }, 500)
+        }, 200)
       }
     }
   }, [commentId, isLoading, data])

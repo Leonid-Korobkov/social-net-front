@@ -140,7 +140,7 @@ function Header({ className }: { className?: string }) {
                   key="logout"
                   color="danger"
                   endContent={<CiLogout className="text-large" />}
-                  onPressStart={onOpen}
+                  onPress={onOpen}
                 >
                   Выйти
                 </DropdownItem>

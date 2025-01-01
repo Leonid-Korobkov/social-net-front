@@ -20,7 +20,12 @@ import {
   Divider,
 } from '@nextui-org/react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaCircleInfo, FaRegComment, FaEllipsisVertical, FaShareFromSquare } from 'react-icons/fa6'
+import {
+  FaCircleInfo,
+  FaRegComment,
+  FaEllipsisVertical,
+  FaShareFromSquare,
+} from 'react-icons/fa6'
 import { AiOutlineLike } from 'react-icons/ai'
 import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
@@ -44,6 +49,7 @@ import * as locales from 'date-fns/locale'
 import { formatToClientDate } from '../../../utils/formatToClientDate'
 import { useToggleCommentLikeMutation } from '../../../app/services/likeComment.api'
 import { CommentLike, Like } from '../../../app/types'
+import { APP_URL } from '../../../constants'
 
 interface ICard {
   avatarUrl: string
@@ -215,16 +221,17 @@ function Card({
   }
 
   const handleShare = () => {
-    const baseUrl = window.location.origin
+    const baseUrl = APP_URL
     let shareUrl = ''
-    
+
     if (cardFor === 'comment') {
       shareUrl = `${baseUrl}/posts/${id}?comment=${commentId}`
     } else {
       shareUrl = `${baseUrl}/posts/${id}`
     }
 
-    navigator.clipboard.writeText(shareUrl)
+    navigator.clipboard
+      .writeText(shareUrl)
       .then(() => {
         toast.success('Ссылка скопирована в буфер обмена')
       })
@@ -239,7 +246,7 @@ function Card({
         <Link
           to={`/users/${authorId}`}
           title={`Переход на страницу автора ${name}`}
-          className='flex-1'
+          className="flex-1"
         >
           <User
             name={name}
@@ -318,7 +325,7 @@ function Card({
               key="likes"
               color="primary"
               startContent={<AiOutlineLike />}
-              onPressStart={() => setIsLikesModalOpen(true)}
+              onPress={() => setIsLikesModalOpen(true)}
             >
               Просмотр лайков
             </DropdownItem>
@@ -326,7 +333,7 @@ function Card({
               key="share"
               color="primary"
               startContent={<FaShareFromSquare />}
-              onPressStart={handleShare}
+              onPress={handleShare}
             >
               Поделиться
             </DropdownItem>
@@ -336,7 +343,7 @@ function Card({
                 className="text-danger"
                 color="danger"
                 startContent={<RiDeleteBinLine />}
-                onPressStart={onOpen}
+                onPress={onOpen}
               >
                 Удалить
               </DropdownItem>
