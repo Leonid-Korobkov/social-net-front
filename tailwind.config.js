@@ -9,7 +9,17 @@ export default {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        'border-flow': {
+          '0%': { 'background-position': '200% 0' },
+          '100%': { 'background-position': '-200% 0' },
+        },
+      },
+      animation: {
+        'border-flow': 'border-flow 3s linear infinite',
+      },
+    },
   },
   darkMode: "class",
   plugins: [

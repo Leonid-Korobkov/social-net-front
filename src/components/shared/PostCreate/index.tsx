@@ -51,13 +51,15 @@ function CreatePost() {
         defaultValue=""
         rules={{
           required: 'Обязательное поле',
+          validate: value =>
+            value.trim().length > 0 || 'Пост не может быть пустым',
         }}
         render={({ field }) => (
           <Textarea
             {...field}
             placeholder="О чем думаете?"
             labelPlacement="inside"
-            errorMessage="Обязательное поле"
+            errorMessage={error}
             isInvalid={error ? true : false}
             className="mb-5"
             label="Новый пост"
