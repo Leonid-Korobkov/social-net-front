@@ -9,7 +9,7 @@ export const followApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['CurrentUser'],
+      invalidatesTags: ['CurrentUser', 'User'],
       async onQueryStarted({ followingId }, { dispatch, queryFulfilled }) {
         // Оптимистичное обновление для getUserById
         const patchUser = dispatch(
@@ -50,7 +50,7 @@ export const followApi = api.injectEndpoints({
         method: 'DELETE',
         body,
       }),
-      invalidatesTags: ['CurrentUser'],
+      invalidatesTags: ['CurrentUser', 'User'],
       async onQueryStarted({ followingId }, { dispatch, queryFulfilled }) {
         // Оптимистичное обновление для getUserById
         const patchUser = dispatch(

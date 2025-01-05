@@ -241,7 +241,15 @@ function Card({
   }
 
   return (
-    <NextUiCard className="mb-5 transform transition-all duration-300 ease-in-out relative before:absolute before:content-[''] before:top-0 before:left-0 before:right-0 before:bottom-0 before:rounded-xl before:p-[2px] before:bg-gradient-to-r before:from-transparent before:via-secondary/70 before:to-transparent before:bg-[length:200%_100%] before:opacity-0 before:transition-all before:duration-500 [&:has(>div.card-body:hover)]:before:opacity-100 [&:has(>div.card-body:hover)]:before:animate-border-flow [&:has(>div.card-body:hover)]:scale-[1.01] [&:has(>div.card-body:hover)]:shadow-lg overflow-visible">
+    <NextUiCard
+      className={`mb-5 transform ${
+        cardFor === 'post'
+          ? `transition-all duration-500 
+    ease-in-out [&:has(>div.card-body:hover)]:scale-[1.01]
+    [&:has(>div.card-body:hover)]:shadow-lg overflow-visible`
+          : ''
+      }`}
+    >
       <CardHeader className="relative z-[1] justify-between items-center bg-transparent">
         <Link
           to={`/users/${authorId}`}
@@ -354,12 +362,14 @@ function Card({
       <CardBody
         className={`card-body px-3 py-2 cursor-pointer ${cardFor === 'comment' ? 'pb-0' : 'pb-5'}`}
         onClick={e => {
-          // Если пользователь выделял текст, не переходим по ссылке
-          if (window.getSelection()?.toString()) {
-            e.preventDefault()
-            return
+          if (cardFor === 'post') {
+            // Если пользователь выделял текст, не переходим по ссылке
+            if (window.getSelection()?.toString()) {
+              e.preventDefault()
+              return
+            }
+            navigate(`/posts/${id}`)
           }
-          navigate(`/posts/${id}`)
         }}
       >
         <Typography size={cardFor === 'comment' ? 'text-lg' : undefined}>

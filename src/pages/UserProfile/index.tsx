@@ -165,7 +165,7 @@ function UserProfile() {
               {user.name}
               {currentUser?.id !== user.id ? (
                 <Button
-                  color={user?.isFollowing ? 'default' : 'primary'}
+                  color={user?.isFollowing ? 'default' : 'secondary'}
                   variant="flat"
                   className="gap-2"
                   onPress={handleFollow}

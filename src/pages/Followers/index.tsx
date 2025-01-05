@@ -1,12 +1,16 @@
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../features/user/user.slice'
 import { Link, useParams } from 'react-router-dom'
-import { Card, CardBody, Spinner } from '@nextui-org/react'
+import { Button, Card, CardBody, Spinner } from '@nextui-org/react'
 import User from '../../components/ui/User'
 import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'
 import { useGetUserByIdQuery } from '../../app/services/user.api'
 import GoBack from '../../components/shared/GoBack'
+import {
+  useCreateFollowMutation,
+  useDeleteFollowMutation,
+} from '../../app/services/follow.api'
 
 function Followers() {
   const { id } = useParams<{ id: string }>()
@@ -15,6 +19,20 @@ function Followers() {
     { id: id ?? '' },
     { skip: !id },
   )
+  const [followUser] = useCreateFollowMutation()
+  const [unfollowUser] = useDeleteFollowMutation()
+
+  const handleFollow = async (followingId: string, isFollowing: boolean) => {
+    try {
+      if (isFollowing) {
+        unfollowUser({ followingId }).unwrap()
+      } else {
+        followUser({ followingId }).unwrap()
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   if (isLoading) {
     return <Spinner />
@@ -47,19 +65,38 @@ function Followers() {
               return null
             }
 
+            const isFollowing = followerItem.follower.isFollowing ?? false
+
             return (
               <Link
                 to={`/users/${followerItem.follower.id}`}
                 key={followerItem.follower.id}
               >
                 <Card>
-                  <CardBody>
+                  <CardBody className="flex flex-row items-center justify-between">
                     <User
                       name={followerItem.follower.name ?? ''}
                       avatarUrl={followerItem.follower.avatarUrl ?? ''}
                       description={followerItem.follower.email ?? ''}
                       className="!justify-start"
                     />
+                    {currentUser &&
+                      currentUser.id !== followerItem.follower.id && (
+                        <Button
+                          color={isFollowing ? 'default' : 'secondary'}
+                          variant="flat"
+                          className="gap-2"
+                          onClick={e => {
+                            e.preventDefault()
+                            handleFollow(
+                              followerItem.follower?.id ?? '',
+                              isFollowing,
+                            )
+                          }}
+                        >
+                          {isFollowing ? 'Отписаться' : 'Подписаться'}
+                        </Button>
+                      )}
                   </CardBody>
                 </Card>
               </Link>
