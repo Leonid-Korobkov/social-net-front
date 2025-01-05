@@ -17,9 +17,6 @@ function Posts() {
         siteName="Zling"
         type="website"
       />
-      <div className="mb-10 w-full">
-        <CreatePost />
-      </div>
       <PostList data={data || []} isLoading={isLoading} />
     </>
   )

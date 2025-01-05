@@ -7,12 +7,26 @@ interface NavButtonProps {
   href: string
   color?: TButtonColors
   isActive?: boolean | null
+  onClick?: () => void
 }
 
-function NavButton({ children, icon, href, color, isActive }: NavButtonProps) {
+function NavButton({
+  children,
+  icon,
+  href,
+  color,
+  isActive,
+  onClick,
+}: NavButtonProps) {
   const location = useLocation()
 
   const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault()
+      onClick()
+      return
+    }
+
     if (location.pathname === href) {
       e.preventDefault()
       window.scrollTo({ top: 0, behavior: 'smooth' })

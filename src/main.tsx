@@ -1,27 +1,38 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { store } from './app/store'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ThemeProvider from './components/shared/ThemeProvider'
-import Auth from './pages/Auth'
 import Layout from './layout'
-import Posts from './pages/Posts'
-import CurrentPost from './pages/CurrentPost'
-import UserProfile from './pages/UserProfile'
-import Followers from './pages/Followers'
-import Following from './pages/Following'
-import Search from './pages/Search'
-import AuthGuard from './features/user/AuthGuard'
 import ErrorPage from './pages/Error'
+import { Spinner } from '@nextui-org/react'
+import AuthGuard from './features/user/AuthGuard'
 
-const container = document.getElementById('root')
+// Ленивая загрузка компонентов
+const Auth = React.lazy(() => import('./pages/Auth'))
+const Posts = React.lazy(() => import('./pages/Posts'))
+const CurrentPost = React.lazy(() => import('./pages/CurrentPost'))
+const UserProfile = React.lazy(() => import('./pages/UserProfile'))
+const Followers = React.lazy(() => import('./pages/Followers'))
+const Following = React.lazy(() => import('./pages/Following'))
+const Search = React.lazy(() => import('./pages/Search'))
+
+const LoadingFallback = () => (
+  <div className="flex justify-center items-center h-screen">
+    <Spinner size="lg" />
+  </div>
+)
 
 const router = createBrowserRouter([
   {
     path: '/auth',
-    element: <Auth />,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <Auth />
+      </Suspense>
+    ),
     errorElement: <ErrorPage />,
   },
   {
@@ -31,37 +42,63 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Posts />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Posts />
+          </Suspense>
+        ),
         errorElement: <ErrorPage />,
       },
       {
         path: 'search',
-        element: <Search />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Search />
+          </Suspense>
+        ),
         errorElement: <ErrorPage />,
       },
       {
         path: 'posts/:id',
-        element: <CurrentPost />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <CurrentPost />
+          </Suspense>
+        ),
         errorElement: <ErrorPage />,
       },
       {
         path: 'users/:id',
-        element: <UserProfile />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <UserProfile />
+          </Suspense>
+        ),
         errorElement: <ErrorPage />,
       },
       {
         path: 'users/:id/followers',
-        element: <Followers />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Followers />
+          </Suspense>
+        ),
         errorElement: <ErrorPage />,
       },
       {
         path: 'users/:id/following',
-        element: <Following />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Following />
+          </Suspense>
+        ),
         errorElement: <ErrorPage />,
       },
     ],
   },
 ])
+
+const container = document.getElementById('root')
 
 if (container) {
   const root = createRoot(container)

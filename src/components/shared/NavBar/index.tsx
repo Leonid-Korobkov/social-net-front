@@ -3,13 +3,18 @@ import { FiUsers } from 'react-icons/fi'
 import { FaUsers } from 'react-icons/fa'
 import { CgProfile } from 'react-icons/cg'
 import { IoSearch } from 'react-icons/io5'
+import { IoMdAdd } from 'react-icons/io'
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
 import NavButton from '../NavButton'
-import { useLocation, matchPath } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
 
-function NavBar() {
+interface NavBarProps {
+  onCreatePost: () => void
+}
+
+function NavBar({ onCreatePost }: NavBarProps) {
   const currentUser = useSelector(selectCurrent)
   const location = useLocation()
 
@@ -25,6 +30,12 @@ function NavBar() {
       path: '/search',
       icon: IoSearch,
       label: 'Поиск',
+    },
+    {
+      path: '#',
+      icon: IoMdAdd,
+      label: 'Создать пост',
+      onClick: onCreatePost,
     },
     {
       path: `users/${currentUser?.id}/following`,
@@ -46,9 +57,14 @@ function NavBar() {
   return (
     <nav className="flex flex-col gap-2">
       <ul className="flex gap-2 flex-col">
-        {navItems.map(({ path, icon: Icon, label }) => (
+        {navItems.map(({ path, icon: Icon, label, onClick }) => (
           <li className="flex flex-col gap-5" key={path}>
-            <NavButton href={path} icon={<Icon />} isActive={isActive(path)}>
+            <NavButton
+              href={path}
+              icon={<Icon />}
+              isActive={isActive(path)}
+              onClick={onClick}
+            >
               {label}
             </NavButton>
           </li>

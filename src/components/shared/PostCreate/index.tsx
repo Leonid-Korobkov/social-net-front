@@ -5,7 +5,11 @@ import { IoMdCreate } from 'react-icons/io'
 import { toast } from 'react-hot-toast'
 import { hasErrorField } from '../../../utils/hasErrorField'
 
-function CreatePost() {
+interface CreatePostProps {
+  onSuccess?: () => void
+}
+
+function CreatePost({ onSuccess }: CreatePostProps) {
   const [createPost, { isLoading }] = useCreatePostMutation()
 
   const {
@@ -26,6 +30,9 @@ function CreatePost() {
         .then(() => {
           toast.success('Пост успешно создан!')
           setValue('text', '')
+          if (onSuccess) {
+            onSuccess()
+          }
         })
         .catch(err => {
           if (hasErrorField(err)) {
