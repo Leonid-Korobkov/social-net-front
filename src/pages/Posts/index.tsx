@@ -1,5 +1,4 @@
 import { useGetAllPostsQuery } from '../../app/services/post.api'
-import CreatePost from '../../components/shared/PostCreate'
 import PostList from '../../components/shared/PostList'
 import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'

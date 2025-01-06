@@ -86,8 +86,7 @@ function Followers() {
                           color={isFollowing ? 'default' : 'secondary'}
                           variant="flat"
                           className="gap-2"
-                          onClick={e => {
-                            e.preventDefault()
+                          onPress={e => {
                             handleFollow(
                               followerItem.follower?.id ?? '',
                               isFollowing,

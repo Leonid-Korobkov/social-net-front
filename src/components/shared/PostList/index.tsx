@@ -19,7 +19,7 @@ function PostList({
   return (
     <div className={className}>
       {isLoading ? (
-        <div className="mt-10">
+        <div>
           {Array.from({ length: 5 }).map((_, index) => (
             <CardSkeleton key={index} />
           ))}

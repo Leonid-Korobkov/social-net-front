@@ -1,14 +1,13 @@
 import { BsPostcard } from 'react-icons/bs'
-import { FiUsers } from 'react-icons/fi'
-import { FaUsers } from 'react-icons/fa'
-import { CgProfile } from 'react-icons/cg'
+import { SlUserFollowing } from "react-icons/sl";
+import { GiShadowFollower } from "react-icons/gi";
 import { IoSearch } from 'react-icons/io5'
-import { IoMdAdd } from 'react-icons/io'
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
 import NavButton from '../NavButton'
-import { useLocation } from 'react-router-dom'
 import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
+import { FaRegSquarePlus, FaUser } from 'react-icons/fa6'
+import { GoHomeFill } from 'react-icons/go';
 
 interface NavBarProps {
   onCreatePost: () => void
@@ -16,14 +15,13 @@ interface NavBarProps {
 
 function NavBar({ onCreatePost }: NavBarProps) {
   const currentUser = useSelector(selectCurrent)
-  const location = useLocation()
 
   const isActive = useActiveNavLink
 
   const navItems = [
     {
       path: '/',
-      icon: BsPostcard,
+      icon: GoHomeFill,
       label: 'Посты',
     },
     {
@@ -33,23 +31,23 @@ function NavBar({ onCreatePost }: NavBarProps) {
     },
     {
       path: '#',
-      icon: IoMdAdd,
+      icon: FaRegSquarePlus,
       label: 'Создать пост',
       onClick: onCreatePost,
     },
     {
       path: `users/${currentUser?.id}/following`,
-      icon: FiUsers,
+      icon: SlUserFollowing,
       label: 'Подписки',
     },
     {
       path: `users/${currentUser?.id}/followers`,
-      icon: FaUsers,
+      icon: GiShadowFollower,
       label: 'Подписчики',
     },
     {
       path: `/users/${currentUser?.id}`,
-      icon: CgProfile,
+      icon: FaUser,
       label: 'Профиль',
     },
   ]

@@ -37,6 +37,8 @@ import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import Image from '../../components/ui/Image'
 import { Post } from '../../app/types'
 import { BsPostcardFill } from 'react-icons/bs'
+import { SlUserFollowing } from 'react-icons/sl'
+import { GiShadowFollower } from 'react-icons/gi'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -199,14 +201,14 @@ function UserProfile() {
                 title="Публикации"
               />
               <CountInfo
-                Icon={FaUsers}
+                Icon={GiShadowFollower}
                 count={user.followers.length}
                 title="Подписчики"
                 userId={user.id}
                 type="followers"
               />
               <CountInfo
-                Icon={FiUsers}
+                Icon={SlUserFollowing}
                 count={user.following.length}
                 title="Подписки"
                 userId={user.id}
