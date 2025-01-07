@@ -2,12 +2,18 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Post } from '../../../app/types'
 import CardSkeleton from '../../ui/CardSkeleton'
 import Card from '../Card'
+import { Spinner } from '@nextui-org/react'
+import { useInView } from 'react-intersection-observer'
+import { useEffect } from 'react'
 
 interface PostListProps {
   data: Post[]
   isLoading: boolean
   handleCardClick?: () => void
   className?: string
+  hasMore?: boolean
+  onLoadMore?: () => void
+  isFetchingMore?: boolean
 }
 
 function PostList({
@@ -15,64 +21,88 @@ function PostList({
   isLoading,
   handleCardClick,
   className,
+  hasMore,
+  onLoadMore,
+  isFetchingMore,
 }: PostListProps) {
+  const { ref: loadMoreRef, inView } = useInView({
+    threshold: 0,
+  })
+
+  useEffect(() => {
+    if (inView && !isLoading && !isFetchingMore && hasMore && onLoadMore) {
+      onLoadMore()
+    }
+  }, [inView, isLoading, isFetchingMore, hasMore])
+
+  if (isLoading && !data.length) {
+    return (
+      <div>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <CardSkeleton key={index} />
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className={className}>
-      {isLoading ? (
-        <div>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CardSkeleton key={index} />
-          ))}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <AnimatePresence mode="popLayout">
+          {data &&
+            data.length > 0 &&
+            data.map(
+              ({
+                author,
+                authorId,
+                comments,
+                content,
+                createdAt,
+                id,
+                likes,
+                likedByUser,
+                isFollowing,
+              }) => (
+                <motion.div
+                  key={id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5, bounce: 0 }}
+                  layout="position"
+                >
+                  <Card
+                    id={id}
+                    authorId={authorId}
+                    avatarUrl={author.avatarUrl || ''}
+                    cardFor={'post'}
+                    content={content}
+                    name={author.name || ''}
+                    likedByUser={likedByUser}
+                    commentsCount={comments.length}
+                    createdAt={createdAt}
+                    likesCount={likes.length}
+                    isFollowing={isFollowing}
+                    likes={likes}
+                    onClick={handleCardClick}
+                  />
+                </motion.div>
+              ),
+            )}
+        </AnimatePresence>
+      </motion.div>
+      {(hasMore || isFetchingMore) && (
+        <div ref={loadMoreRef} className="py-4 flex justify-center">
+          {isFetchingMore ? (
+            <Spinner size="lg" />
+          ) : (
+            hasMore && <div className="h-20" />
+          )}
         </div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <AnimatePresence mode="popLayout">
-            {data &&
-              data.length > 0 &&
-              data.map(
-                ({
-                  author,
-                  authorId,
-                  comments,
-                  content,
-                  createdAt,
-                  id,
-                  likes,
-                  likedByUser,
-                  isFollowing,
-                }) => (
-                  <motion.div
-                    key={id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, bounce: 0 }}
-                    layout="position"
-                  >
-                    <Card
-                      id={id}
-                      authorId={authorId}
-                      avatarUrl={author.avatarUrl || ''}
-                      cardFor={'post'}
-                      content={content}
-                      name={author.name || ''}
-                      likedByUser={likedByUser}
-                      commentsCount={comments.length}
-                      createdAt={createdAt}
-                      likesCount={likes.length}
-                      isFollowing={isFollowing}
-                      likes={likes}
-                      onClick={handleCardClick}
-                    />
-                  </motion.div>
-                ),
-              )}
-          </AnimatePresence>
-        </motion.div>
       )}
     </div>
   )

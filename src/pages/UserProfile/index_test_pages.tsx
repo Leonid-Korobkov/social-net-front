@@ -53,6 +53,9 @@ function UserProfile() {
 
   const [party, setParty] = useState(false)
   const size = useWindowSize()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [displayedPosts, setDisplayedPosts] = useState<Post[]>([])
+  const postsPerPage = 5
 
   const dispatch = useDispatch()
 
@@ -95,9 +98,15 @@ function UserProfile() {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       )
-      setPosts(newPosts)
+      setDisplayedPosts(newPosts.slice(0, currentPage * postsPerPage))
     }
-  }, [user, isLoading])
+  }, [user, isLoading, currentPage])
+
+  const loadMorePosts = () => {
+    setCurrentPage(prev => prev + 1)
+  }
+
+  const hasMorePosts = user?.posts && displayedPosts.length < user.posts.length
 
   if (isLoading) {
     return <UserProfileSkeleton />
@@ -232,7 +241,7 @@ function UserProfile() {
         </div>
         <PostList
           className="w-full mt-4"
-          data={posts || []}
+          data={displayedPosts || []}
           isLoading={isLoading}
           handleCardClick={() => {}}
         />

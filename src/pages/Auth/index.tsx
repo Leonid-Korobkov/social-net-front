@@ -12,7 +12,7 @@ import { APP_URL } from '../../constants'
 function Auth() {
   const [selected, setSelected] = useState('login')
   const [isRegisterSuccess, setRegisterSuccess] = useState(false)
-  const { error } = useGetAllPostsQuery()
+  const { error } = useGetAllPostsQuery({})
 
   return (
     <>

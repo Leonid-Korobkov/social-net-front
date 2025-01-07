@@ -48,6 +48,7 @@ function Layout() {
         <div className="flex-2 p-4 lg:sticky lg:top-16 hidden lg:block">
           <NavBar onCreatePost={onOpen} />
         </div>
+        {/* mb-40 lg:mb-4 */}
         <div className="flex-2 p-4 overflow-auto pb-20 lg:pb-4 h-full w-full">
           <Outlet />
         </div>
