@@ -50,10 +50,16 @@ export const postApi = api.injectEndpoints({
         return endpointName
       },
       merge: (currentCache, newItems) => {
-        if (!currentCache || newItems.total !== currentCache.total ) return newItems
+        if (!currentCache || newItems.total !== currentCache.total)
+          return newItems
+
+        const uniquePosts = new Map()
+
+        currentCache.posts.forEach(post => uniquePosts.set(post.id, post))
+        newItems.posts.forEach(post => uniquePosts.set(post.id, post))
 
         return {
-          posts: [...currentCache.posts, ...newItems.posts],
+          posts: Array.from(uniquePosts.values()),
           total: newItems.total,
           hasMore: newItems.hasMore,
         }

@@ -1,6 +1,7 @@
 import { FcDislike } from 'react-icons/fc'
 import { MdOutlineFavoriteBorder } from 'react-icons/md'
 import MetaInfo from '../MetaInfo'
+import { FaRegHeart } from 'react-icons/fa6'
 
 interface AnimatedLikeProps {
   isLiked: boolean
@@ -13,7 +14,6 @@ function AnimatedLike({ isLiked, count, onClick }: AnimatedLikeProps) {
     <div className="flex items-center gap-2 cursor-pointer" onClick={onClick}>
       <MetaInfo
         count={count}
-        Icon={isLiked ? FcDislike : MdOutlineFavoriteBorder}
         isLiked={isLiked}
       />
     </div>

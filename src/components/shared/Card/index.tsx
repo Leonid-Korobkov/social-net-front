@@ -108,6 +108,7 @@ function Card({
   const [deleteComment] = useDeleteCommentMutation()
 
   const [error, setError] = useState('')
+  const [isLikeInProgress, setIsLikeInProgress] = useState(false)
   const navigate = useNavigate()
   const currentUser = useSelector(selectCurrent)
 
@@ -115,17 +116,24 @@ function Card({
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false)
 
   const handleLike = async () => {
+    if (isLikeInProgress) return
+    setIsLikeInProgress(true)
+
     try {
       if (cardFor === 'comment') {
-        toggleLike({ commentId, isLiked: likedByUser, postId: id }).unwrap()
+        await toggleLike({
+          commentId,
+          isLiked: likedByUser,
+          postId: id,
+        }).unwrap()
       } else {
         if (likedByUser) {
-          unlikePost({
+          await unlikePost({
             postId: id,
             userId: authorId,
           }).unwrap()
         } else {
-          likePost({
+          await likePost({
             postId: id,
             userId: authorId,
           }).unwrap()
@@ -137,6 +145,8 @@ function Card({
       } else {
         setError(err as string)
       }
+    } finally {
+      setIsLikeInProgress(false)
     }
   }
 
@@ -376,8 +386,8 @@ function Card({
           <RawHTML>{content}</RawHTML>
         </Typography>
       </CardBody>
-      <CardFooter className="gap-3">
-        <div className="flex gap-5 items-center">
+      <CardFooter className="gap-3 -ml-2">
+        <div className="flex gap-1 items-center">
           <AnimatedLike
             isLiked={likedByUser}
             count={likesCount}
