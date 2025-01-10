@@ -34,6 +34,16 @@ function Followers() {
     }
   }
 
+  function onCardClick(
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    id: string,
+  ) {
+    if (id === 'button') {
+      e.preventDefault()
+      return
+    }
+  }
+
   if (isLoading) {
     return <Spinner />
   }
@@ -86,6 +96,11 @@ function Followers() {
                           color={isFollowing ? 'default' : 'secondary'}
                           variant="flat"
                           className="gap-2"
+                        onClick={e => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }
+                        }
                           onPress={e => {
                             handleFollow(
                               followerItem.follower?.id ?? '',
