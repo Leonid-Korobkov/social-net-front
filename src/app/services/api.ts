@@ -55,6 +55,5 @@ export const api = createApi({
   tagTypes: ['CurrentUser', 'User', 'Post', 'Posts'],
   baseQuery: baseQueryWithErrorHandling,
   refetchOnMountOrArgChange: true,
-  keepUnusedDataFor: 0,
   endpoints: () => ({}),
 })
