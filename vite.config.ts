@@ -7,7 +7,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         cleanupOutdatedCaches: true,
@@ -46,11 +47,15 @@ export default defineConfig({
         short_name: 'Zling',
         description: 'Социальная сеть для людей, которые любят общаться',
         theme_color: '#9353D3',
+        background_color: '#ffffff',
+        display: 'standalone',
+        start_url: '/',
         icons: [
           {
             src: 'src/assets/img/favicomatic/favicon-196x196.png',
             sizes: '196x196',
             type: 'image/png',
+            purpose: 'any maskable',
           },
           {
             src: 'src/assets/img/favicomatic/favicon-96x96.png',
@@ -63,6 +68,10 @@ export default defineConfig({
             type: 'image/png',
           },
         ],
+      },
+      devOptions: {
+        enabled: true,
+        type: 'module',
       },
     }),
   ],

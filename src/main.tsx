@@ -14,13 +14,31 @@ import { registerSW } from 'virtual:pwa-register'
 // Регистрируем Service Worker с автообновлением
 const updateSW = registerSW({
   onNeedRefresh() {
-    if (window.confirm('Доступно обновление. Перезагрузить страницу?')) {
-      updateSW(true)
-    }
+    // Создаем и показываем уведомление
+    const notification = document.createElement('div')
+    notification.style.position = 'fixed'
+    notification.style.bottom = '20px'
+    notification.style.right = '20px'
+    notification.style.backgroundColor = '#9353D3'
+    notification.style.color = 'white'
+    notification.style.padding = '16px'
+    notification.style.borderRadius = '8px'
+    notification.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)'
+    notification.style.zIndex = '9999'
+    notification.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div>Доступно обновление приложения!</div>
+        <button onclick="location.reload()" style="background: white; color: #9353D3; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+          Обновить
+        </button>
+      </div>
+    `
+    document.body.appendChild(notification)
   },
   onOfflineReady() {
     console.log('Приложение готово к работе офлайн')
   },
+  immediate: true,
 })
 
 // Ленивая загрузка компонентов
