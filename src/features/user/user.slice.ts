@@ -22,7 +22,10 @@ const slice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    logout: () => initialState,
+    logout: () => {
+      localStorage.removeItem('token')
+      return initialState
+    },
     resetUser: state => {
       state.user = null
     },
@@ -32,6 +35,7 @@ const slice = createSlice({
       .addMatcher(userApi.endpoints.login.matchFulfilled, (state, action) => {
         state.token = action.payload.token
         state.isAuthenticated = true
+        localStorage.setItem('token', action.payload.token)
       })
       .addMatcher(
         userApi.endpoints.currentUser.matchFulfilled,
