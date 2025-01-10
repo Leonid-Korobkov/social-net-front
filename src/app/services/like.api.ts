@@ -1,5 +1,7 @@
 import { Like, Post, User } from '../types'
 import { api } from './api'
+import { PostsResponse } from './post.api'
+import { toast } from 'react-hot-toast'
 
 export const likeApi = api.injectEndpoints({
   endpoints: builder => ({
@@ -10,12 +12,15 @@ export const likeApi = api.injectEndpoints({
         body: { postId },
       }),
       invalidatesTags: ['Post', 'Posts', 'User'],
-      async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
-        const userIdString = userId.toString()
+      async onQueryStarted(
+        { postId, userId },
+        { dispatch, queryFulfilled, getState },
+      ) {
+        // Обновляем профиль пользователя
         const patchUserProfile = dispatch(
           api.util.updateQueryData(
             'getUserById' as never,
-            { id: userIdString } as never,
+            { id: userId.toString() } as never,
             (draft: User) => {
               const post = draft.posts.find(p => p.id === postId)
               if (post) {
@@ -26,6 +31,7 @@ export const likeApi = api.injectEndpoints({
           ),
         )
 
+        // Обновляем отдельный пост
         const patchSinglePost = dispatch(
           api.util.updateQueryData(
             'getPostById' as never,
@@ -37,26 +43,38 @@ export const likeApi = api.injectEndpoints({
           ),
         )
 
-        const patchAllPosts = dispatch(
-          api.util.updateQueryData(
-            'getAllPosts' as never,
-            undefined as never,
-            (draft: Post[]) => {
-              const post = draft.find(p => p.id === postId)
-              if (post) {
-                post.likedByUser = true
-                post.likes.push({} as Like)
-              }
-            },
-          ),
-        )
+        // Получаем все закешированные запросы getAllPosts
+        const queries = api.util.selectInvalidatedBy(getState(), [
+          { type: 'Posts' },
+        ])
+        const patchAllPostsResults = queries
+          .filter(query => query.endpointName === 'getAllPosts')
+          .map(query => {
+            return dispatch(
+              api.util.updateQueryData(
+                'getAllPosts' as never,
+                query.originalArgs as never,
+                (draft: PostsResponse) => {
+                  const post = draft.posts.find(p => p.id === postId)
+                  if (post) {
+                    post.likedByUser = true
+                    post.likes.push({} as Like)
+                  }
+                },
+              ),
+            )
+          })
 
         try {
           await queryFulfilled
-        } catch {
-          patchAllPosts.undo()
+        } catch (error) {
+          // Отменяем все оптимистичные обновления
+          patchAllPostsResults.forEach(patchResult => patchResult.undo())
           patchSinglePost.undo()
           patchUserProfile.undo()
+
+          // Показываем ошибку пользователю
+          toast.error('Не удалось поставить лайк')
         }
       },
     }),
@@ -68,12 +86,15 @@ export const likeApi = api.injectEndpoints({
         body: { postId },
       }),
       invalidatesTags: ['Post', 'Posts'],
-      async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
-        const userIdString = userId.toString()
+      async onQueryStarted(
+        { postId, userId },
+        { dispatch, queryFulfilled, getState },
+      ) {
+        // Обновляем профиль пользователя
         const patchUserProfile = dispatch(
           api.util.updateQueryData(
             'getUserById' as never,
-            { id: userIdString } as never,
+            { id: userId.toString() } as never,
             (draft: User) => {
               const post = draft.posts.find(p => p.id === postId)
               if (post) {
@@ -84,6 +105,7 @@ export const likeApi = api.injectEndpoints({
           ),
         )
 
+        // Обновляем отдельный пост
         const patchSinglePost = dispatch(
           api.util.updateQueryData(
             'getPostById' as never,
@@ -97,26 +119,38 @@ export const likeApi = api.injectEndpoints({
           ),
         )
 
-        const patchAllPosts = dispatch(
-          api.util.updateQueryData(
-            'getAllPosts' as never,
-            undefined as never,
-            (draft: Post[]) => {
-              const post = draft.find(p => p.id === postId)
-              if (post) {
-                post.likedByUser = false
-                post.likes.pop()
-              }
-            },
-          ),
-        )
+        // Получаем все закешированные запросы getAllPosts
+        const queries = api.util.selectInvalidatedBy(getState(), [
+          { type: 'Posts' },
+        ])
+        const patchAllPostsResults = queries
+          .filter(query => query.endpointName === 'getAllPosts')
+          .map(query => {
+            return dispatch(
+              api.util.updateQueryData(
+                'getAllPosts' as never,
+                query.originalArgs as never,
+                (draft: PostsResponse) => {
+                  const post = draft.posts.find(p => p.id === postId)
+                  if (post) {
+                    post.likedByUser = false
+                    post.likes.pop()
+                  }
+                },
+              ),
+            )
+          })
 
         try {
           await queryFulfilled
-        } catch {
-          patchAllPosts.undo()
+        } catch (error) {
+          // Отменяем все оптимистичные обновления
+          patchAllPostsResults.forEach(patchResult => patchResult.undo())
           patchSinglePost.undo()
           patchUserProfile.undo()
+
+          // Показываем ошибку пользователю
+          toast.error('Не удалось убрать лайк')
         }
       },
     }),

@@ -1,7 +1,7 @@
 import { Post } from '../types'
 import { api } from './api'
 
-interface PostsResponse {
+export interface PostsResponse {
   posts: Post[]
   total: number
   hasMore: boolean
@@ -26,7 +26,10 @@ export const postApi = api.injectEndpoints({
       invalidatesTags: ['Posts'],
     }),
 
-    getAllPosts: builder.query<PostsResponse, { page?: number; limit?: number }>({
+    getAllPosts: builder.query<
+      PostsResponse,
+      { page?: number; limit?: number }
+    >({
       query: ({ page, limit }) => ({
         url: '/posts',
         method: 'GET',
@@ -42,6 +45,20 @@ export const postApi = api.injectEndpoints({
           total: parseInt(meta?.response?.headers?.get('x-total-count') || '0'),
           hasMore: response.length === arg.limit,
         }
+      },
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName
+      },
+      merge: (currentCache, newItems) => {
+        if (!currentCache) return newItems
+        return {
+          posts: [...currentCache.posts, ...newItems.posts],
+          total: newItems.total,
+          hasMore: newItems.hasMore,
+        }
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.page !== previousArg?.page
       },
       providesTags: result =>
         result?.posts
