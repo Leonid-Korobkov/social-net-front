@@ -49,6 +49,12 @@ function Posts() {
         siteName="Zling"
         type="website"
       />
+      {/* TODO: оптимизировать посты и лайки
+      search: rtk query как сделать бесконечный скролл
+      https://medium.com/@ngure1/building-and-using-a-custom-infinite-scroll-hook-in-react-with-rtk-query-7e210850d3b5
+      https://stackoverflow.com/questions/72530121/rtk-query-infinite-scrolling-retaining-existing-data
+      https://codesandbox.io/p/sandbox/react-rtk-query-inifinite-scroll-8kj9bh?file=%2Fsrc%2FApp.js
+      */}
       <PostList
         data={allPosts}
         isLoading={isLoading}

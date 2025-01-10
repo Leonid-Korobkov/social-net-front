@@ -9,6 +9,19 @@ import Layout from './layout'
 import ErrorPage from './pages/Error'
 import { Spinner } from '@nextui-org/react'
 import AuthGuard from './features/user/AuthGuard'
+import { registerSW } from 'virtual:pwa-register'
+
+// Регистрируем Service Worker с автообновлением
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (window.confirm('Доступно обновление. Перезагрузить страницу?')) {
+      updateSW(true)
+    }
+  },
+  onOfflineReady() {
+    console.log('Приложение готово к работе офлайн')
+  },
+})
 
 // Ленивая загрузка компонентов
 const Auth = React.lazy(() => import('./pages/Auth'))
