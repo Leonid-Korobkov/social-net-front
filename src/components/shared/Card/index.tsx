@@ -405,7 +405,6 @@ function Card({
             </Link>
           ) : null}
         </div>
-        {error && <Alert color="danger" title={error} />}
       </CardFooter>
 
       <Modal
