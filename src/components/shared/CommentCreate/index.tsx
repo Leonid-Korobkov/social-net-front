@@ -27,7 +27,7 @@ function CreateComment() {
 
       promise
         .then(() => {
-          toast.success('Комментарий успешно создан!')я
+          toast.success('Комментарий успешно создан!')
           setValue('comment', '')
           // Скролл к комментарию
           window.scrollTo({
