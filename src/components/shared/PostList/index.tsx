@@ -55,18 +55,22 @@ function PostList({
         <AnimatePresence mode="popLayout">
           {data &&
             data.length > 0 &&
-            data.map(
-              ({
+            data.map(post => {
+              if (!post || !post.author) return null
+
+              const {
                 author,
                 authorId,
-                comments,
+                comments = [],
                 content,
                 createdAt,
                 id,
-                likes,
-                likedByUser,
-                isFollowing,
-              }) => (
+                likes = [],
+                likedByUser = false,
+                isFollowing = false,
+              } = post
+
+              return (
                 <motion.div
                   key={id}
                   initial={{ opacity: 0 }}
@@ -78,21 +82,21 @@ function PostList({
                   <Card
                     id={id}
                     authorId={authorId}
-                    avatarUrl={author.avatarUrl || ''}
+                    avatarUrl={author?.avatarUrl || ''}
                     cardFor={'post'}
                     content={content}
-                    name={author.name || ''}
+                    name={author?.name || ''}
                     likedByUser={likedByUser}
-                    commentsCount={comments.length}
+                    commentsCount={comments?.length || 0}
                     createdAt={createdAt}
-                    likesCount={likes.length}
+                    likesCount={likes?.length || 0}
                     isFollowing={isFollowing}
                     likes={likes}
                     onClick={handleCardClick}
                   />
                 </motion.div>
-              ),
-            )}
+              )
+            })}
         </AnimatePresence>
       </motion.div>
       {(hasMore || isFetchingMore) && (

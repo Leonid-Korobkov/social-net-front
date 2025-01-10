@@ -9,37 +9,6 @@ import Layout from './layout'
 import ErrorPage from './pages/Error'
 import { Spinner } from '@nextui-org/react'
 import AuthGuard from './features/user/AuthGuard'
-import { registerSW } from 'virtual:pwa-register'
-import { toast } from 'react-hot-toast'
-
-// Регистрация Service Worker с автообновлением
-const updateSW = registerSW({
-  immediate: true,
-  onNeedRefresh() {
-    toast.custom(
-      t => (
-        <div className="bg-primary text-white p-4 rounded-lg shadow-lg z-50 flex items-center gap-3">
-          <div>Доступна новая версия приложения!</div>
-          <button
-            onClick={() => {
-              updateSW(true)
-              toast.dismiss(t.id)
-            }}
-            className="bg-white text-primary px-4 py-2 rounded hover:bg-gray-100 transition-colors"
-          >
-            Обновить
-          </button>
-        </div>
-      ),
-      {
-        duration: Infinity,
-      },
-    )
-  },
-  onOfflineReady() {
-    toast.success('Приложение готово к работе офлайн')
-  },
-})
 
 // Ленивая загрузка компонентов
 const Auth = React.lazy(() => import('./pages/Auth'))
