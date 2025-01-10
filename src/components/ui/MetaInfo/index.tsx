@@ -12,13 +12,40 @@ interface IMetaInfo {
 function MetaInfo({ count, Icon, classNameForIcon, isLiked }: IMetaInfo) {
   return (
     <div className="flex items-center gap-2 cursor-pointer">
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         <motion.p
           key={count}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.15 }}
+          initial={{
+            opacity: 0,
+            y: -20,
+            filter: 'blur(8px)',
+            scale: 1.2,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            scale: 1,
+            transition: {
+              duration: 0.4,
+              type: 'spring',
+              damping: 15,
+              stiffness: 200,
+            },
+          }}
+          exit={{
+            opacity: 0,
+            y: 20,
+            filter: 'blur(8px)',
+            scale: 0.8,
+            transition: {
+              duration: 0.3,
+            },
+          }}
+          style={{
+            backfaceVisibility: 'hidden',
+            transform: 'perspective(1000px)',
+          }}
           className="select-none font-semibold text-default-400 text-l"
         >
           {count}
@@ -35,8 +62,8 @@ function MetaInfo({ count, Icon, classNameForIcon, isLiked }: IMetaInfo) {
           animate={
             isLiked
               ? {
-                  scale: [1, 1.2, 0.95, 1],
-                  rotate: [0, -15, 15, 0],
+                  scale: [1, 1.4, 0.9, 1.1, 1],
+                  rotate: [0, -20, 20, -20, 0],
                 }
               : {
                   scale: 1,
@@ -44,8 +71,8 @@ function MetaInfo({ count, Icon, classNameForIcon, isLiked }: IMetaInfo) {
                 }
           }
           transition={{
-            duration: 0.5,
-            ease: 'easeInOut',
+            duration: 0.6,
+            ease: [0.4, 0, 0.2, 1],
           }}
         >
           <Icon />

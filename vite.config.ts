@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
@@ -7,65 +7,63 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
-      injectRegister: 'auto',
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      manifest: {
+        name: 'Zling Social Network',
+        short_name: 'Zling',
+        description: 'Социальная сеть Zling',
+        theme_color: '#ffffff',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable',
+          },
+        ],
+      },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         cleanupOutdatedCaches: true,
-        skipWaiting: true,
         clientsClaim: true,
+        skipWaiting: true,
+        sourcemap: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/zling-api\.up\.railway\.app\/api\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 5, // 5 минут
-              },
+              networkTimeoutSeconds: 10,
               cacheableResponse: {
                 statuses: [0, 200],
               },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/zling\.up\.railway\.app\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'site-cache',
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24, // 24 часа
+                maxAgeSeconds: 24 * 60 * 60, // 24 часа
               },
             },
           },
-        ],
-      },
-      manifest: {
-        name: 'Zling',
-        short_name: 'Zling',
-        description: 'Социальная сеть для людей, которые любят общаться',
-        theme_color: '#9353D3',
-        background_color: '#ffffff',
-        display: 'standalone',
-        start_url: '/',
-        icons: [
           {
-            src: 'src/assets/img/favicomatic/favicon-196x196.png',
-            sizes: '196x196',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-          {
-            src: 'src/assets/img/favicomatic/favicon-96x96.png',
-            sizes: '96x96',
-            type: 'image/png',
-          },
-          {
-            src: 'src/assets/img/favicomatic/favicon-32x32.png',
-            sizes: '32x32',
-            type: 'image/png',
+            urlPattern: /\.(js|css|png|jpg|jpeg|svg|gif)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'assets-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 дней
+              },
+            },
           },
         ],
       },

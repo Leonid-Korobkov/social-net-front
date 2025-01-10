@@ -10,35 +10,35 @@ import ErrorPage from './pages/Error'
 import { Spinner } from '@nextui-org/react'
 import AuthGuard from './features/user/AuthGuard'
 import { registerSW } from 'virtual:pwa-register'
+import { toast } from 'react-hot-toast'
 
-// Регистрируем Service Worker с автообновлением
+// Регистрация Service Worker с автообновлением
 const updateSW = registerSW({
+  immediate: true,
   onNeedRefresh() {
-    // Создаем и показываем уведомление
-    const notification = document.createElement('div')
-    notification.style.position = 'fixed'
-    notification.style.bottom = '20px'
-    notification.style.right = '20px'
-    notification.style.backgroundColor = '#9353D3'
-    notification.style.color = 'white'
-    notification.style.padding = '16px'
-    notification.style.borderRadius = '8px'
-    notification.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)'
-    notification.style.zIndex = '9999'
-    notification.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div>Доступно обновление приложения!</div>
-        <button onclick="location.reload()" style="background: white; color: #9353D3; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-          Обновить
-        </button>
-      </div>
-    `
-    document.body.appendChild(notification)
+    toast.custom(
+      t => (
+        <div className="bg-primary text-white p-4 rounded-lg shadow-lg z-50 flex items-center gap-3">
+          <div>Доступна новая версия приложения!</div>
+          <button
+            onClick={() => {
+              updateSW(true)
+              toast.dismiss(t.id)
+            }}
+            className="bg-white text-primary px-4 py-2 rounded hover:bg-gray-100 transition-colors"
+          >
+            Обновить
+          </button>
+        </div>
+      ),
+      {
+        duration: Infinity,
+      },
+    )
   },
   onOfflineReady() {
-    console.log('Приложение готово к работе офлайн')
+    toast.success('Приложение готово к работе офлайн')
   },
-  immediate: true,
 })
 
 // Ленивая загрузка компонентов
