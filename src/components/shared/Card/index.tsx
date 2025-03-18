@@ -29,7 +29,7 @@ import {
 import { AiOutlineLike } from 'react-icons/ai'
 import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useSelector } from 'react-redux'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import {
   useCreateLikeMutation,
   useDeleteLikeMutation,
@@ -83,24 +83,25 @@ const getLocale = (): Locale => {
   }
 }
 
-function Card({
-  avatarUrl = '',
-  name = '',
-  content = '',
-  authorId = '',
-  id = '',
-  likesCount = 0,
+const Card = memo(
+  ({
+    avatarUrl = '',
+    name = '',
+    content = '',
+    authorId = '',
+    id = '',
+    likesCount = 0,
   commentsCount = 0,
   cardFor = 'post',
   likedByUser = false,
   createdAt,
-  commentId = '',
-  isFollowing = false,
-  likes = [],
-  onClick,
-}: ICard) {
-  const [likePost] = useCreateLikeMutation()
-  const [unlikePost] = useDeleteLikeMutation()
+    commentId = '',
+    isFollowing = false,
+    likes = [],
+    onClick,
+  }: ICard) => {
+    const [likePost] = useCreateLikeMutation()
+    const [unlikePost] = useDeleteLikeMutation()
 
   const [toggleLike] = useToggleCommentLikeMutation()
 
@@ -489,6 +490,6 @@ function Card({
       </Modal>
     </NextUiCard>
   )
-}
+})
 
 export default Card
