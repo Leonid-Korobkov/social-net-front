@@ -10,6 +10,12 @@ import ErrorPage from './pages/Error'
 import { Spinner } from '@nextui-org/react'
 import AuthGuard from './features/user/AuthGuard'
 
+// import { scan } from 'react-scan' // must be imported before React and React DOM
+
+// scan({
+//   enabled: true,
+// })
+
 // Ленивая загрузка компонентов
 const Auth = React.lazy(() => import('./pages/Auth'))
 const Posts = React.lazy(() => import('./pages/Posts'))
