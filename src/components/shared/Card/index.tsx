@@ -18,7 +18,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Divider,
-} from '@nextui-org/react'
+} from "@heroui/react"
 import { Link, useNavigate } from 'react-router-dom'
 import {
   FaCircleInfo,

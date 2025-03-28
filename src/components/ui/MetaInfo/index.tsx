@@ -1,4 +1,4 @@
-import { Spinner } from '@nextui-org/react'
+import { Spinner } from "@heroui/react"
 import { IconType } from 'react-icons'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaHeart, FaRegHeart } from 'react-icons/fa6'

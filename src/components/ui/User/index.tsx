@@ -1,4 +1,4 @@
-import { User as NextUiUser } from '@nextui-org/react'
+import { User as NextUiUser } from "@heroui/react"
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 
 interface IUser {

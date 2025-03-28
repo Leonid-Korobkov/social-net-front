@@ -1,4 +1,4 @@
-import { Button as NextButton } from '@nextui-org/react'
+import { Button as NextButton } from "@heroui/react"
 
 export type TButtonColors =
   | 'default'

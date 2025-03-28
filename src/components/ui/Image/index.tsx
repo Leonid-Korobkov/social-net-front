@@ -1,4 +1,4 @@
-import { ImageProps } from '@nextui-org/react'
+import { ImageProps } from "@heroui/react"
 import ImageWithSkeleton from '../ImageWithSkeleton'
 
 function Image({ src, alt, className, width, ...props }: ImageProps) {

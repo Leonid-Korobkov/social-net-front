@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import MetaInfo from '../MetaInfo'
 import { IconType } from 'react-icons'
-import { Spinner, Skeleton } from '@nextui-org/react'
+import { Spinner, Skeleton } from "@heroui/react"
 
 interface ICountInfo {
   Icon: IconType

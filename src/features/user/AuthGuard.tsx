@@ -1,4 +1,4 @@
-import { Image, Spinner } from '@nextui-org/react'
+import { Image, Spinner } from "@heroui/react"
 import { useCurrentUserQuery } from '../../app/services/user.api'
 import { useTheme } from 'next-themes'
 

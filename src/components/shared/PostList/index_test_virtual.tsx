@@ -3,7 +3,7 @@ import { Post } from '../../../app/types'
 import CardSkeleton from '../../ui/CardSkeleton'
 import Card from '../Card'
 import { useEffect, useRef, useState } from 'react'
-import { Spinner } from '@nextui-org/react'
+import { Spinner } from "@heroui/react"
 import { Virtuoso, Components } from 'react-virtuoso'
 
 interface PostListProps {

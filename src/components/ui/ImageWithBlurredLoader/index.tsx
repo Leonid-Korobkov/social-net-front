@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Image as NextImage } from '@nextui-org/react'
+import { Image as NextImage } from "@heroui/react"
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 
 interface ImageWithBlurredLoaderProps {

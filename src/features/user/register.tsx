@@ -1,4 +1,4 @@
-import { Alert, Button, Input, Link } from '@nextui-org/react'
+import { Alert, Button, Input, Link } from "@heroui/react"
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'

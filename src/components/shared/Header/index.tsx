@@ -18,7 +18,7 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownSection,
-} from '@nextui-org/react'
+} from "@heroui/react"
 import { useTheme } from 'next-themes'
 import { FaMoon } from 'react-icons/fa'
 import { LuSunMedium } from 'react-icons/lu'

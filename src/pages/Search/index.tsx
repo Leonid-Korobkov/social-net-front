@@ -8,7 +8,7 @@ import {
   Spinner,
   Button,
   Alert,
-} from '@nextui-org/react'
+} from "@heroui/react"
 import { IoSearch } from 'react-icons/io5'
 import UserCard from '../../components/shared/UserCard'
 import PostCard from '../../components/shared/PostCard'

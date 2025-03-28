@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.6.0",
-    "@nextui-org/alert": "^2.2.4",
-    "@nextui-org/react": "^2.6.5",
+    "@heroui/alert": "2.2.16",
+    "@heroui/react": "2.7.5",
     "@reduxjs/toolkit": "^2.0.1",
     "@tiptap/extension-color": "^2.10.3",
     "@tiptap/pm": "^2.10.3",

@@ -3,7 +3,7 @@ import { Post } from '../../../app/types'
 import CardSkeleton from '../../ui/CardSkeleton'
 import Card from '../Card'
 import { useEffect, useRef, useState } from 'react'
-import { Spinner } from '@nextui-org/react'
+import { Spinner } from "@heroui/react"
 import { VariableSizeList as List } from 'react-window'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { useInView } from 'react-intersection-observer'

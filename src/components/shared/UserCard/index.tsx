@@ -1,4 +1,4 @@
-import { Card, CardBody, Avatar } from '@nextui-org/react'
+import { Card, CardBody, Avatar } from "@heroui/react"
 import { User } from '../../../app/types'
 import { Link } from 'react-router-dom'
 

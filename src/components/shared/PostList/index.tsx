@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Post } from '../../../app/types'
 import CardSkeleton from '../../ui/CardSkeleton'
 import Card from '../Card'
-import { Spinner } from '@nextui-org/react'
+import { Spinner } from "@heroui/react"
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
 

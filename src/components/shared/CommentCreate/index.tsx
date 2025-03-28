@@ -1,4 +1,4 @@
-import { Button, Textarea } from '@nextui-org/react'
+import { Button, Textarea } from "@heroui/react"
 import { IoMdCreate } from 'react-icons/io'
 import { useForm, Controller } from 'react-hook-form'
 import { useParams } from 'react-router-dom'

@@ -13,7 +13,7 @@ import { selectIsAuthenticated } from '../features/user/user.slice'
 import { useEffect } from 'react'
 import Profile from '../components/shared/Profile'
 import CreatePostModal from '../components/shared/CreatePostModal'
-import { useDisclosure } from '@nextui-org/react'
+import { useDisclosure } from "@heroui/react"
 
 function Layout() {
   const isAuth = useSelector(selectIsAuthenticated)

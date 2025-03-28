@@ -1,6 +1,6 @@
 import { useController } from 'react-hook-form'
 import { Control } from 'react-hook-form'
-import { Input as NextInput } from '@nextui-org/react'
+import { Input as NextInput } from "@heroui/react"
 
 type Props = {
   name: string

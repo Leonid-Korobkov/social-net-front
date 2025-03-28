@@ -1,4 +1,4 @@
-import { Card, CardHeader, Skeleton } from '@nextui-org/react'
+import { Card, CardHeader, Skeleton } from "@heroui/react"
 
 function CreateCommentSkeleton() {
   return (

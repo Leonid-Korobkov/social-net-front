@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardBody,
   Image as NextImage,
-} from '@nextui-org/react'
+} from "@heroui/react"
 import { selectCurrent } from '../../../features/user/user.slice'
 import { Link } from 'react-router-dom'
 import { MdAlternateEmail } from 'react-icons/md'

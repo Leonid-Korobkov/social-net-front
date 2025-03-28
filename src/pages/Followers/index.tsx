@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../features/user/user.slice'
 import { Link, useParams } from 'react-router-dom'
-import { Button, Card, CardBody, Spinner } from '@nextui-org/react'
+import { Button, Card, CardBody, Spinner } from "@heroui/react"
 import User from '../../components/ui/User'
 import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import { APP_URL } from '../../constants'

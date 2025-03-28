@@ -9,7 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
   Textarea,
-} from '@nextui-org/react'
+} from "@heroui/react"
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { User } from '../../../app/types'

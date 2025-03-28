@@ -7,7 +7,7 @@ import {
   Routes,
   Route,
 } from 'react-router-dom'
-import { NextUIProvider } from '@nextui-org/system'
+import { HeroUIProvider } from "@heroui/system"
 
 import Posts from './pages/Posts'
 
@@ -21,11 +21,11 @@ function App() {
   const navigate = useNavigate()
 
   return (
-    <NextUIProvider navigate={navigate} useHref={useHref}>
+    <HeroUIProvider navigate={navigate} useHref={useHref}>
       <Routes>
         <Route path="/" element={<Posts />} />
       </Routes>
-    </NextUIProvider>
+    </HeroUIProvider>
   )
 }
 

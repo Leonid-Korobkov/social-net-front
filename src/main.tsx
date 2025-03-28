@@ -7,7 +7,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ThemeProvider from './components/shared/ThemeProvider'
 import Layout from './layout'
 import ErrorPage from './pages/Error'
-import { Spinner } from '@nextui-org/react'
+import { Spinner } from "@heroui/react"
 import AuthGuard from './features/user/AuthGuard'
 
 // import { scan } from 'react-scan' // must be imported before React and React DOM

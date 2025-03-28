@@ -1,4 +1,4 @@
-import { Alert, Card, CardBody, Tab, Tabs } from '@nextui-org/react'
+import { Alert, Card, CardBody, Tab, Tabs } from "@heroui/react"
 import { useState } from 'react'
 import { IoLogIn, IoPeople } from 'react-icons/io5'
 import Login from '../../features/user/login'

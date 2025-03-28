@@ -4,7 +4,7 @@ import {
   CardBody,
   CardFooter,
   Skeleton,
-} from '@nextui-org/react'
+} from "@heroui/react"
 
 function CardSkeleton() {
   return (

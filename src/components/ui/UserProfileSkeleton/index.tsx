@@ -1,4 +1,4 @@
-import { Card, Skeleton } from '@nextui-org/react'
+import { Card, Skeleton } from "@heroui/react"
 import { FaUsers } from 'react-icons/fa'
 import { FiUsers } from 'react-icons/fi'
 import CountInfo from '../CountInfo'

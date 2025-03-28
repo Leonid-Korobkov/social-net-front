@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
-import { Image } from '@nextui-org/react'
+import { Image } from "@heroui/react"
 import { BASE_URL } from '../../../constants'
 
 interface ImageUploadProps {

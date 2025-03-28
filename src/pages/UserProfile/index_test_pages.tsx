@@ -7,10 +7,10 @@ import {
   Modal,
   ModalContent,
   Image as NextImage,
-} from '@nextui-org/react'
+} from "@heroui/react"
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md'
 import { MdOutlinePersonAddDisabled } from 'react-icons/md'
-import { useDisclosure } from '@nextui-org/react'
+import { useDisclosure } from "@heroui/react"
 import { APP_URL } from '../../constants'
 import { CiEdit } from 'react-icons/ci'
 import { resetUser, selectCurrent } from '../../features/user/user.slice'

@@ -1,6 +1,6 @@
 import { Controller, useForm } from 'react-hook-form'
 import { useCreatePostMutation } from '../../../app/services/post.api'
-import { Button, Textarea } from '@nextui-org/react'
+import { Button, Textarea } from "@heroui/react"
 import { IoMdCreate } from 'react-icons/io'
 import { toast } from 'react-hot-toast'
 import { hasErrorField } from '../../../utils/hasErrorField'
