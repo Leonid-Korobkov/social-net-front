@@ -1,6 +1,4 @@
-import { BsPostcard } from 'react-icons/bs'
-import { SlUserFollowing } from "react-icons/sl";
-import { GiShadowFollower } from "react-icons/gi";
+import { FaUsers } from "react-icons/fa";
 import { IoSearch } from 'react-icons/io5'
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
@@ -8,6 +6,7 @@ import NavButton from '../NavButton'
 import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
 import { FaRegSquarePlus, FaUser } from 'react-icons/fa6'
 import { GoHomeFill } from 'react-icons/go';
+import { RiUserFollowFill } from 'react-icons/ri'
 
 interface NavBarProps {
   onCreatePost: () => void
@@ -37,12 +36,12 @@ function NavBar({ onCreatePost }: NavBarProps) {
     },
     {
       path: `users/${currentUser?.id}/following`,
-      icon: SlUserFollowing,
+      icon: RiUserFollowFill,
       label: 'Подписки',
     },
     {
       path: `users/${currentUser?.id}/followers`,
-      icon: GiShadowFollower,
+      icon: FaUsers,
       label: 'Подписчики',
     },
     {

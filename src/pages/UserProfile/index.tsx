@@ -7,10 +7,10 @@ import {
   Modal,
   ModalContent,
   Image as NextImage,
-} from "@heroui/react"
+} from '@heroui/react'
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md'
 import { MdOutlinePersonAddDisabled } from 'react-icons/md'
-import { useDisclosure } from "@heroui/react"
+import { useDisclosure } from '@heroui/react'
 import { APP_URL } from '../../constants'
 import { CiEdit } from 'react-icons/ci'
 import { resetUser, selectCurrent } from '../../features/user/user.slice'
@@ -35,8 +35,8 @@ import OpenGraphMeta from '../../components/shared/OpenGraphMeta'
 import Image from '../../components/ui/Image'
 import { Post } from '../../app/types'
 import { BsPostcardFill } from 'react-icons/bs'
-import { SlUserFollowing } from 'react-icons/sl'
-import { GiShadowFollower } from 'react-icons/gi'
+import { RiUserFollowFill } from 'react-icons/ri'
+import { FaUsers } from 'react-icons/fa'
 
 function UserProfile() {
   const { id } = useParams<{ id: string }>()
@@ -199,14 +199,14 @@ function UserProfile() {
                 title="Публикации"
               />
               <CountInfo
-                Icon={GiShadowFollower}
+                Icon={FaUsers}
                 count={user.followers.length}
                 title="Подписчики"
                 userId={user.id}
                 type="followers"
               />
               <CountInfo
-                Icon={SlUserFollowing}
+                Icon={RiUserFollowFill}
                 count={user.following.length}
                 title="Подписки"
                 userId={user.id}
