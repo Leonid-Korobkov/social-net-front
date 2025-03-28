@@ -9,7 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
   Textarea,
-} from "@heroui/react"
+} from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { User } from '../../../app/types'
@@ -123,7 +123,13 @@ function EditProfile({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} backdrop="blur" placement="top">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      backdrop="blur"
+      placement="top"
+      isDismissable={false}
+    >
       <ModalContent>
         {onClose => (
           <>
@@ -239,7 +245,7 @@ function EditProfile({
                         isInvalid={errors.dateOfBirth ? true : false}
                         showMonthAndYearPickers
                         selectorButtonPlacement="start"
-                        description="Формат даты: ММ.ДД.ГГГГ"
+                        description="Формат даты: ДД.ММ.ГГГГ"
                       />
                     )
                   }}

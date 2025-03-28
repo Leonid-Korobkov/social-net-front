@@ -15,9 +15,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@internationalized/date": "^3.6.0",
     "@heroui/alert": "2.2.16",
     "@heroui/react": "2.7.5",
+    "@internationalized/date": "^3.7.0",
+    "@react-types/shared": "^3.28.0",
     "@reduxjs/toolkit": "^2.0.1",
     "@tiptap/extension-color": "^2.10.3",
     "@tiptap/pm": "^2.10.3",
