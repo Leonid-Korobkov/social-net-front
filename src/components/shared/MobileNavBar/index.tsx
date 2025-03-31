@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom'
-import { CgProfile } from 'react-icons/cg'
 import { IoSearch } from 'react-icons/io5'
 import { useSelector } from 'react-redux'
 import { selectCurrent } from '../../../features/user/user.slice'
