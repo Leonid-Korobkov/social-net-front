@@ -2,14 +2,14 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../store'
 import { BASE_URL } from '@/app/constants'
 import { BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query'
+import Cookies from 'js-cookie'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${BASE_URL}/api`,
   prepareHeaders: (headers, { getState }) => {
-    // Проверяем, что находимся в браузере, а не на сервере
     const token =
       typeof window !== 'undefined'
-        ? (getState() as RootState).auth.token || localStorage.getItem('token')
+        ? Cookies.get('token') || (getState() as RootState).auth.token
         : (getState() as RootState).auth.token
 
     if (token) {
@@ -29,6 +29,10 @@ const baseQueryWithErrorHandling = async (
     const result = await baseQuery(args, api, extraOptions)
 
     if (result.error) {
+      if (result.error.status === 401) {
+        Cookies.remove('token', { path: '/' })
+      }
+
       // Обрабатываем ошибки от сервера
       if (result.error.status === 500) {
         return {

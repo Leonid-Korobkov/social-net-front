@@ -12,7 +12,7 @@ function ErrorPage() {
 
   return (
     <>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-dvh">
         <Card className="p-8 text-center space-y-4">
           <BiError className="text-6xl text-danger mx-auto" />
           <h1 className="text-2xl font-bold text-danger">

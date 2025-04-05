@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from '@/store/types'
 import { api } from './api'
+import Cookies from 'js-cookie' // Добавляем пакет js-cookie для работы с куками
 
 export const userApi = api.injectEndpoints({
   endpoints: builder => ({
@@ -13,6 +14,24 @@ export const userApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
+      onQueryStarted: async (_, { queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled
+          // Устанавливаем токен в cookies с настройками безопасности
+          // expires - срок действия куки (7 дней)
+          // path - доступность куки для всех страниц сайта
+          // secure - куки только по HTTPS (в продакшн)
+          // sameSite - защита от CSRF атак
+          Cookies.set('token', data.token, {
+            expires: 7,
+            path: '/',
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+          })
+        } catch (error) {
+          console.error('Ошибка при сохранении токена:', error)
+        }
+      },
     }),
 
     registerUser: builder.mutation<
@@ -24,6 +43,21 @@ export const userApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
+    }),
+
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: '/logout',
+        method: 'POST',
+      }),
+      onQueryStarted: async (_, { queryFulfilled }) => {
+        try {
+          await queryFulfilled
+          Cookies.remove('token', { path: '/' })
+        } catch (error) {
+          console.error('Ошибка при удалении токена:', error)
+        }
+      },
     }),
 
     currentUser: builder.query<User, void>({

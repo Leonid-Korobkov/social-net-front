@@ -1,11 +1,11 @@
-'use client'
+import { ReactNode } from 'react'
 
 interface ContainerProps {
-  children: React.ReactNode | React.ReactNode[] | React.ReactNode
+  children: ReactNode | ReactNode[] | ReactNode
   className?: string
 }
 
-function Container({ children, className }: ContainerProps) {
+export default function Container({ children, className }: ContainerProps) {
   return (
     <div
       className={`lg:flex max-w-screen-xl mx-auto w-full items-start justify-between ${className}`}
@@ -14,5 +14,3 @@ function Container({ children, className }: ContainerProps) {
     </div>
   )
 }
-
-export default Container

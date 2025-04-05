@@ -10,15 +10,18 @@ import {
   useDeleteFollowMutation,
 } from '@/store/services/follow.api'
 import Link from 'next/link'
+import { use } from 'react'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 function Followers({ params }: PageProps) {
-  const { id } = params
+  const unwrappedParams = use(params)
+  const { id } = unwrappedParams
+
   const currentUser = useSelector(selectCurrent)
   const { data: user, isLoading } = useGetUserByIdQuery(
     { id: id ?? '' },

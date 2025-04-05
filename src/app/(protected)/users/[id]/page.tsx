@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
@@ -35,19 +35,23 @@ import ProfileInfo from '@/components/shared/ProfileInfo'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import PostList from '@/components/shared/PostList'
 import EditProfile from '@/components/shared/EditProfile'
+import { GetServerSideProps } from 'next/types'
+import { notFound, useParams } from 'next/navigation'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
   searchParams: {
     comment?: string
   }
 }
 
 function UserProfile({ params }: PageProps) {
-  // const { id } = params
-  const id = '5'
+  // Используем React.use для разворачивания Promise в params
+  const unwrappedParams = use(params)
+  const { id } = unwrappedParams
+
   const { isOpen, onOpen, onClose } = useDisclosure()
   const currentUser = useSelector(selectCurrent)
   const { data: user, isLoading } = useGetUserByIdQuery(
@@ -108,27 +112,11 @@ function UserProfile({ params }: PageProps) {
   }, [user, isLoading])
 
   if (isLoading) {
-    return <UserProfileSkeleton />
+    return null
   }
-
+  
   if (!user) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center justify-center min-h-[60vh] p-4"
-      >
-        <RiEmotionSadLine className="w-32 h-32 text-gray-400 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-700 mb-2">
-          Упс! Пользователь не найден
-        </h2>
-        <p className="text-gray-500 text-center max-w-md mb-4">
-          Возможно, пользователь был удален или указан неверный идентификатор
-        </p>
-        <GoBack />
-      </motion.div>
-    )
+    return notFound()
   }
 
   return (
@@ -236,9 +224,14 @@ function UserProfile({ params }: PageProps) {
           isLoading={isLoading}
           handleCardClick={() => {}}
         />
-        <EditProfile isOpen={isOpen} onClose={onClose} user={user} params={{
-          id: ''
-        }} />
+        <EditProfile
+          isOpen={isOpen}
+          onClose={onClose}
+          user={user}
+          params={{
+            id: '',
+          }}
+        />
         <Modal
           closeButton={true}
           aria-labelledby="modal-title"

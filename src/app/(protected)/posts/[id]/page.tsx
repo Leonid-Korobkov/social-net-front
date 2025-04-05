@@ -1,7 +1,7 @@
 'use client'
 import { useGetPostByIdQuery } from '@/store/services/post.api'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { useEffect, use } from 'react'
 import GoBack from '@/components/shared/GoBack'
 import CardSkeleton from '@/components/ui/CardSkeleton'
 import CreateCommentSkeleton from '@/components/ui/CommentCreateSkeleton'
@@ -11,15 +11,17 @@ import Card from '@/components/shared/Card'
 import { useRouter } from 'next/navigation'
 
 interface PageProps {
-  params: {
+  paramsIn: Promise<{
     id: string
-  }
+  }>
   searchParams: {
     comment?: string
   }
 }
 
-function CurrentPost({ params, searchParams }: PageProps) {
+function CurrentPost({ paramsIn, searchParams }: PageProps) {
+  const params = use(paramsIn)
+
   const commentId = searchParams.comment
   const router = useRouter()
   const { data, isLoading } = useGetPostByIdQuery(params.id)

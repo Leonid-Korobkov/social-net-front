@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { User } from '@/store/types'
 import { userApi } from '@/store/services/user.api'
 import { RootState } from '@/store/store'
+import Cookies from 'js-cookie'
 
 interface InitialState {
   user: User | null
@@ -23,9 +24,7 @@ const slice = createSlice({
   initialState,
   reducers: {
     logout: () => {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token')
-      }
+      Cookies.remove('token', { path: '/' })
       return initialState
     },
     resetUser: state => {
@@ -37,9 +36,7 @@ const slice = createSlice({
       .addMatcher(userApi.endpoints.login.matchFulfilled, (state, action) => {
         state.token = action.payload.token
         state.isAuthenticated = true
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('token', action.payload.token)
-        }
+        Cookies.set('token', action.payload.token, { path: '/' })
       })
       .addMatcher(
         userApi.endpoints.currentUser.matchFulfilled,
@@ -54,13 +51,14 @@ const slice = createSlice({
           state.user = action.payload
         }
       )
+      .addMatcher(userApi.endpoints.logout.matchFulfilled, () => initialState)
   },
 })
 
 export const { logout, resetUser } = slice.actions
 export default slice.reducer
 
-// Селекторы для получения данных из стейта
+// Селекторы для получения данных из стейта
 export const selectIsAuthenticated = (state: RootState) =>
   state.auth.isAuthenticated
 
