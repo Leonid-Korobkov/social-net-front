@@ -28,7 +28,7 @@ import { Post } from '@/store/types'
 import { useDeleteFollowMutation } from '@/store/services/follow.api'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import UserProfileSkeleton from '@/components/ui/UserProfileSkeleton'
-import GoBack from '@/components/shared/GoBack'
+import GoBack from '@/components/layout/GoBack'
 import Image from '@/components/ui/Image'
 import CountInfo from '@/components/ui/CountInfo'
 import ProfileInfo from '@/components/shared/ProfileInfo'
@@ -38,19 +38,19 @@ import EditProfile from '@/components/shared/EditProfile'
 import { GetServerSideProps } from 'next/types'
 import { notFound, useParams } from 'next/navigation'
 
-interface PageProps {
+type PageProps = {
   params: Promise<{
+    [x: string]: string
     id: string
   }>
-  searchParams: {
-    comment?: string
-  }
 }
 
 function UserProfile({ params }: PageProps) {
   // Используем React.use для разворачивания Promise в params
   const unwrappedParams = use(params)
   const { id } = unwrappedParams
+  // const paramss = useParams();
+  // const id = paramss.id as string;
 
   const { isOpen, onOpen, onClose } = useDisclosure()
   const currentUser = useSelector(selectCurrent)
@@ -112,9 +112,9 @@ function UserProfile({ params }: PageProps) {
   }, [user, isLoading])
 
   if (isLoading) {
-    return null
+    return <UserProfileSkeleton />
   }
-  
+
   if (!user) {
     return notFound()
   }

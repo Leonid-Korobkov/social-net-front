@@ -1,5 +1,5 @@
 'use client'
-import { Button, Input, Link, Alert } from "@heroui/react"
+import { Button, Input, Link, Alert } from '@heroui/react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'

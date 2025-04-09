@@ -110,7 +110,7 @@ export const searchApi = api.injectEndpoints({
               post.content.toLowerCase().includes(arg.toLowerCase()) ||
               (post.author?.name || '')
                 .toLowerCase()
-                .includes(arg.toLowerCase()),
+                .includes(arg.toLowerCase())
           ),
         }
       },
@@ -128,7 +128,7 @@ export const searchApi = api.injectEndpoints({
             user =>
               (user.name || '').toLowerCase().includes(arg.toLowerCase()) ||
               (user.email || '').toLowerCase().includes(arg.toLowerCase()) ||
-              (user.bio || '').toLowerCase().includes(arg.toLowerCase()),
+              (user.bio || '').toLowerCase().includes(arg.toLowerCase())
           ),
         }
       },

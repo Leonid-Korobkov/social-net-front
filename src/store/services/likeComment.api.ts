@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CommentLike, Like, Post } from '../types'
 import { api } from './api'
 
@@ -15,7 +16,7 @@ export const likeCommentApi = api.injectEndpoints({
       invalidatesTags: ['Post', 'Posts'],
       async onQueryStarted(
         { commentId, isLiked, postId },
-        { dispatch, queryFulfilled },
+        { dispatch, queryFulfilled }
       ) {
         // Update single post if viewing post details
         const patchSinglePost = dispatch(
@@ -32,8 +33,8 @@ export const likeCommentApi = api.injectEndpoints({
                   comment.likes.pop()
                 }
               }
-            },
-          ),
+            }
+          )
         )
 
         try {

@@ -1,7 +1,7 @@
-import Header from '@/components/shared/Header'
-import Container from '@/components/shared/Container'
-import LayoutNavigation from '@/components/client/LayoutNavigation'
-import ProfileSidebar from '@/components/client/ProfileSidebar'
+import Header from '@/components/layout/Header'
+import Container from '@/components/layout/Container'
+import LayoutNavigation from '@/components/layout/LayoutNavigation'
+import ProfileSidebar from '@/components/layout/ProfileSidebar'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (

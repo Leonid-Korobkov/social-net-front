@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { Button, TButtonColors } from '../../ui/Button'
 import { usePathname } from 'next/navigation'
+import { JSX } from 'react'
 
 interface NavButtonProps {
   children: React.ReactNode

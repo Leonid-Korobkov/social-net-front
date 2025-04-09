@@ -38,7 +38,7 @@ export const postApi = api.injectEndpoints({
       transformResponse: (
         response: Post[],
         meta: QueryMetaType,
-        arg: { limit: number },
+        arg: { limit: number }
       ) => {
         return {
           posts: response,

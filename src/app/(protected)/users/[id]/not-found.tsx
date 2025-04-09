@@ -4,15 +4,9 @@ import { BiError } from 'react-icons/bi'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { RiEmotionSadLine } from 'react-icons/ri'
-import GoBack from '@/components/shared/GoBack'
+import GoBack from '@/components/layout/GoBack'
 
 function ErrorPage() {
-  const router = useRouter()
-  // Сделайть перезагрузку страницы
-  const reloadPage = () => {
-    router.push('/')
-  }
-
   return (
     <>
       <motion.div

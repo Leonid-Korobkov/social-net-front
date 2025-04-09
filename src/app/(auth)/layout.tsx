@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { selectIsAuthenticated } from '@/features/user/user.slice'
 import { useRouter } from 'next/navigation'
-import Header from '@/components/shared/Header'
+import Header from '@/components/layout/Header'
 
 export default function AuthLayout({
   children,

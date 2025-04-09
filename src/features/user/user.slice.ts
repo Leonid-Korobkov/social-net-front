@@ -24,7 +24,7 @@ const slice = createSlice({
   initialState,
   reducers: {
     logout: () => {
-      Cookies.remove('token', { path: '/' })
+      Cookies.remove('token')
       return initialState
     },
     resetUser: state => {

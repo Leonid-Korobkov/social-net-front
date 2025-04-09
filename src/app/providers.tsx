@@ -1,26 +1,38 @@
 'use client'
-import { store } from '@/store/store'
-import { useEffect, useState } from 'react'
+import { makeStore, AppStore } from '@/store/store'
+import { useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from 'next-themes'
 import { Provider as RProvider } from 'react-redux'
 import { useRouter } from 'next/navigation'
 import { HeroUIProvider } from '@heroui/react'
+import AuthGuard from '@/features/user'
 
-export const Providers = (props: React.PropsWithChildren) => {
-  const router = useRouter()
+export const Providers = ({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) => {
   const [isClient, setIsClient] = useState(false)
+
+  const storeRef = useRef<AppStore>(undefined)
+  if (!storeRef.current) {
+    storeRef.current = makeStore()
+  }
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  if (!isClient) return null
-
   return (
-    <ThemeProvider>
-      <HeroUIProvider navigate={router.push}>
-        <RProvider store={store}>{props.children}</RProvider>
-      </HeroUIProvider>
-    </ThemeProvider>
+    <>
+      <ThemeProvider>
+        <HeroUIProvider>
+          <RProvider store={storeRef.current}>
+            <AuthGuard></AuthGuard>
+            {children}
+          </RProvider>
+        </HeroUIProvider>
+      </ThemeProvider>
+    </>
   )
 }

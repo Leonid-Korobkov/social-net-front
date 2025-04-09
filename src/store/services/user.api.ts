@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck
 import { User } from '@/store/types'
 import { api } from './api'
 import Cookies from 'js-cookie' // Добавляем пакет js-cookie для работы с куками

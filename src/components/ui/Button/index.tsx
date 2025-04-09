@@ -1,5 +1,6 @@
 'use client'
 import { Button as NextButton } from "@heroui/react"
+import { JSX } from "react"
 
 export type TButtonColors =
   | 'default'

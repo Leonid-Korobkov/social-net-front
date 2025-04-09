@@ -4,7 +4,7 @@ import { selectCurrent } from '@/features/user/user.slice'
 import { Button, Card, CardBody, Spinner } from '@heroui/react'
 import User from '@/components/ui/User'
 import { useGetUserByIdQuery } from '@/store/services/user.api'
-import GoBack from '@/components/shared/GoBack'
+import GoBack from '@/components/layout/GoBack'
 import {
   useCreateFollowMutation,
   useDeleteFollowMutation,

@@ -2,7 +2,7 @@
 import { useGetPostByIdQuery } from '@/store/services/post.api'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, use } from 'react'
-import GoBack from '@/components/shared/GoBack'
+import GoBack from '@/components/layout/GoBack'
 import CardSkeleton from '@/components/ui/CardSkeleton'
 import CreateCommentSkeleton from '@/components/ui/CommentCreateSkeleton'
 import CardCommentSkeleton from '@/components/ui/CardCommentSkeleton'
@@ -10,21 +10,24 @@ import CreateComment from '@/components/shared/CommentCreate'
 import Card from '@/components/shared/Card'
 import { useRouter } from 'next/navigation'
 
-interface PageProps {
-  paramsIn: Promise<{
+type PageProps = {
+  params: Promise<{
+    [x: string]: string
     id: string
   }>
-  searchParams: {
-    comment?: string
-  }
+  searchParams: Promise<{
+    [x: string]: string
+    comment: string
+  }>
 }
 
-function CurrentPost({ paramsIn, searchParams }: PageProps) {
-  const params = use(paramsIn)
+function CurrentPost({ params, searchParams }: PageProps) {
+  const paramsIn = use(params)
+  const searchParamsIn = use(searchParams)
 
-  const commentId = searchParams.comment
+  const commentId = searchParamsIn.comment
   const router = useRouter()
-  const { data, isLoading } = useGetPostByIdQuery(params.id)
+  const { data, isLoading } = useGetPostByIdQuery(paramsIn.id)
 
   useEffect(() => {
     if (commentId && !isLoading && data?.comments) {
@@ -35,7 +38,7 @@ function CurrentPost({ paramsIn, searchParams }: PageProps) {
           commentElement.classList.add('highlight')
           setTimeout(() => {
             commentElement.classList.remove('highlight')
-            router.push(`/posts/${params.id}`)
+            router.push(`/posts/${paramsIn.id}`)
           }, 2000)
         }, 200)
       }
@@ -91,7 +94,7 @@ function CurrentPost({ paramsIn, searchParams }: PageProps) {
         likes={likes}
       />
       <div className="mt-10">
-        <CreateComment params={params} />
+        <CreateComment params={paramsIn} />
       </div>
       <div className="mt-10">
         <motion.div
