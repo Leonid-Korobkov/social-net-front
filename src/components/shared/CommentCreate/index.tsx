@@ -1,8 +1,9 @@
+'use client'
 import { Button, Textarea } from '@heroui/react'
 import { IoMdCreate } from 'react-icons/io'
 import { useForm, Controller } from 'react-hook-form'
 import { useCreateCommentMutation } from '@/store/services/comment.api'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import { hasErrorField } from '@/utils/hasErrorField'
 
 interface PageProps {
@@ -34,11 +35,13 @@ function CreateComment({ params }: PageProps) {
         .then(() => {
           toast.success('Комментарий успешно создан!')
           setValue('comment', '')
-          // Скролл к комментарию
-          window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: 'smooth',
-          })
+          setTimeout(() => {
+            // Скролл к комментарию
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: 'smooth',
+            })
+          }, 100)
         })
         .catch(err => {
           if (hasErrorField(err)) {

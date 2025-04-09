@@ -16,7 +16,6 @@ export const StoreProvider = ({
 
   return (
     <RProvider store={storeRef.current}>
-      <PreLoader></PreLoader>
       {children}
     </RProvider>
   )

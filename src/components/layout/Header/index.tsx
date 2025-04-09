@@ -25,7 +25,6 @@ import { FaMoon } from 'react-icons/fa'
 import { LuSunMedium } from 'react-icons/lu'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  logout,
   selectCurrent,
   selectIsAuthenticated,
 } from '../../../features/user/user.slice'
@@ -35,10 +34,13 @@ import { useEffect, useState } from 'react'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import Link from 'next/link'
 import Logo from '../../shared/Logo'
+import { useUserState } from '@/store/user.store'
 
 function Header({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+  const logout = useUserState.use.logout()
 
   const currentUser = useSelector(selectCurrent)
   const isAuth = useSelector(selectIsAuthenticated)
@@ -52,7 +54,7 @@ function Header({ className }: { className?: string }) {
 
   const handleLogout = () => {
     router.push('/auth')
-    dispatch(logout())
+    logout()
   }
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)

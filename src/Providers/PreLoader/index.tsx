@@ -1,9 +1,23 @@
 'use client'
 import { useCurrentUserQuery } from '@/store/services/user.api'
 import Image from 'next/image'
+import { useEffect } from 'react'
 
 function PreLoader() {
   const { isLoading } = useCurrentUserQuery()
+
+  useEffect(() => {
+    const html = document.documentElement
+    html.classList.add('overflow-hidden')
+    if (isLoading) {
+      html.classList.add('overflow-hidden')
+    } else {
+      html.classList.remove('overflow-hidden')
+    }
+    return () => {
+      html.classList.remove('overflow-hidden')
+    }
+  }, [isLoading])
 
   return (
     <>

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { ThemeProvider } from 'next-themes'
 import PreLoader from '@/providers/PreLoader'
 import { StoreProvider } from '@/providers/StoreProvider'
+import { ThemeProvider } from '@/providers/ThemeProvider'
 
 export const metadata: Metadata = {
   title: 'Zling',
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning className='overflow-hidden'>
       <head>
         <meta name="apple-mobile-web-app-title" content="krbln" />
       </head>
