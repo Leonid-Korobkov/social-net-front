@@ -6,9 +6,9 @@ import {
 // Demo: https://res.cloudinary.com/demo/image/upload/w_300,c_limit,q_auto/turtles.jpg
 export default function cloudinaryLoader({
   src,
-  format,
-  width,
-  quality,
+  format = 'auto',
+  width = 800,
+  quality = 'auto',
   progressive = true,
   cache = true,
 }: UseCloudinaryImageProps & CloudinaryTransformations) {

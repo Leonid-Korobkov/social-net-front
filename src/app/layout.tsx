@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import PreLoader from '@/providers/PreLoader'
 import { StoreProvider } from '@/providers/StoreProvider'
+import { StoreProvider as TStoreProvider} from '@/providers/StoreProvider/Tindex'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 
 export const metadata: Metadata = {
@@ -15,16 +16,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" suppressHydrationWarning className='overflow-hidden'>
+    <html lang="ru" suppressHydrationWarning className="overflow-hidden">
       <head>
         <meta name="apple-mobile-web-app-title" content="krbln" />
       </head>
       <body className={`antialiased`}>
         <ThemeProvider>
-          <StoreProvider>
-            <PreLoader />
-            {children}
-          </StoreProvider>
+          <TStoreProvider>
+            <StoreProvider>
+              <PreLoader />
+              {children}
+            </StoreProvider>
+          </TStoreProvider>
         </ThemeProvider>
       </body>
     </html>

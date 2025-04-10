@@ -2,7 +2,6 @@
 import { makeStore, AppStore } from '@/store/store'
 import { useRef } from 'react'
 import { Provider as RProvider } from 'react-redux'
-import PreLoader from '../PreLoader'
 
 export const StoreProvider = ({
   children,

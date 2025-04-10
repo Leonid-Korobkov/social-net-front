@@ -30,13 +30,13 @@ import { useWindowSize } from '@/hooks/useWindowSize'
 import UserProfileSkeleton from '@/components/ui/UserProfileSkeleton'
 import GoBack from '@/components/layout/GoBack'
 import Image from '@/components/ui/Image'
+// import Image from 'next/image'
 import CountInfo from '@/components/ui/CountInfo'
 import ProfileInfo from '@/components/shared/ProfileInfo'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import PostList from '@/components/shared/PostList'
 import EditProfile from '@/components/shared/EditProfile'
-import { GetServerSideProps } from 'next/types'
-import { notFound, useParams } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
 type PageProps = {
   params: Promise<{
@@ -145,6 +145,8 @@ function UserProfile({ params }: PageProps) {
             <Image
               alt={`Изображение профиля ${user.name}`}
               src={`${user.avatarUrl}`}
+              width={200}
+              height={200}
               // isBlurred
               className="w-[200px] h-[200px] border-4 border-white rounded-xl cursor-pointer"
               onClick={handleImageClick}
