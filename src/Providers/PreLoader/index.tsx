@@ -1,10 +1,18 @@
 'use client'
-import { useCurrentUserQuery } from '@/store/services/user.api'
+import { useGetCurrentUser } from '@/services/api/user.api'
+import { useUserStore } from '@/store/user.store'
 import Image from 'next/image'
 import { useEffect } from 'react'
 
 function PreLoader() {
-  const { isLoading } = useCurrentUserQuery()
+  const { isLoading, error } = useGetCurrentUser()
+  const setError = useUserStore(state => state.setError)
+
+  useEffect(() => {
+    if (error && error.status !== 401) {
+      setError(error.errorMessage)
+    }
+  })
 
   useEffect(() => {
     const html = document.documentElement

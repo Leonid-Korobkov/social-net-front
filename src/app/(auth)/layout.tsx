@@ -1,16 +1,15 @@
 'use client'
-import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
-import { selectIsAuthenticated } from '@/features/user/user.slice'
-import { useRouter } from 'next/navigation'
 import Header from '@/components/layout/Header'
+import { useUserStore } from '@/store/user.store'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const isAuth = useSelector(selectIsAuthenticated)
+  const isAuth = useUserStore.use.isAuthenticated()
   const router = useRouter()
 
   useEffect(() => {

@@ -3,13 +3,13 @@ import { Alert, Button, Input, Link } from '@heroui/react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
-import { useRegisterUserMutation } from '@/store/services/user.api'
 import { hasErrorField } from '@/utils/hasErrorField'
 import {
   validateEmailPattern,
   validatePassword,
 } from '@/utils/validateFieldsForm'
 import { RiLockPasswordFill } from 'react-icons/ri'
+import { useRegister } from '@/services/api/user.api'
 
 interface IForm {
   email: string
@@ -32,17 +32,17 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
     reValidateMode: 'onChange',
   })
 
-  const [registerUser, { isLoading, error, isSuccess }] =
-    useRegisterUserMutation()
+  const {
+    mutateAsync: registerUser,
+    isPending: isLoading,
+    error,
+    isSuccess,
+  } = useRegister()
 
   const onSubmit: SubmitHandler<IForm> = async data => {
-    try {
-      await registerUser(data).unwrap()
-      setSelected('login')
-      setRegisterSuccess(true)
-    } catch (error) {
-      console.error(error)
-    }
+    await registerUser(data)
+    setSelected('login')
+    setRegisterSuccess(true)
   }
 
   return (

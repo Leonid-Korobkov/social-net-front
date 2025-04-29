@@ -1,19 +1,14 @@
 'use client'
-import { Button, Input, Link, Alert } from '@heroui/react'
-import { useForm } from 'react-hook-form'
-import { SubmitHandler } from 'react-hook-form'
+import { useLogin } from '@/services/api/user.api'
+import { Alert, Button, Input, Link } from '@heroui/react'
+import { useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
-import {
-  useLazyCurrentUserQuery,
-  useLoginMutation,
-} from '@/store/services/user.api'
-import { useRouter } from 'next/navigation'
-import { hasErrorField } from '../../utils/hasErrorField'
+import { IoEye, IoEyeOff } from 'react-icons/io5'
 import {
   validateEmailPattern,
   validatePassword,
 } from '../../utils/validateFieldsForm'
-import { RiLockPasswordFill } from 'react-icons/ri'
 
 interface IForm {
   email: string
@@ -26,6 +21,8 @@ interface LoginProps {
 }
 
 function Login({ setSelected, isRegisterSuccess }: LoginProps) {
+  const [isVisiblePass, setIsVisiblePass] = useState(false)
+
   const {
     register,
     formState: { errors },
@@ -35,21 +32,15 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
     reValidateMode: 'onChange',
   })
 
-  const router = useRouter()
-  const [login, { isLoading, error, isSuccess }] = useLoginMutation()
-  const [triggerCurrentQuery] = useLazyCurrentUserQuery()
+  const {
+    mutateAsync: login,
+    isPending: isLoading,
+    error,
+    isSuccess,
+  } = useLogin()
 
   const onSubmit: SubmitHandler<IForm> = async data => {
-    try {
-      await login(data).unwrap()
-      await triggerCurrentQuery().unwrap()
-
-      setTimeout(() => {
-        router.push('/')
-      }, 1000)
-    } catch (err) {
-      console.error(err, error)
-    }
+    await login(data)
   }
 
   return (
@@ -73,10 +64,23 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
       />
       <Input
         label="Пароль"
-        type="password"
+        type={isVisiblePass ? 'text' : 'password'}
         errorMessage={errors.password ? errors.password.message : ''}
         isInvalid={errors.password ? true : false}
-        endContent={<RiLockPasswordFill className="form-icon" />}
+        endContent={
+          <button
+            aria-label="toggle password visibility"
+            className="focus:outline-none flex items-center justify-center h-full"
+            type="button"
+            onClick={() => setIsVisiblePass(!isVisiblePass)}
+          >
+            {isVisiblePass ? (
+              <IoEye className="form-icon text-default-400" />
+            ) : (
+              <IoEyeOff className="form-icon text-default-400" />
+            )}
+          </button>
+        }
         {...register('password', {
           required: 'Обязательное поле',
           validate: validatePassword,
@@ -105,9 +109,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
         </Button>
       </div>
 
-      {error && hasErrorField(error) && (
-        <Alert color="danger" title={error.data.error} />
-      )}
+      {error && <Alert color="danger" title={error.errorMessage} />}
       {isSuccess && <Alert color="success" title="Вход успешно выполнен" />}
     </form>
   )

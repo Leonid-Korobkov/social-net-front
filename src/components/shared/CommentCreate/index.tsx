@@ -1,10 +1,10 @@
 'use client'
-import { Button, Textarea } from '@heroui/react'
-import { IoMdCreate } from 'react-icons/io'
-import { useForm, Controller } from 'react-hook-form'
-import { useCreateCommentMutation } from '@/store/services/comment.api'
-import toast, { Toaster } from 'react-hot-toast'
+import { useCreateComment } from '@/services/api/comment.api'
 import { hasErrorField } from '@/utils/hasErrorField'
+import { Button, Textarea } from '@heroui/react'
+import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { IoMdCreate } from 'react-icons/io'
 
 interface PageProps {
   params: {
@@ -14,7 +14,8 @@ interface PageProps {
 
 function CreateComment({ params }: PageProps) {
   const { id } = params
-  const [createComment, { isLoading }] = useCreateCommentMutation()
+  const { mutateAsync: createComment, isPending: isLoading } =
+    useCreateComment()
 
   const {
     handleSubmit,
@@ -29,7 +30,7 @@ function CreateComment({ params }: PageProps) {
       const promise = createComment({
         content: data.comment,
         postId: id,
-      }).unwrap()
+      })
 
       promise
         .then(() => {

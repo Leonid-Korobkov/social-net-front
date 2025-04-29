@@ -1,42 +1,36 @@
 'use client'
-import { useEffect, useState, use } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import GoBack from '@/components/layout/GoBack'
+import EditProfile from '@/components/shared/EditProfile'
+import PostList from '@/components/shared/PostList'
+import ProfileInfo from '@/components/shared/ProfileInfo'
+import CountInfo from '@/components/ui/CountInfo'
+import Image from '@/components/ui/Image'
+import UserProfileSkeleton from '@/components/ui/UserProfileSkeleton'
+import { useWindowSize } from '@/hooks/useWindowSize'
+import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
+import { useGetPostsByUserId, useGetUserById } from '@/services/api/user.api'
+import { useUserStore } from '@/store/user.store'
+import { formatToClientDate } from '@/utils/formatToClientDate'
 import {
   Button,
   Card,
   Modal,
   ModalContent,
   Image as NextImage,
+  useDisclosure,
 } from '@heroui/react'
-import { MdOutlinePersonAddAlt1 } from 'react-icons/md'
-import { MdOutlinePersonAddDisabled } from 'react-icons/md'
-import { useDisclosure } from '@heroui/react'
-import { CiEdit } from 'react-icons/ci'
-import { RiEmotionSadLine } from 'react-icons/ri'
-
-import Confetti from 'react-confetti'
 import { motion } from 'framer-motion'
-
-import { BsPostcardFill } from 'react-icons/bs'
-import { RiUserFollowFill } from 'react-icons/ri'
-import { FaUsers } from 'react-icons/fa'
-
-import { resetUser, selectCurrent } from '@/features/user/user.slice'
-import { useGetUserByIdQuery } from '@/store/services/user.api'
-import { useCreateFollowMutation } from '@/store/services/follow.api'
-import { Post } from '@/store/types'
-import { useDeleteFollowMutation } from '@/store/services/follow.api'
-import { useWindowSize } from '@/hooks/useWindowSize'
-import UserProfileSkeleton from '@/components/ui/UserProfileSkeleton'
-import GoBack from '@/components/layout/GoBack'
-import Image from '@/components/ui/Image'
-// import Image from 'next/image'
-import CountInfo from '@/components/ui/CountInfo'
-import ProfileInfo from '@/components/shared/ProfileInfo'
-import { formatToClientDate } from '@/utils/formatToClientDate'
-import PostList from '@/components/shared/PostList'
-import EditProfile from '@/components/shared/EditProfile'
 import { notFound } from 'next/navigation'
+import { use, useState } from 'react'
+import Confetti from 'react-confetti'
+import { BsPostcardFill } from 'react-icons/bs'
+import { CiEdit } from 'react-icons/ci'
+import { FaUsers } from 'react-icons/fa'
+import {
+  MdOutlinePersonAddAlt1,
+  MdOutlinePersonAddDisabled,
+} from 'react-icons/md'
+import { RiUserFollowFill } from 'react-icons/ri'
 
 type PageProps = {
   params: Promise<{
@@ -46,44 +40,41 @@ type PageProps = {
 }
 
 function UserProfile({ params }: PageProps) {
-  // Используем React.use для разворачивания Promise в params
   const unwrappedParams = use(params)
   const { id } = unwrappedParams
-  // const paramss = useParams();
-  // const id = paramss.id as string;
-
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const currentUser = useSelector(selectCurrent)
-  const { data: user, isLoading } = useGetUserByIdQuery(
-    { id: id ?? '' },
-    { skip: !id }
-  )
-  const [posts, setPosts] = useState<Post[]>([])
-
-  const [followUser] = useCreateFollowMutation()
-  const [unfolowUser] = useDeleteFollowMutation()
 
   const [party, setParty] = useState(false)
-  const size = useWindowSize()
-
-  const dispatch = useDispatch()
-
-  useEffect(
-    () => () => {
-      dispatch(resetUser())
-    },
-    []
-  )
-
   const [isImageOpen, setImageOpen] = useState(false)
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const currentUser = useUserStore.use.current()
+
+  const { data: user, isPending: isLoading } = useGetUserById(id)
+  const {
+    data: posts,
+    isLoading: isLoadingPosts,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useGetPostsByUserId({
+    userId: id,
+    limit: 5,
+  })
+
+  const { mutateAsync: followUser, isPending: isFollowPending } =
+    useCreateFollow()
+  const { mutateAsync: unfollowUser, isPending: isUnfollowPending } =
+    useDeleteFollow()
+
+  const size = useWindowSize()
 
   const handleFollow = async () => {
     try {
       if (id) {
         if (user?.isFollowing) {
-          unfolowUser({ followingId: id }).unwrap()
+          unfollowUser({ followingId: id, userId: currentUser?.id || '' })
         } else {
-          followUser({ followingId: id }).unwrap()
+          followUser({ followingId: id, userId: currentUser?.id || '' })
           setParty(true)
         }
       }
@@ -96,20 +87,15 @@ function UserProfile({ params }: PageProps) {
     onOpen()
   }
 
+  function handleSettingProfile() {}
+
   const handleImageClick = () => {
     setImageOpen(true)
   }
 
-  useEffect(() => {
-    if (!isLoading && user) {
-      const newPosts = [...user.posts]
-      newPosts.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
-      setPosts(newPosts)
-    }
-  }, [user, isLoading])
+  const handleLoadMore = () => {
+    fetchNextPage()
+  }
 
   if (isLoading) {
     return <UserProfileSkeleton />
@@ -159,6 +145,7 @@ function UserProfile({ params }: PageProps) {
                   variant="flat"
                   className="gap-2"
                   onPress={handleFollow}
+                  isLoading={isFollowPending || isUnfollowPending}
                   endContent={
                     user?.isFollowing ? (
                       <MdOutlinePersonAddDisabled />
@@ -170,14 +157,24 @@ function UserProfile({ params }: PageProps) {
                   {user?.isFollowing ? 'Отписаться' : 'Подписаться'}
                 </Button>
               ) : (
-                <Button
-                  endContent={<CiEdit />}
-                  onPress={handleEditProfile}
-                  variant="ghost"
-                  color="warning"
-                >
-                  Редактировать
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    endContent={<CiEdit />}
+                    onPress={handleEditProfile}
+                    variant="ghost"
+                    color="warning"
+                  >
+                    Редактировать
+                  </Button>
+                  <Button
+                    endContent={<CiEdit />}
+                    onPress={handleSettingProfile}
+                    variant="ghost"
+                    color="secondary"
+                  >
+                    Настройки
+                  </Button>
+                </div>
               )}
             </div>
           </Card>
@@ -185,7 +182,7 @@ function UserProfile({ params }: PageProps) {
             <Card className="flex gap-2 justify-center flex-row flex-wrap mb-2">
               <CountInfo
                 Icon={BsPostcardFill}
-                count={user.posts.length}
+                count={user.postCount}
                 title="Публикации"
               />
               <CountInfo
@@ -222,16 +219,18 @@ function UserProfile({ params }: PageProps) {
         </div>
         <PostList
           className="w-full mt-4"
-          data={posts || []}
-          isLoading={isLoading}
-          handleCardClick={() => {}}
+          data={posts ?? []}
+          isLoading={isLoadingPosts}
+          hasMore={hasNextPage}
+          onLoadMore={handleLoadMore}
+          isFetchingMore={isFetchingNextPage && !isLoading}
         />
         <EditProfile
           isOpen={isOpen}
           onClose={onClose}
           user={user}
           params={{
-            id: '',
+            id: id,
           }}
         />
         <Modal

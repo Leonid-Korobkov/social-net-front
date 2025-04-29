@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import PreLoader from '@/providers/PreLoader'
-import { StoreProvider } from '@/providers/StoreProvider'
-import { StoreProvider as TStoreProvider} from '@/providers/StoreProvider/Tindex'
 import { ThemeProvider } from '@/providers/ThemeProvider'
+import ScrollRestoration from '@/providers/ScrollRestoration'
+import { StoreProvider } from '@/providers/StoreProvider'
+import { Suspense } from 'react'
+import ProgressProvider from '@/providers/ProgressProvider'
 
 export const metadata: Metadata = {
   title: 'Zling',
@@ -22,12 +24,14 @@ export default function RootLayout({
       </head>
       <body className={`antialiased`}>
         <ThemeProvider>
-          <TStoreProvider>
-            <StoreProvider>
-              <PreLoader />
-              {children}
-            </StoreProvider>
-          </TStoreProvider>
+          <StoreProvider>
+            <PreLoader />
+            <Suspense>
+              <ScrollRestoration>
+                <ProgressProvider>{children}</ProgressProvider>
+              </ScrollRestoration>
+            </Suspense>
+          </StoreProvider>
         </ThemeProvider>
       </body>
     </html>

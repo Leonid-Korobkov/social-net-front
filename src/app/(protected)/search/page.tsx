@@ -1,49 +1,48 @@
 'use client'
-import { useState } from 'react'
+import PostCard from '@/components/shared/PostCard'
+import UserCard from '@/components/shared/UserCard'
 import {
-  Input,
-  Tabs,
-  Tab,
+  Alert,
+  Button,
   Card,
   CardBody,
+  Input,
   Spinner,
-  Button,
-  Alert,
+  Tab,
+  Tabs,
 } from '@heroui/react'
+import { useState } from 'react'
 import { IoSearch } from 'react-icons/io5'
-import UserCard from '@/components/shared/UserCard'
-import PostCard from '@/components/shared/PostCard'
-import {
-  useSearchPostsQuery,
-  useSearchUsersQuery,
-} from '@/store/services/search.api'
-import { skipToken } from '@reduxjs/toolkit/query'
 
 function Search() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('posts')
   const [debouncedQuery, setDebouncedQuery] = useState('')
 
-  const {
-    data: posts = [],
-    isLoading: isLoadingPosts,
-    isFetching: isFetchingPosts,
-  } = useSearchPostsQuery(debouncedQuery || skipToken)
+  // const {
+  //   data: posts = [],
+  //   isLoading: isLoadingPosts,
+  //   isFetching: isFetchingPosts,
+  // } = useSearchPostsQuery(debouncedQuery || skipToken)
 
-  const {
-    data: users = [],
-    isLoading: isLoadingUsers,
-    isFetching: isFetchingUsers,
-  } = useSearchUsersQuery(debouncedQuery || skipToken)
+  // const {
+  //   data: users = [],
+  //   isLoading: isLoadingUsers,
+  //   isFetching: isFetchingUsers,
+  // } = useSearchUsersQuery(debouncedQuery || skipToken)
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return
     setDebouncedQuery(searchQuery.trim())
   }
 
-  const isLoading =
-    (activeTab === 'posts' && (isLoadingPosts || isFetchingPosts)) ||
-    (activeTab === 'users' && (isLoadingUsers || isFetchingUsers))
+  // const isLoading =
+  //   (activeTab === 'posts' && (isLoadingPosts || isFetchingPosts)) ||
+  //   (activeTab === 'users' && (isLoadingUsers || isFetchingUsers))
+
+  const isLoading = false
+  const users: any[] = []
+  const posts: any[] = []
 
   return (
     <div className="container mx-auto">

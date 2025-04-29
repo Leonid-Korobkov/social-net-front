@@ -1,7 +1,6 @@
 'use client'
-import { Modal, ModalContent, ModalHeader, ModalBody } from '@heroui/react'
+import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react'
 import CreatePost from '../PostCreate'
-import { usePathname, useRouter } from 'next/navigation'
 
 interface CreatePostModalProps {
   isOpen: boolean
@@ -9,14 +8,8 @@ interface CreatePostModalProps {
 }
 
 function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-
   const handleSuccess = () => {
     onOpenChange()
-    if (pathname !== '/') {
-      router.push('/')
-    }
   }
 
   return (

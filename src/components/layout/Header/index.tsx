@@ -23,28 +23,25 @@ import {
 import { useTheme } from 'next-themes'
 import { FaMoon } from 'react-icons/fa'
 import { LuSunMedium } from 'react-icons/lu'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  selectCurrent,
-  selectIsAuthenticated,
-} from '../../../features/user/user.slice'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { CiLogout } from 'react-icons/ci'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import Link from 'next/link'
 import Logo from '../../shared/Logo'
-import { useUserState } from '@/store/user.store'
+import { useUserStore } from '@/store/user.store'
+import { useQueryClient } from '@tanstack/react-query'
 
 function Header({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const queryClient = useQueryClient()
 
-  const logout = useUserState.use.logout()
+  const logout = useUserStore.use.logout()
+  const currentUser = useUserStore.use.current()
+  const isAuth = useUserStore.use.isAuthenticated()
 
-  const currentUser = useSelector(selectCurrent)
-  const isAuth = useSelector(selectIsAuthenticated)
-  const dispatch = useDispatch()
   const router = useRouter()
 
   const { getOptimizedUrl } = useCloudinaryImage({
@@ -54,15 +51,9 @@ function Header({ className }: { className?: string }) {
 
   const handleLogout = () => {
     router.push('/auth')
+    queryClient.removeQueries()
     logout()
   }
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const pathname = usePathname()
-
-  useEffect(() => {
-    setIsMenuOpen(false)
-  }, [pathname])
 
   return (
     <NextNavbar

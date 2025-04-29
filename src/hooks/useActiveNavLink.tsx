@@ -1,11 +1,10 @@
 'use client'
+import { useUserStore } from '@/store/user.store'
 import { usePathname } from 'next/navigation'
-import { useSelector } from 'react-redux'
-import { selectCurrent } from '../features/user/user.slice'
 
 export function useActiveNavLink(path: string) {
   const pathname = usePathname()
-  const currentUser = useSelector(selectCurrent)
+  const currentUser = useUserStore.use.current()
 
   // Функция для проверки соответствия URL паттерну (замена matchPath из react-router)
   const matchPath = (pattern: string, pathname: string) => {

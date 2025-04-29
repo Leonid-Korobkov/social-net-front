@@ -52,7 +52,3 @@ next-env.d.ts
 *.sln
 *.sw?
 .cursor
-
-
-/social-net-front_copy
-.env

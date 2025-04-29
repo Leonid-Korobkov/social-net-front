@@ -1,14 +1,16 @@
 'use client'
-import { useGetPostByIdQuery } from '@/store/services/post.api'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, use } from 'react'
 import GoBack from '@/components/layout/GoBack'
+import Card from '@/components/shared/Card'
+import CreateComment from '@/components/shared/CommentCreate'
+import CommentList from '@/components/shared/CommentList'
+import CardCommentSkeleton from '@/components/ui/CardCommentSkeleton'
 import CardSkeleton from '@/components/ui/CardSkeleton'
 import CreateCommentSkeleton from '@/components/ui/CommentCreateSkeleton'
-import CardCommentSkeleton from '@/components/ui/CardCommentSkeleton'
-import CreateComment from '@/components/shared/CommentCreate'
-import Card from '@/components/shared/Card'
+import { useGetCommentsByPostId } from '@/services/api/comment.api'
+import { useGetPostById } from '@/services/api/post.api'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import { use, useEffect } from 'react'
 
 type PageProps = {
   params: Promise<{
@@ -25,10 +27,22 @@ function CurrentPost({ params, searchParams }: PageProps) {
   const paramsIn = use(params)
   const searchParamsIn = use(searchParams)
 
+  const {
+    data: comments,
+    fetchNextPage: fetchNextPageComments,
+    hasNextPage: hasNextPageComments,
+    isLoading: isLoadingComments,
+    isFetchingNextPage: isFetchingNextPageComments,
+  } = useGetCommentsByPostId({
+    limit: 10,
+    postId: paramsIn.id,
+  })
+
   const commentId = searchParamsIn.comment
   const router = useRouter()
-  const { data, isLoading } = useGetPostByIdQuery(paramsIn.id)
+  const { data, isLoading } = useGetPostById(paramsIn.id)
 
+  // Скролл к комменту при открытии страницы
   useEffect(() => {
     if (commentId && !isLoading && data?.comments) {
       const commentElement = document.getElementById(`comment-${commentId}`)
@@ -68,8 +82,8 @@ function CurrentPost({ params, searchParams }: PageProps) {
     content,
     author,
     authorId,
-    comments,
-    likes,
+    likeCount,
+    commentCount,
     createdAt,
     id,
     likedByUser,
@@ -84,54 +98,25 @@ function CurrentPost({ params, searchParams }: PageProps) {
         avatarUrl={author?.avatarUrl ?? ''}
         content={content}
         name={author?.name ?? ''}
-        likesCount={likes.length}
-        commentsCount={comments?.length}
+        likesCount={likeCount}
+        commentsCount={commentCount}
         authorId={authorId}
         id={id}
         likedByUser={likedByUser}
         createdAt={createdAt}
         isFollowing={isFollowing}
-        likes={likes}
       />
       <div className="mt-10">
         <CreateComment params={paramsIn} />
       </div>
       <div className="mt-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <AnimatePresence mode="popLayout">
-            {data.comments
-              ? data.comments.map(comment => (
-                  <motion.div
-                    key={comment.id}
-                    id={`comment-${comment.id}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, bounce: 0 }}
-                    layout="position"
-                  >
-                    <Card
-                      cardFor="comment"
-                      avatarUrl={comment.user?.avatarUrl ?? ''}
-                      content={comment.content}
-                      name={comment.user?.name ?? ''}
-                      authorId={comment.userId ?? ''}
-                      commentId={comment.id}
-                      id={id}
-                      createdAt={comment.createdAt}
-                      likedByUser={comment.likedByUser}
-                      likesCount={comment.likes.length}
-                      likes={comment.likes}
-                    />
-                  </motion.div>
-                ))
-              : null}
-          </AnimatePresence>
-        </motion.div>
+        <CommentList
+          data={comments}
+          isLoading={isLoadingComments}
+          hasMore={hasNextPageComments}
+          onLoadMore={fetchNextPageComments}
+          isFetchingMore={isFetchingNextPageComments}
+        />
       </div>
     </>
   )

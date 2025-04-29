@@ -1,21 +1,29 @@
 'use client'
-import { makeStore, AppStore } from '@/store/store'
-import { useRef } from 'react'
-import { Provider as RProvider } from 'react-redux'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useState } from 'react'
 
 export const StoreProvider = ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const storeRef = useRef<AppStore>(undefined)
-  if (!storeRef.current) {
-    storeRef.current = makeStore()
-  }
-
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          // queries: {
+          //   staleTime: 0,
+          //   retry: 1,
+          //   refetchOnWindowFocus: false,
+          // },
+        },
+      })
+  )
   return (
-    <RProvider store={storeRef.current}>
+    <QueryClientProvider client={queryClient}>
       {children}
-    </RProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }

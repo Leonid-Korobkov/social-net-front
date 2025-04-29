@@ -1,14 +1,14 @@
 'use client'
-import { AnimatePresence, motion } from 'framer-motion'
-import CardSkeleton from '../../ui/CardSkeleton'
-import Card from '../Card'
+import CardCommentSkeleton from '@/components/ui/CardCommentSkeleton'
 import { Spinner } from '@heroui/react'
-import { useInView } from 'react-intersection-observer'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect } from 'react'
-import { Post } from '@/store/types'
+import { useInView } from 'react-intersection-observer'
+import Card from '../Card'
+import { Comment } from '@/store/types'
 
-interface PostListProps {
-  data: Post[]
+interface CommentsListProps {
+  data: Comment[] | undefined
   isLoading: boolean
   handleCardClick?: () => void
   className?: string
@@ -17,15 +17,14 @@ interface PostListProps {
   isFetchingMore?: boolean
 }
 
-function PostList({
+function CommentList({
   data,
   isLoading,
-  handleCardClick,
   className,
   hasMore,
   onLoadMore,
   isFetchingMore,
-}: PostListProps) {
+}: CommentsListProps) {
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
   })
@@ -36,11 +35,11 @@ function PostList({
     }
   }, [inView, isLoading, isFetchingMore, hasMore])
 
-  if (isLoading && !data.length) {
+  if (isLoading && !data?.length) {
     return (
-      <div>
+      <div className="mt-10">
         {Array.from({ length: 5 }).map((_, index) => (
-          <CardSkeleton key={index} />
+          <CardCommentSkeleton key={index} />
         ))}
       </div>
     )
@@ -54,26 +53,11 @@ function PostList({
         transition={{ duration: 0.5 }}
       >
         <AnimatePresence mode="popLayout">
-          {data &&
-            data.length > 0 &&
-            data.map(post => {
-              if (!post || !post.authorId) return null
-
-              const {
-                author,
-                authorId,
-                commentCount,
-                content,
-                createdAt,
-                id,
-                likeCount,
-                likedByUser = false,
-                isFollowing = false,
-              } = post
-
-              return (
+          {!isLoading && data
+            ? data.map(comment => (
                 <motion.div
-                  key={id}
+                  key={comment.id}
+                  id={`comment-${comment.id}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -81,22 +65,21 @@ function PostList({
                   layout="position"
                 >
                   <Card
-                    id={id}
-                    authorId={authorId}
-                    avatarUrl={author?.avatarUrl || ''}
-                    cardFor={'post'}
-                    content={content}
-                    name={author?.name || ''}
-                    likedByUser={likedByUser}
-                    commentsCount={commentCount}
-                    createdAt={createdAt}
-                    likesCount={likeCount}
-                    isFollowing={isFollowing}
-                    onClick={handleCardClick}
+                    cardFor="comment"
+                    avatarUrl={comment.user?.avatarUrl ?? ''}
+                    content={comment.content}
+                    name={comment.user?.name ?? ''}
+                    authorId={comment.userId ?? ''}
+                    commentId={comment.id}
+                    id={comment.postId}
+                    createdAt={comment.createdAt}
+                    likedByUser={comment.likedByUser}
+                    likesCount={comment.likeCount}
+                    likes={comment.likes}
                   />
                 </motion.div>
-              )
-            })}
+              ))
+            : null}
         </AnimatePresence>
       </motion.div>
       {(hasMore || isFetchingMore) && (
@@ -112,4 +95,4 @@ function PostList({
   )
 }
 
-export default PostList
+export default CommentList

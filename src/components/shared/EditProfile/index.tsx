@@ -23,7 +23,7 @@ import toast from 'react-hot-toast'
 import ImageUpload from '../ImageUpload'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import { User } from '@/store/types'
-import { useUpdateUserMutation } from '@/store/services/user.api'
+import { useUpdateUser } from '@/services/api/user.api'
 
 interface IEditProfile {
   isOpen: boolean
@@ -40,7 +40,7 @@ function EditProfile({
   user,
   params,
 }: IEditProfile) {
-  const [updateUser, { isLoading }] = useUpdateUserMutation()
+  const { mutateAsync: updateUser, isPending: isLoading } = useUpdateUser()
 
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -77,26 +77,27 @@ function EditProfile({
     if (id) {
       try {
         const formData = new FormData()
-        formData.append('name', data.name || '')
+        formData.append('name', data.name?.trim() || '')
         if (data.email !== user?.email) {
-          formData.append('email', data.email || '')
+          formData.append('email', data.email?.trim() || '')
         }
         formData.append(
           'dateOfBirth',
           data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : ''
         )
-        formData.append('bio', data.bio || '')
-        formData.append('location', data.location || '')
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        selectedFile &&
+        formData.append('bio', data.bio?.trim() || '')
+        formData.append('location', data.location?.trim() || '')
+
+        if (selectedFile) {
           formData.append(
             'avatar',
             new File([selectedFile], `${data.email}_${Date.now()}.png`, {
               type: selectedFile.type,
             })
           )
+        }
 
-        const promise = updateUser({ body: formData, id }).unwrap()
+        const promise = updateUser({ body: formData, id })
 
         const toastId = toast.loading('Сохранение...')
 

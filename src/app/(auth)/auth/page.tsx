@@ -2,15 +2,14 @@
 import { Alert, Card, CardBody, Tab, Tabs } from '@heroui/react'
 import { useState } from 'react'
 import { IoLogIn, IoPeople } from 'react-icons/io5'
-import { useGetAllPostsQuery } from '@/store/services/post.api'
 import Login from '@/features/user/login'
 import Register from '@/features/user/register'
-import { hasErrorField } from '@/utils/hasErrorField'
+import { useUserStore } from '@/store/user.store'
 
 function Auth() {
   const [selected, setSelected] = useState('login')
   const [isRegisterSuccess, setRegisterSuccess] = useState(false)
-  const { error } = useGetAllPostsQuery({})
+  const error = useUserStore(state => state.error)
 
   return (
     <>
@@ -68,16 +67,12 @@ function Auth() {
               </Tabs>
             </CardBody>
           </Card>
-          {error && 'status' in error && error.status !== 401 && (
+          {error && (
             <div className="flex items-center justify-center p-4">
               <Alert
                 color="danger"
                 title="Ошибка"
-                description={
-                  hasErrorField(error)
-                    ? error.data.error
-                    : 'Произошла неизвестная ошибка'
-                }
+                description={error ? error : 'Произошла неизвестная ошибка'}
               />
             </div>
           )}

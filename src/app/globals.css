@@ -56,9 +56,8 @@ body {
 } */
 
 @layer components {
-  /* text-default-200 */
   .form-icon {
-    @apply text-xl pointer-events-none flex-shrink-0 self-center;
+    @apply text-xl text-default-200 pointer-events-none flex-shrink-0 self-center;
   }
 }
 

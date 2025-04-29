@@ -1,14 +1,10 @@
 'use client'
-import { useSelector } from 'react-redux'
-import { selectCurrent } from '@/features/user/user.slice'
-import { Button, Card, CardBody, Spinner } from '@heroui/react'
-import User from '@/components/ui/User'
-import { useGetUserByIdQuery } from '@/store/services/user.api'
 import GoBack from '@/components/layout/GoBack'
-import {
-  useCreateFollowMutation,
-  useDeleteFollowMutation,
-} from '@/store/services/follow.api'
+import User from '@/components/ui/User'
+import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
+import { useGetUserById } from '@/services/api/user.api'
+import { useUserStore } from '@/store/user.store'
+import { Button, Card, CardBody, Spinner } from '@heroui/react'
 import Link from 'next/link'
 import { use } from 'react'
 
@@ -22,20 +18,26 @@ function Following({ params }: PageProps) {
   const unwrappedParams = use(params)
   const { id } = unwrappedParams
 
-  const currentUser = useSelector(selectCurrent)
-  const { data: user, isLoading } = useGetUserByIdQuery(
-    { id: id ?? '' },
-    { skip: !id }
-  )
-  const [followUser] = useCreateFollowMutation()
-  const [unfollowUser] = useDeleteFollowMutation()
+  const currentUser = useUserStore.use.current()
+  const { data: user, isPending: isLoading } = useGetUserById(id)
+
+  const {
+    mutateAsync: followUser,
+    isPending: isPendingFollow,
+    variables: variablesFollow,
+  } = useCreateFollow()
+  const {
+    mutateAsync: unfollowUser,
+    isPending: isPendingUnfollow,
+    variables: variablesUnfollow,
+  } = useDeleteFollow()
 
   const handleFollow = async (followingId: string, isFollowing: boolean) => {
     try {
       if (isFollowing) {
-        unfollowUser({ followingId }).unwrap()
+        unfollowUser({ followingId, userId: id })
       } else {
-        followUser({ followingId }).unwrap()
+        followUser({ followingId, userId: id })
       }
     } catch (error) {
       console.error(error)
@@ -65,6 +67,18 @@ function Following({ params }: PageProps) {
 
             const isFollowing = followingItem.following.isFollowing ?? false
 
+            const isPending = !isFollowing
+              ? (isPendingFollow &&
+                  variablesFollow?.followingId ===
+                    followingItem.following.id) ||
+                (isPendingUnfollow &&
+                  variablesFollow?.followingId === followingItem.following.id)
+              : (isPendingFollow &&
+                  variablesUnfollow?.followingId ===
+                    followingItem.following.id) ||
+                (isPendingUnfollow &&
+                  variablesUnfollow?.followingId === followingItem.following.id)
+
             return (
               <Link
                 href={`/users/${followingItem.following.id}`}
@@ -85,6 +99,7 @@ function Following({ params }: PageProps) {
                           color={isFollowing ? 'default' : 'secondary'}
                           variant="flat"
                           className="gap-2"
+                          isLoading={isPending}
                           onClick={e => {
                             e.preventDefault()
                             handleFollow(

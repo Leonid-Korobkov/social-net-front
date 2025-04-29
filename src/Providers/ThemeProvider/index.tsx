@@ -1,3 +1,4 @@
+'use client'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { HeroUIProvider } from '@heroui/react'
 import { Toaster } from 'react-hot-toast'

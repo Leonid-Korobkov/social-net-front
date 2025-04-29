@@ -1,27 +1,30 @@
 'use client'
 import PostList from '@/components/shared/PostList'
-import { useGetAllPostsQuery } from '@/store/services/post.api'
-import { useState } from 'react'
+import { useGetAllPosts } from '@/services/api/post.api'
 
 function Posts() {
-  const [page, setPage] = useState(1)
-  const { data, isLoading, isFetching } = useGetAllPostsQuery({
-    page,
+  const {
+    data: data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+  } = useGetAllPosts({
     limit: 5,
   })
 
   const handleLoadMore = () => {
-    setPage(prev => prev + 1)
+    fetchNextPage()
   }
 
   return (
     <>
       <PostList
-        data={data?.posts ?? []}
+        data={data ?? []}
         isLoading={isLoading}
-        hasMore={data?.hasMore}
+        hasMore={hasNextPage}
         onLoadMore={handleLoadMore}
-        isFetchingMore={isFetching && !isLoading}
+        isFetchingMore={isFetchingNextPage && !isLoading}
       />
     </>
   )

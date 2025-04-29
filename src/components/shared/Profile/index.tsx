@@ -1,18 +1,17 @@
 'use client'
-import { useSelector } from 'react-redux'
 import { Card, CardHeader, CardBody, Image as NextImage } from '@heroui/react'
-import { selectCurrent } from '../../../features/user/user.slice'
 import Link from 'next/link'
 import { MdAlternateEmail } from 'react-icons/md'
 import Image from '../../ui/Image'
+import { useUserStore } from '@/store/user.store'
 
 function Profile() {
-  const current = useSelector(selectCurrent)
+  const currentUser = useUserStore.use.current()
 
-  if (!current) {
+  if (!currentUser) {
     return <p>Не найден</p>
   }
-  const { name, email, avatarUrl, id } = current
+  const { name, email, avatarUrl, id } = currentUser
 
   return (
     <Card className="py-4 w-[302px]">

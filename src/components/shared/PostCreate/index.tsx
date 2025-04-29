@@ -1,17 +1,17 @@
 'use client'
-import { Controller, useForm } from 'react-hook-form'
+import { useCreatePost } from '@/services/api/post.api'
 import { Button, Textarea } from '@heroui/react'
-import { IoMdCreate } from 'react-icons/io'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
+import { IoMdCreate } from 'react-icons/io'
 import { hasErrorField } from '../../../utils/hasErrorField'
-import { useCreatePostMutation } from '@/store/services/post.api'
 
 interface CreatePostProps {
   onSuccess?: () => void
 }
 
 function CreatePost({ onSuccess }: CreatePostProps) {
-  const [createPost, { isLoading }] = useCreatePostMutation()
+  const { mutateAsync: createPost, isPending: isLoading } = useCreatePost()
 
   const {
     handleSubmit,
@@ -25,7 +25,7 @@ function CreatePost({ onSuccess }: CreatePostProps) {
   const onSubmit = handleSubmit(async data => {
     try {
       const toastId = toast.loading('Создание поста...')
-      const promise = createPost({ content: data.text }).unwrap()
+      const promise = createPost({ content: data.text })
 
       promise
         .then(() => {

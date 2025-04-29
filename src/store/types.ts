@@ -15,6 +15,7 @@ export type User = {
   followers: Follows[]
   following: Follows[]
   isFollowing?: boolean
+  postCount: number
 }
 
 export type Follows = {
@@ -31,8 +32,11 @@ export type Post = {
   content: string
   author: User
   authorId: string
-  likes: Like[]
+  viewCount: number
+  shareCount: number
+  commentCount: number
   comments: Comment[]
+  likeCount: number
   createdAt: Date
   likedByUser?: boolean
   isFollowing?: boolean
@@ -56,6 +60,7 @@ export type Comment = {
   userId?: string
   likes: CommentLike[]
   likedByUser?: boolean
+  likeCount: number
   createdAt: Date
 }
 

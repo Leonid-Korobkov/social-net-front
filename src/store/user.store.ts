@@ -2,35 +2,47 @@ import { create } from 'zustand'
 import Cookies from 'js-cookie'
 import { User } from './types'
 import { createSelectors } from './createSelectors'
+import { useQueryClient } from '@tanstack/react-query'
 
-interface InitialState {
-  user: User | null
+interface initialUserStore {
   isAuthenticated: boolean
-  users: User[] | null
   current: User | null
   token?: string
+  error?: string
 
+  setUser: (user: User) => void
   logout: () => void
-  resetUser: () => void
+  setIsAuthenticated: () => void
+  setError: (error: string) => void
 }
 
-const initialState: InitialState = {
-  user: null,
+const initialState: initialUserStore = {
   isAuthenticated: false,
-  users: null,
   current: null,
-  
+  token: undefined,
+  error: undefined,
+
+  setUser: () => {},
   logout: () => {},
-  resetUser: () => {},
+  setIsAuthenticated: () => {},
+  setError: () => {},
 }
 
-export const UserState = create<InitialState>(set => ({
+export const UserStore = create<initialUserStore>(set => ({
   ...initialState,
   logout: () => {
     Cookies.remove('token')
     set(initialState)
   },
-  resetUser: () => set({ user: null }),
+  setUser: user => {
+    set({ current: user, isAuthenticated: true })
+  },
+  setIsAuthenticated: () => {
+    set({ isAuthenticated: true })
+  },
+  setError: error => {
+    set({ error })
+  },
 }))
 
-export const useUserState = createSelectors(UserState)
+export const useUserStore = createSelectors(UserStore)
