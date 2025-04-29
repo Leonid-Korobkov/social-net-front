@@ -1,8 +1,7 @@
-import { create } from 'zustand'
 import Cookies from 'js-cookie'
-import { User } from './types'
+import { create } from 'zustand'
 import { createSelectors } from './createSelectors'
-import { useQueryClient } from '@tanstack/react-query'
+import { User } from './types'
 
 interface initialUserStore {
   isAuthenticated: boolean
