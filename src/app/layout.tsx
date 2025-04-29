@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import PreLoader from '@/providers/PreLoader'
-import { ThemeProvider } from '@/providers/ThemeProvider'
-import ScrollRestoration from '@/providers/ScrollRestoration'
-import { StoreProvider } from '@/providers/StoreProvider'
+import PreLoader from '@/Providers/PreLoader'
+import { ThemeProvider } from '@/Providers/ThemeProvider'
+import ScrollRestoration from '@/Providers/ScrollRestoration'
+import { StoreProvider } from '@/Providers/StoreProvider'
 import { Suspense } from 'react'
-import ProgressProvider from '@/providers/ProgressProvider'
+import ProgressProvider from '@/Providers/ProgressProvider'
 
 export const metadata: Metadata = {
   title: 'Zling',
