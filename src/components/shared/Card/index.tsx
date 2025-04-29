@@ -25,6 +25,7 @@ import * as locales from 'date-fns/locale'
 import CardActionWidget from '../CardActionWidget'
 import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
 import { useToggleCommentLike } from '@/services/api/commentLike.api'
+import { useTopLoader } from 'nextjs-toploader'
 
 export interface ICard {
   avatarUrl: string
@@ -77,11 +78,11 @@ const Card = memo(
     const { mutateAsync: likePost } = useCreateLike()
     const { mutateAsync: unlikePost } = useDeleteLike()
 
-    // const [toggleLike] = useToggleCommentLikeMutation()
     const { mutateAsync: toggleLike } = useToggleCommentLike()
 
     const [isLikeInProgress, setIsLikeInProgress] = useState(false)
     const router = useRouter()
+    const loader = useTopLoader()
 
     const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
@@ -221,6 +222,7 @@ const Card = memo(
                 e.preventDefault()
                 return
               }
+              loader.start()
               router.push(`/posts/${id}`)
             }
           }}
