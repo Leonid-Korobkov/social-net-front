@@ -1,3 +1,4 @@
+'use client'
 import {
   Alert,
   Button,
@@ -12,9 +13,6 @@ import {
 } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { User } from '../../../app/types'
-import { useParams } from 'react-router-dom'
-import { useUpdateUserMutation } from '../../../app/services/user.api'
 import { hasErrorField } from '../../../utils/hasErrorField'
 import { validateEmailPattern } from '../../../utils/validateFieldsForm'
 import { IoMdMail } from 'react-icons/io'
@@ -24,23 +22,29 @@ import { parseDate, getLocalTimeZone, today } from '@internationalized/date'
 import toast from 'react-hot-toast'
 import ImageUpload from '../ImageUpload'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
+import { User } from '@/store/types'
+import { useUpdateUser } from '@/services/api/user.api'
 
 interface IEditProfile {
   isOpen: boolean
   onClose: () => void
   user?: User
+  params: {
+    id: string
+  }
 }
 
 function EditProfile({
   isOpen = false,
   onClose = () => null,
   user,
+  params,
 }: IEditProfile) {
-  const [updateUser, { isLoading }] = useUpdateUserMutation()
+  const { mutateAsync: updateUser, isPending: isLoading } = useUpdateUser()
 
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const { id } = useParams<{ id: string }>()
+  const { id } = params
   const { getOptimizedUrl } = useCloudinaryImage({
     src: user?.avatarUrl,
   })
@@ -73,25 +77,27 @@ function EditProfile({
     if (id) {
       try {
         const formData = new FormData()
-        formData.append('name', data.name || '')
+        formData.append('name', data.name?.trim() || '')
         if (data.email !== user?.email) {
-          formData.append('email', data.email || '')
+          formData.append('email', data.email?.trim() || '')
         }
         formData.append(
           'dateOfBirth',
-          data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : '',
+          data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : ''
         )
-        formData.append('bio', data.bio || '')
-        formData.append('location', data.location || '')
-        selectedFile &&
+        formData.append('bio', data.bio?.trim() || '')
+        formData.append('location', data.location?.trim() || '')
+
+        if (selectedFile) {
           formData.append(
             'avatar',
             new File([selectedFile], `${data.email}_${Date.now()}.png`, {
               type: selectedFile.type,
-            }),
+            })
           )
+        }
 
-        const promise = updateUser({ body: formData, id }).unwrap()
+        const promise = updateUser({ body: formData, id })
 
         const toastId = toast.loading('Сохранение...')
 

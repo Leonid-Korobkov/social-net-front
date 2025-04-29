@@ -1,11 +1,13 @@
+'use client'
+
 import { useState } from 'react'
 
-interface UseCloudinaryImageProps {
+export interface UseCloudinaryImageProps {
   src: string | undefined
   width?: number
 }
 
-interface CloudinaryTransformations {
+export interface CloudinaryTransformations {
   format?: string
   width?: number
   quality?: string
@@ -53,7 +55,7 @@ export const useCloudinaryImage = ({
 
   const getOptimizedUrl = (
     format: string = 'auto',
-    imageWidth: number = width,
+    imageWidth: number = width
   ) => {
     return getCloudinaryUrl({
       format,

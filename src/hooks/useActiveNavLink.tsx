@@ -1,24 +1,44 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { matchPath, useLocation } from 'react-router-dom'
-import { selectCurrent } from '../features/user/user.slice'
+'use client'
+import { useUserStore } from '@/store/user.store'
+import { usePathname } from 'next/navigation'
 
 export function useActiveNavLink(path: string) {
-  const location = useLocation()
-  const currentUser = useSelector(selectCurrent)
+  const pathname = usePathname()
+  const currentUser = useUserStore.use.current()
 
-  const match = matchPath(path, location.pathname)
-  const userProfileMatch = matchPath('/users/:id', location.pathname)
+  // Функция для проверки соответствия URL паттерну (замена matchPath из react-router)
+  const matchPath = (pattern: string, pathname: string) => {
+    if (!pathname) return false
+
+    // Простой вариант для точного совпадения
+    if (pattern === pathname) return true
+
+    // Для путей с параметрами (например, /users/:id)
+    const patternSegments = pattern.split('/')
+    const pathnameSegments = pathname.split('/')
+
+    if (patternSegments.length !== pathnameSegments.length) return false
+
+    for (let i = 0; i < patternSegments.length; i++) {
+      if (patternSegments[i].startsWith(':')) continue // Пропускаем параметры
+      if (patternSegments[i] !== pathnameSegments[i]) return false
+    }
+
+    return true
+  }
+
+  const match = matchPath(path, pathname || '')
+  const userProfileMatch = matchPath('/users/:id', pathname || '')
 
   // Для профиля пользователя проверяем точное совпадение
   if (
     path === `/users/${currentUser?.id}` &&
-    location.pathname === `/users/${currentUser?.id}`
+    pathname === `/users/${currentUser?.id}`
   ) {
     return (
       userProfileMatch &&
-      !location.pathname.includes('/following') &&
-      !location.pathname.includes('/followers')
+      !pathname.includes('/following') &&
+      !pathname.includes('/followers')
     )
   }
 

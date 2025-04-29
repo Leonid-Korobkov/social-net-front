@@ -1,13 +1,13 @@
-import { Image as NextImage } from "@heroui/react"
+'use client'
+import { ImageProps, Image as NextImage } from "@heroui/react"
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 
-interface ImageWithSkeletonProps {
+interface ImageWithSkeletonProps extends Omit<ImageProps, 'src' | 'alt'>  {
   src: string
   alt: string
   className?: string
   sizes?: string
   width?: number
-  [key: string]: any
 }
 
 function ImageWithSkeleton({

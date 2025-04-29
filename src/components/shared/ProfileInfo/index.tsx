@@ -1,3 +1,4 @@
+'use client'
 import RawHTML from '../../ui/EscapeHtml'
 
 interface IProfileInfo {

@@ -1,3 +1,4 @@
+'use client'
 import { FcDislike } from 'react-icons/fc'
 import { MdOutlineFavoriteBorder } from 'react-icons/md'
 import MetaInfo from '../MetaInfo'

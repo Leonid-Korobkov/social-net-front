@@ -1,14 +1,21 @@
-import { Button, Textarea } from "@heroui/react"
-import { IoMdCreate } from 'react-icons/io'
-import { useForm, Controller } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
-import { useCreateCommentMutation } from '../../../app/services/comment.api'
+'use client'
+import { useCreateComment } from '@/services/api/comment.api'
+import { hasErrorField } from '@/utils/hasErrorField'
+import { Button, Textarea } from '@heroui/react'
+import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { hasErrorField } from '../../../utils/hasErrorField'
+import { IoMdCreate } from 'react-icons/io'
 
-function CreateComment() {
-  const { id } = useParams<{ id: string }>()
-  const [createComment, { isLoading }] = useCreateCommentMutation()
+interface PageProps {
+  params: {
+    id: string
+  }
+}
+
+function CreateComment({ params }: PageProps) {
+  const { id } = params
+  const { mutateAsync: createComment, isPending: isLoading } =
+    useCreateComment()
 
   const {
     handleSubmit,
@@ -23,17 +30,19 @@ function CreateComment() {
       const promise = createComment({
         content: data.comment,
         postId: id,
-      }).unwrap()
+      })
 
       promise
         .then(() => {
           toast.success('Комментарий успешно создан!')
           setValue('comment', '')
-          // Скролл к комментарию
-          window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: 'smooth',
-          })
+          setTimeout(() => {
+            // Скролл к комментарию
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: 'smooth',
+            })
+          }, 100)
         })
         .catch(err => {
           if (hasErrorField(err)) {

@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom'
+'use client'
+import Link from 'next/link'
 import MetaInfo from '../MetaInfo'
 import { IconType } from 'react-icons'
-import { Spinner, Skeleton } from "@heroui/react"
+import { Spinner, Skeleton } from '@heroui/react'
 
 interface ICountInfo {
   Icon: IconType
@@ -45,7 +46,7 @@ function CountInfo({
   return (
     <Link
       className="transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
-      to={`/users/${userId}/${type}`}
+      href={`/users/${userId}/${type}`}
     >
       {content}
     </Link>

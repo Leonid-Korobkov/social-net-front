@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 
 // Use for local storage
@@ -49,7 +50,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         console.error(error)
       }
     },
-    [key],
+    [key]
   )
 
   const remove = React.useCallback(() => {

@@ -1,3 +1,4 @@
+'use client'
 import { ImageProps } from "@heroui/react"
 import ImageWithSkeleton from '../ImageWithSkeleton'
 

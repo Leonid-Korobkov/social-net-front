@@ -1,10 +1,11 @@
+'use client'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Post } from '../../../app/types'
 import CardSkeleton from '../../ui/CardSkeleton'
 import Card from '../Card'
-import { Spinner } from "@heroui/react"
+import { Spinner } from '@heroui/react'
 import { useInView } from 'react-intersection-observer'
 import { useEffect } from 'react'
+import { Post } from '@/store/types'
 
 interface PostListProps {
   data: Post[]
@@ -56,16 +57,16 @@ function PostList({
           {data &&
             data.length > 0 &&
             data.map(post => {
-              if (!post || !post.author) return null
+              if (!post || !post.authorId) return null
 
               const {
                 author,
                 authorId,
-                comments = [],
+                commentCount,
                 content,
                 createdAt,
                 id,
-                likes = [],
+                likeCount,
                 likedByUser = false,
                 isFollowing = false,
               } = post
@@ -87,11 +88,10 @@ function PostList({
                     content={content}
                     name={author?.name || ''}
                     likedByUser={likedByUser}
-                    commentsCount={comments?.length || 0}
+                    commentsCount={commentCount}
                     createdAt={createdAt}
-                    likesCount={likes?.length || 0}
+                    likesCount={likeCount}
                     isFollowing={isFollowing}
-                    likes={likes}
                     onClick={handleCardClick}
                   />
                 </motion.div>

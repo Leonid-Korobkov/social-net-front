@@ -1,14 +1,15 @@
+'use client'
 import { motion } from 'framer-motion'
-import { Image as NextImage } from "@heroui/react"
+import { Image as NextImage, ImageProps } from '@heroui/react'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
+import Image from 'next/image'
 
-interface ImageWithBlurredLoaderProps {
+interface ImageWithBlurredLoaderProps extends Omit<ImageProps, 'src' | 'alt'> {
   src: string
   alt: string
   className?: string
   sizes?: string
   width?: number
-  [key: string]: any
 }
 
 function ImageWithBlurredLoader({
@@ -41,10 +42,13 @@ function ImageWithBlurredLoader({
       {/* Размытое превью */}
       {isLoading && (
         <div className="absolute inset-0">
-          <img
+          <Image
             src={getBlurredUrl()}
             alt={alt}
             className="w-full h-full object-cover rounded-xl blur-md aspect-square"
+            width={400}
+            height={400}
+            unoptimized
           />
         </div>
       )}

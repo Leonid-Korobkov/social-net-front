@@ -1,3 +1,4 @@
+'use client'
 import { Spinner } from "@heroui/react"
 import { IconType } from 'react-icons'
 import { motion, AnimatePresence } from 'framer-motion'

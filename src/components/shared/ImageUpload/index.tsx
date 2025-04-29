@@ -1,7 +1,7 @@
+'use client'
 import { useCallback, useState, useEffect } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
-import { Image } from "@heroui/react"
-import { BASE_URL } from '../../../constants'
+import { Image } from '@heroui/react'
 
 interface ImageUploadProps {
   onChange: (file: File) => void
@@ -22,8 +22,7 @@ function ImageUpload({
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       if (fileRejections.length > 0) {
         fileRejections.forEach(({ errors }) => {
-          errors.forEach((error: any) => {
-            console.log(error)
+          errors.forEach((error: { code: string; message: string }) => {
             switch (error.code) {
               case 'too-many-files':
                 onError('Можно загрузить только один файл')
@@ -50,7 +49,7 @@ function ImageUpload({
         setPreview(previewUrl)
       }
     },
-    [onChange, onError],
+    [onChange, onError]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -86,7 +85,7 @@ function ImageUpload({
         }
       }
     },
-    [onDrop, onError],
+    [onDrop, onError]
   )
 
   // Добавляем обработчик вставки при монтировании и удаляем при размонтировании
@@ -107,7 +106,7 @@ function ImageUpload({
   }, [preview])
 
   const displayImage =
-    preview ||  (currentImageUrl ? `${currentImageUrl}` : null)
+    preview || (currentImageUrl ? `${currentImageUrl}` : null)
 
   return (
     <div className={`flex flex-col items-center gap-4 ${className}`}>

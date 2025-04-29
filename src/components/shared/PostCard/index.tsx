@@ -1,6 +1,7 @@
+'use client'
 import { Card, CardBody, Avatar } from "@heroui/react"
-import { Post } from '../../../app/types'
-import { Link } from 'react-router-dom'
+import { Post } from '@/store/types'
+import Link from 'next/link'
 import { formatDistance } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
@@ -13,12 +14,12 @@ function PostCard({ post }: PostCardProps) {
     <Card>
       <CardBody className="p-4">
         <div className="flex items-center gap-3 mb-3">
-          <Link to={`/users/${post.author.id}`}>
+          <Link href={`/users/${post.author.id}`}>
             <Avatar src={post.author.avatarUrl} name={post.author.name} />
           </Link>
           <div>
             <Link
-              to={`/users/${post.author.id}`}
+              href={`/users/${post.author.id}`}
               className="font-semibold hover:text-primary transition-colors"
             >
               {post.author.name}
@@ -31,7 +32,7 @@ function PostCard({ post }: PostCardProps) {
             </p>
           </div>
         </div>
-        <Link to={`/posts/${post.id}`}>
+        <Link href={`/posts/${post.id}`}>
           <p className="text-default-700">{post.content}</p>
         </Link>
       </CardBody>

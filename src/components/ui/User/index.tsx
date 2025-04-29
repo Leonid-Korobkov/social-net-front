@@ -1,3 +1,4 @@
+'use client'
 import { User as NextUiUser } from "@heroui/react"
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 

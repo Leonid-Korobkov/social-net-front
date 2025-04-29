@@ -1,5 +1,8 @@
-import { NavLink, useLocation } from 'react-router-dom'
+'use client'
+import Link from 'next/link'
 import { Button, TButtonColors } from '../../ui/Button'
+import { usePathname } from 'next/navigation'
+import { JSX } from 'react'
 
 interface NavButtonProps {
   children: React.ReactNode
@@ -18,7 +21,7 @@ function NavButton({
   isActive,
   onClick,
 }: NavButtonProps) {
-  const location = useLocation()
+  const pathname = usePathname()
 
   const handleClick = (e: React.MouseEvent) => {
     if (onClick) {
@@ -27,26 +30,24 @@ function NavButton({
       return
     }
 
-    if (location.pathname === href) {
+    if (pathname === href) {
       e.preventDefault()
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   return (
-    <NavLink to={href} onClick={handleClick}>
-      {() => (
-        <Button
-          className="flex justify-start text-xl pointer-events-none"
-          type="button"
-          fullWidth
-          icon={icon}
-          color={isActive ? 'secondary' : color}
-        >
-          {children}
-        </Button>
-      )}
-    </NavLink>
+    <Link href={href} onClick={handleClick}>
+      <Button
+        className="flex justify-start text-xl pointer-events-none"
+        type="button"
+        fullWidth
+        icon={icon}
+        color={isActive ? 'secondary' : color}
+      >
+        {children}
+      </Button>
+    </Link>
   )
 }
 

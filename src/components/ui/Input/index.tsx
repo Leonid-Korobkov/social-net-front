@@ -1,13 +1,15 @@
+'use client'
 import { useController } from 'react-hook-form'
 import { Control } from 'react-hook-form'
-import { Input as NextInput } from "@heroui/react"
+import { Input as NextInput } from '@heroui/react'
+import { JSX } from 'react'
 
 type Props = {
   name: string
   label: string
   placeholder?: string
   type?: string
-  control: Control<any>
+  control: Control
   required?: string
   endContent?: JSX.Element
 }

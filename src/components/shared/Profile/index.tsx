@@ -1,23 +1,17 @@
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { useSelector } from 'react-redux'
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Image as NextImage,
-} from "@heroui/react"
-import { selectCurrent } from '../../../features/user/user.slice'
-import { Link } from 'react-router-dom'
+'use client'
+import { Card, CardHeader, CardBody, Image as NextImage } from '@heroui/react'
+import Link from 'next/link'
 import { MdAlternateEmail } from 'react-icons/md'
 import Image from '../../ui/Image'
+import { useUserStore } from '@/store/user.store'
 
 function Profile() {
-  const current = useSelector(selectCurrent)
+  const currentUser = useUserStore.use.current()
 
-  if (!current) {
+  if (!currentUser) {
     return <p>Не найден</p>
   }
-  const { name, email, avatarUrl, id } = current
+  const { name, email, avatarUrl, id } = currentUser
 
   return (
     <Card className="py-4 w-[302px]">
@@ -26,11 +20,10 @@ function Profile() {
           alt="Изображение профиля"
           src={`${avatarUrl}`}
           className="w-full"
-          // isBlurred
         />
       </CardHeader>
       <CardBody className="overflow-visible py-2">
-        <Link to={`/users/${id}`}>
+        <Link href={`/users/${id}`}>
           <h4 className="font-bold text-large mb-2">{name}</h4>
         </Link>
         <p className="text-default-500 flex items-center gap-2 font-mono">

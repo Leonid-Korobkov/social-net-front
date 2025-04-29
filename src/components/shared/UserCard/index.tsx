@@ -1,6 +1,7 @@
-import { Card, CardBody, Avatar } from "@heroui/react"
-import { User } from '../../../app/types'
-import { Link } from 'react-router-dom'
+'use client'
+import { Card, CardBody, Avatar } from '@heroui/react'
+import { User } from '@/store/types'
+import Link from 'next/link'
 
 interface UserCardProps {
   user: User
@@ -10,12 +11,12 @@ function UserCard({ user }: UserCardProps) {
   return (
     <Card>
       <CardBody className="flex flex-row items-center gap-4">
-        <Link to={`/users/${user.id}`}>
+        <Link href={`/users/${user.id}`}>
           <Avatar src={user.avatarUrl} name={user.name} size="lg" />
         </Link>
         <div className="flex flex-col">
           <Link
-            to={`/users/${user.id}`}
+            href={`/users/${user.id}`}
             className="text-lg font-semibold hover:text-primary transition-colors"
           >
             {user.name}

@@ -1,3 +1,4 @@
+'use client'
 import { Card, CardHeader, Skeleton } from "@heroui/react"
 
 function CreateCommentSkeleton() {
