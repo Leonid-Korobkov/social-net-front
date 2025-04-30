@@ -11,3 +11,5 @@ export const validatePassword = {
 }
 
 export const validateEmailPattern = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/
+
+export const validateUserName = /^[a-z0-9_-]{3,15}$/

@@ -26,8 +26,8 @@ function Profile() {
         <Link href={`/users/${id}`}>
           <h4 className="font-bold text-large mb-2">@{userName}</h4>
         </Link>
-        <p className="text-default-500 flex flex-col items-center gap-2 font-mono">
-          <div>{name}</div>
+        <p className="text-default-500 gap-2 font-mono">
+          <span>{name}</span>
         </p>
       </CardBody>
     </Card>

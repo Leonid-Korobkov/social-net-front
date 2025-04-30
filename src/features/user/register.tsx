@@ -1,20 +1,22 @@
 'use client'
-import { Alert, Button, Input, Link } from '@heroui/react'
-import { useForm } from 'react-hook-form'
-import { SubmitHandler } from 'react-hook-form'
-import { IoMdMail } from 'react-icons/io'
+import { useRegister } from '@/services/api/user.api'
 import { hasErrorField } from '@/utils/hasErrorField'
 import {
   validateEmailPattern,
   validatePassword,
+  validateUserName,
 } from '@/utils/validateFieldsForm'
-import { RiLockPasswordFill } from 'react-icons/ri'
-import { useRegister } from '@/services/api/user.api'
+import { Alert, Button, Input, Link } from '@heroui/react'
+import { useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { IoMdMail } from 'react-icons/io'
+import { IoEye, IoEyeOff } from 'react-icons/io5'
 
 interface IForm {
   email: string
   password: string
   name: string
+  userName: string
 }
 
 interface RegisterProps {
@@ -23,6 +25,8 @@ interface RegisterProps {
 }
 
 function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
+  const [isVisiblePass, setIsVisiblePass] = useState(false)
+
   const {
     register,
     formState: { errors },
@@ -55,9 +59,30 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         type="text"
         errorMessage={errors.name ? errors.name.message : ''}
         isInvalid={errors.name ? true : false}
+        placeholder="Иван Петрович"
         {...register('name', {
           required: 'Обязательное поле',
           minLength: { value: 3, message: 'Минимум 3 символа' },
+          validate: value => {
+            if (value.trim() === '') {
+              return 'Имя не может содержать пробелы'
+            }
+            return true
+          },
+        })}
+      />
+      <Input
+        label="Имя пользователя"
+        type="text"
+        errorMessage={errors.userName?.message || ''}
+        isInvalid={errors.userName ? true : false}
+        placeholder="username_100500"
+        {...register('userName', {
+          required: 'Обязательное поле',
+          pattern: {
+            value: validateUserName,
+            message: `Имя пользователя может содержать только латинские маленькие буквы, цифры, символы "_" и "-"`,
+          },
         })}
       />
       <Input
@@ -66,6 +91,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         errorMessage={errors.email?.message || ''}
         isInvalid={errors.email ? true : false}
         endContent={<IoMdMail className="form-icon" />}
+        placeholder="example@gmail.com"
         {...register('email', {
           required: 'Обязательное поле',
           pattern: {
@@ -76,10 +102,23 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       />
       <Input
         label="Пароль"
-        type="password"
+        type={isVisiblePass ? 'text' : 'password'}
         errorMessage={errors.password ? errors.password.message : ''}
         isInvalid={errors.password ? true : false}
-        endContent={<RiLockPasswordFill className="form-icon" />}
+        endContent={
+          <button
+            aria-label="toggle password visibility"
+            className="focus:outline-none flex items-center justify-center h-full"
+            type="button"
+            onClick={() => setIsVisiblePass(!isVisiblePass)}
+          >
+            {isVisiblePass ? (
+              <IoEye className="form-icon text-default-400" />
+            ) : (
+              <IoEyeOff className="form-icon text-default-400" />
+            )}
+          </button>
+        }
         {...register('password', {
           required: 'Обязательное поле',
           validate: validatePassword,

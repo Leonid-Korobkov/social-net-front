@@ -8,6 +8,7 @@ import { useUserStore } from '@/store/user.store'
 import { Button, Card, CardBody, Spinner } from '@heroui/react'
 import Link from 'next/link'
 import { use } from 'react'
+import FollowSkeleton from '@/components/ui/FollowSkeleton'
 
 interface PageProps {
   params: Promise<{
@@ -46,7 +47,7 @@ function Following({ params }: PageProps) {
   }
 
   if (isLoading) {
-    return <Spinner />
+    return <FollowSkeleton />
   }
 
   if (!user) {
@@ -120,7 +121,13 @@ function Following({ params }: PageProps) {
                                 variant="flat"
                                 className="gap-2"
                                 isLoading={isPending}
-                                onClick={e => {
+                                onPress={e => {
+                                  handleFollow(
+                                    followingItem.following?.id ?? '',
+                                    isFollowing
+                                  )
+                                }}
+                                onMouseDown={e => {
                                   e.preventDefault()
                                   handleFollow(
                                     followingItem.following?.id ?? '',

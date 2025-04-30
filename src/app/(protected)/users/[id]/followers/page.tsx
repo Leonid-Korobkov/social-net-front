@@ -6,6 +6,8 @@ import { useGetUserById } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
 import { Button, Card, CardBody, Spinner } from '@heroui/react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useTopLoader } from 'nextjs-toploader'
 import { use } from 'react'
 
 interface PageProps {
@@ -17,6 +19,8 @@ interface PageProps {
 function Followers({ params }: PageProps) {
   const unwrappedParams = use(params)
   const { id } = unwrappedParams
+  const loader = useTopLoader()
+  const router = useRouter()
 
   const currentUser = useUserStore.use.current()
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
@@ -102,6 +106,14 @@ function Followers({ params }: PageProps) {
                   variablesUnfollow?.followingId === followerItem.follower.id)
 
             return (
+              // <div
+              //   onClick={e => {
+              //     if (followerItem.follower) {
+              //       router.push(`/users/${followerItem.follower.id}`)
+              //     }
+              //   }}
+              //   key={followerItem.follower.id}
+              // >
               <Link
                 href={`/users/${followerItem.follower.id}`}
                 key={followerItem.follower.id}
@@ -120,16 +132,30 @@ function Followers({ params }: PageProps) {
                           color={isFollowing ? 'default' : 'secondary'}
                           variant="flat"
                           className="gap-2"
+                          isLoading={isPending || isFetchingUser}
                           onClick={e => {
                             e.preventDefault()
                             e.stopPropagation()
-                          }}
-                          isLoading={isPending || isFetchingUser}
-                          onPress={e => {
                             handleFollow(
                               followerItem.follower?.id ?? '',
                               isFollowing
                             )
+                          }}
+                          onMouseDown={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onMouseUp={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onPointerDown={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          onPointerUp={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
                           }}
                         >
                           {isFollowing ? 'Отписаться' : 'Подписаться'}
@@ -138,6 +164,7 @@ function Followers({ params }: PageProps) {
                   </CardBody>
                 </Card>
               </Link>
+              // </div>
             )
           })}
         </div>

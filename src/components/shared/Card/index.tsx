@@ -84,7 +84,6 @@ const Card = memo(
     const [isLikeInProgress, setIsLikeInProgress] = useState(false)
     const router = useRouter()
     const loader = useTopLoader()
-    const setReduce = UserSettingsStore.getState().setReduceAnimation
 
     const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
@@ -106,7 +105,6 @@ const Card = memo(
               userId: authorId,
             })
           } else {
-            setReduce()
             await likePost({
               postId: id,
               userId: authorId,

@@ -169,6 +169,7 @@ function CardActionWidget({
             key="likes"
             color="primary"
             startContent={<AiOutlineLike />}
+            onMouseDown={handleOpenModalLikes}
             onPress={handleOpenModalLikes}
           >
             Просмотр лайков
@@ -177,6 +178,7 @@ function CardActionWidget({
             key="share"
             color="primary"
             startContent={<FaShareFromSquare />}
+            onMouseDown={handleShare}
             onPress={handleShare}
           >
             Поделиться
@@ -187,6 +189,7 @@ function CardActionWidget({
               className="text-danger"
               color="danger"
               startContent={<RiDeleteBinLine />}
+              onMouseDown={onOpen}
               onPress={onOpen}
             >
               Удалить

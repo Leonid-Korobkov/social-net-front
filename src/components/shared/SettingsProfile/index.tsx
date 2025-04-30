@@ -28,7 +28,7 @@ import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import { User } from '@/store/types'
 import { useUpdateUser } from '@/services/api/user.api'
 
-interface IEditProfile {
+interface ISettingsProfile {
   isOpen: boolean
   onClose: () => void
   user?: User
@@ -37,12 +37,12 @@ interface IEditProfile {
   }
 }
 
-function EditProfile({
+function SettingsProfile({
   isOpen = false,
   onClose = () => null,
   user,
   params,
-}: IEditProfile) {
+}: ISettingsProfile) {
   const { mutateAsync: updateUser, isPending: isLoading } = useUpdateUser()
 
   const [error, setError] = useState('')
@@ -328,4 +328,4 @@ function EditProfile({
   )
 }
 
-export default EditProfile
+export default SettingsProfile
