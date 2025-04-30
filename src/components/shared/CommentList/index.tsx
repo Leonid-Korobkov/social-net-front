@@ -68,7 +68,7 @@ function CommentList({
                     cardFor="comment"
                     avatarUrl={comment.user?.avatarUrl ?? ''}
                     content={comment.content}
-                    name={comment.user?.name ?? ''}
+                    username={comment.user?.userName ?? ''}
                     authorId={comment.userId ?? ''}
                     commentId={comment.id}
                     id={comment.postId}

@@ -47,14 +47,17 @@ export const useCreatePost = () => {
       }
     },
     onSuccess: newPost => {
+      console.log(newPost)
       // 1) Вставляем новый пост на первую страницу
       queryClient.setQueryData<InfiniteData<PostsDTO>>(postKeys.all, old => {
         if (!old) return old
+        console.log(old)
         const newPages = [...old.pages]
         newPages[0] = {
           ...newPages[0],
           data: [newPost, ...newPages[0].data],
         }
+        console.log({ ...old, pages: newPages })
         return { ...old, pages: newPages }
       })
 
@@ -74,9 +77,6 @@ export const useCreatePost = () => {
           return { ...old, pages: newPages }
         })
       }
-      // onSuccess: () => {
-      //   queryClient.invalidateQueries({ queryKey: postKeys.all })
-      // },
     },
   })
 }

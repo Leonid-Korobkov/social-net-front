@@ -1,8 +1,9 @@
 'use client'
-import { ImageProps, Image as NextImage } from "@heroui/react"
+import { ImageProps, Image } from '@heroui/react'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
+import NextImage from 'next/image'
 
-interface ImageWithSkeletonProps extends Omit<ImageProps, 'src' | 'alt'>  {
+interface ImageWithSkeletonProps extends Omit<ImageProps, 'src' | 'alt'> {
   src: string
   alt: string
   className?: string
@@ -16,13 +17,14 @@ function ImageWithSkeleton({
   className = '',
   sizes = '(max-width: 768px) 100vw, 50vw',
   width = 800,
+  onClick,
   ...props
 }: ImageWithSkeletonProps) {
   const { isLoading, error, getOptimizedUrl, handleLoad, handleError } =
     useCloudinaryImage({ src, width })
 
   return (
-    <div className={`relative aspect-square lg:w-full lg:h-full`}>
+    <div className={`relative aspect-square lg:w-full lg:h-full min-h-[200px] min-w-[200px]`}>
       {/* {isLoading && (
         <Skeleton className="h-full w-full rounded-xl">
           <div className="aspect-square rounded-xl bg-default-300 absolute inset-0 min-h-[200px]"></div>
@@ -35,8 +37,7 @@ function ImageWithSkeleton({
       > */}
       {src && !error && (
         <picture className={error ? 'hidden' : ''}>
-          {/* AVIF формат */}
-          <source
+          {/* <source
             type="image/avif"
             sizes={sizes}
             srcSet={`
@@ -45,7 +46,6 @@ function ImageWithSkeleton({
                 ${getOptimizedUrl('avif', 1200)} 1200w
               `}
           />
-          {/* WebP формат */}
           <source
             type="image/webp"
             sizes={sizes}
@@ -55,7 +55,6 @@ function ImageWithSkeleton({
                 ${getOptimizedUrl('webp', 1200)} 1200w
               `}
           />
-          {/* png формат */}
           <source
             type="image/png"
             sizes={sizes}
@@ -65,7 +64,6 @@ function ImageWithSkeleton({
                 ${getOptimizedUrl('png', 1200)} 1200w
               `}
           />
-          {/* jpg формат */}
           <source
             type="image/jpg"
             sizes={sizes}
@@ -74,23 +72,22 @@ function ImageWithSkeleton({
                 ${getOptimizedUrl('jpg', 800)} 800w,
                 ${getOptimizedUrl('jpg', 1200)} 1200w
               `}
-          />
+          /> */}
           {/* Оригинальный формат как fallback */}
           <NextImage
-            src={getOptimizedUrl()}
+            src={src}
             alt={alt}
-            className={`w-full h-full object-cover rounded-xl aspect-square ${className}`}
-            {...props}
+            fill={true}
+            className={`w-full h-full object-cover rounded-xl aspect-square z-10 ${className}`}
             onLoad={handleLoad}
             onError={handleError}
+            onClick={onClick}
           />
           <img
             src={getOptimizedUrl()}
             alt={alt}
             className={`absolute z-0 inset-0 w-full h-full object-cover aspect-square filter blur-xl scale-105 saturate-150 opacity-70 translate-y-1 rounded-large`}
           />
-          
-          
         </picture>
       )}
       {/* </motion.div> */}

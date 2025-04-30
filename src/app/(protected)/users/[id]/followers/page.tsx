@@ -68,7 +68,7 @@ function Followers({ params }: PageProps) {
       <h1 className="text-2xl font-bold mb-5">
         {currentUser?.id === user.id
           ? 'Мои подписчики'
-          : `Подписчики ${user.name}`}
+          : `Подписчики ${user.userName}`}
       </h1>
       {user.followers?.length > 0 ? (
         <div className="gap-5 flex flex-col">
@@ -109,9 +109,9 @@ function Followers({ params }: PageProps) {
                 <Card>
                   <CardBody className="flex flex-row items-center justify-between">
                     <User
-                      name={followerItem.follower.name ?? ''}
+                      username={followerItem.follower.userName ?? ''}
                       avatarUrl={followerItem.follower.avatarUrl ?? ''}
-                      description={followerItem.follower.email ?? ''}
+                      description={followerItem.follower.name ?? ''}
                       className="!justify-start"
                     />
                     {currentUser &&

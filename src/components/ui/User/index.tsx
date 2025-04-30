@@ -1,16 +1,16 @@
 'use client'
-import { User as NextUiUser } from "@heroui/react"
+import { User as NextUiUser } from '@heroui/react'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 
 interface IUser {
-  name: string
+  username: string
   avatarUrl: string
   description?: string | React.ReactNode
   className?: string
 }
 
 function User({
-  name = '',
+  username = '',
   description = '',
   avatarUrl = '',
   className = '',
@@ -22,7 +22,7 @@ function User({
 
   return (
     <NextUiUser
-      name={name}
+      name={username}
       className={className}
       description={description}
       avatarProps={{

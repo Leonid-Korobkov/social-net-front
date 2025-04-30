@@ -15,6 +15,7 @@ interface PostListProps {
   hasMore?: boolean
   onLoadMore?: () => void
   isFetchingMore?: boolean
+  skeletonClassName?: string
 }
 
 function PostList({
@@ -25,6 +26,7 @@ function PostList({
   hasMore,
   onLoadMore,
   isFetchingMore,
+  skeletonClassName
 }: PostListProps) {
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
@@ -38,7 +40,7 @@ function PostList({
 
   if (isLoading && !data.length) {
     return (
-      <div>
+      <div className={skeletonClassName}>
         {Array.from({ length: 5 }).map((_, index) => (
           <CardSkeleton key={index} />
         ))}
@@ -86,7 +88,7 @@ function PostList({
                     avatarUrl={author?.avatarUrl || ''}
                     cardFor={'post'}
                     content={content}
-                    name={author?.name || ''}
+                    username={author?.userName || ''}
                     likedByUser={likedByUser}
                     commentsCount={commentCount}
                     createdAt={createdAt}

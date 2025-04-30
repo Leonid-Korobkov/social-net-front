@@ -1,11 +1,12 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import MotionConfigProvider from '@/Providers/MotionConfigProvider'
 import PreLoader from '@/Providers/PreLoader'
-import { ThemeProvider } from '@/Providers/ThemeProvider'
+import ProgressProvider from '@/Providers/ProgressProvider'
 import ScrollRestoration from '@/Providers/ScrollRestoration'
 import { StoreProvider } from '@/Providers/StoreProvider'
+import { ThemeProvider } from '@/Providers/ThemeProvider'
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import ProgressProvider from '@/Providers/ProgressProvider'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Zling',
@@ -28,7 +29,9 @@ export default function RootLayout({
             <PreLoader />
             <Suspense>
               <ScrollRestoration>
-                <ProgressProvider>{children}</ProgressProvider>
+                <MotionConfigProvider>
+                  <ProgressProvider>{children}</ProgressProvider>
+                </MotionConfigProvider>
               </ScrollRestoration>
             </Suspense>
           </StoreProvider>

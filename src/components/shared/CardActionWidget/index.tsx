@@ -265,7 +265,7 @@ function CardActionWidget({
                         <Link key={like.id} href={`/users/${like.userId}`}>
                           <Divider className="mb-2" />
                           <User
-                            name={like.user?.name || 'Аноним'}
+                            username={like.user?.name || 'Аноним'}
                             avatarUrl={like.user?.avatarUrl || ''}
                             description={
                               <div className="flex items-center gap-1">

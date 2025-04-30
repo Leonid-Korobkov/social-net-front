@@ -12,14 +12,14 @@ function UserCard({ user }: UserCardProps) {
     <Card>
       <CardBody className="flex flex-row items-center gap-4">
         <Link href={`/users/${user.id}`}>
-          <Avatar src={user.avatarUrl} name={user.name} size="lg" />
+          <Avatar src={user.avatarUrl} name={user.userName} size="lg" />
         </Link>
         <div className="flex flex-col">
           <Link
             href={`/users/${user.id}`}
             className="text-lg font-semibold hover:text-primary transition-colors"
           >
-            {user.name}
+            {user.userName}
           </Link>
           <p className="text-default-500">{user.email}</p>
           {user.bio && (

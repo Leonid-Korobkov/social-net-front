@@ -58,7 +58,7 @@ function UserProfile({ params }: PageProps) {
     fetchNextPage,
   } = useGetPostsByUserId({
     userId: id,
-    limit: 5,
+    limit: 10,
   })
 
   const { mutateAsync: followUser, isPending: isFollowPending } =
@@ -134,7 +134,7 @@ function UserProfile({ params }: PageProps) {
               width={200}
               height={200}
               // isBlurred
-              className="w-[200px] h-[200px] border-4 border-white rounded-xl cursor-pointer"
+              className="max-w-full max-h-full border-4 border-white rounded-xl cursor-pointer"
               onClick={handleImageClick}
             />
             <div className="flex flex-col text-2xl font-bold gap-4 items-center">
@@ -200,11 +200,11 @@ function UserProfile({ params }: PageProps) {
                 type="following"
               />
             </Card>
+            <ProfileInfo title="Никнейм" info={`@${user.userName}`} />
             <ProfileInfo
               title="Зарегистрирован"
               info={formatToClientDate(user.createdAt, false)}
             />
-            <ProfileInfo title="Почта" info={user.email} />
             <ProfileInfo title="Местоположение" info={user.location} />
             <ProfileInfo
               title="Дата рождения"
@@ -224,6 +224,7 @@ function UserProfile({ params }: PageProps) {
           hasMore={hasNextPage}
           onLoadMore={handleLoadMore}
           isFetchingMore={isFetchingNextPage && !isLoading}
+          skeletonClassName="mt-10"
         />
         <EditProfile
           isOpen={isOpen}

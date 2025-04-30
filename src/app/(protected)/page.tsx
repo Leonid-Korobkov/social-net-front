@@ -10,7 +10,7 @@ function Posts() {
     isLoading,
     isFetchingNextPage,
   } = useGetAllPosts({
-    limit: 5,
+    limit: 10,
   })
 
   const handleLoadMore = () => {

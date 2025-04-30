@@ -11,7 +11,7 @@ function Profile() {
   if (!currentUser) {
     return <p>Не найден</p>
   }
-  const { name, email, avatarUrl, id } = currentUser
+  const { userName, name, email, avatarUrl, id } = currentUser
 
   return (
     <Card className="py-4 w-[302px]">
@@ -24,11 +24,10 @@ function Profile() {
       </CardHeader>
       <CardBody className="overflow-visible py-2">
         <Link href={`/users/${id}`}>
-          <h4 className="font-bold text-large mb-2">{name}</h4>
+          <h4 className="font-bold text-large mb-2">@{userName}</h4>
         </Link>
-        <p className="text-default-500 flex items-center gap-2 font-mono">
-          <MdAlternateEmail />
-          {email}
+        <p className="text-default-500 flex flex-col items-center gap-2 font-mono">
+          <div>{name}</div>
         </p>
       </CardBody>
     </Card>

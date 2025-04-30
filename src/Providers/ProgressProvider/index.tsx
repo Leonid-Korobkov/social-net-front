@@ -7,8 +7,9 @@ function ProgressProvider({ children }: { children: React.ReactNode }) {
       <NextTopLoader
         color="#9353D3"
         crawl={true}
+        height={6}
         showSpinner={false}
-        shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+        shadow="0 0 20px #2299DD,0 0 10px #2299DD"
       />
       {children}
     </>

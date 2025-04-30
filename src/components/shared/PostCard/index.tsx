@@ -15,14 +15,14 @@ function PostCard({ post }: PostCardProps) {
       <CardBody className="p-4">
         <div className="flex items-center gap-3 mb-3">
           <Link href={`/users/${post.author.id}`}>
-            <Avatar src={post.author.avatarUrl} name={post.author.name} />
+            <Avatar src={post.author.avatarUrl} name={post.author.userName} />
           </Link>
           <div>
             <Link
               href={`/users/${post.author.id}`}
               className="font-semibold hover:text-primary transition-colors"
             >
-              {post.author.name}
+              {post.author.userName}
             </Link>
             <p className="text-xs text-default-500">
               {formatDistance(new Date(post.createdAt), new Date(), {

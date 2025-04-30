@@ -97,7 +97,7 @@ function CurrentPost({ params, searchParams }: PageProps) {
         cardFor="current-post"
         avatarUrl={author?.avatarUrl ?? ''}
         content={content}
-        name={author?.name ?? ''}
+        username={author?.userName ?? ''}
         likesCount={likeCount}
         commentsCount={commentCount}
         authorId={authorId}

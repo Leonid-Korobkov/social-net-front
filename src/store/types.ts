@@ -3,6 +3,7 @@ export type User = {
   email: string
   password: string
   name?: string
+  userName: string
   avatarUrl?: string
   dateOfBirth?: Date
   createdAt: Date
@@ -16,6 +17,7 @@ export type User = {
   following: Follows[]
   isFollowing?: boolean
   postCount: number
+  reduceAnimation?: boolean
 }
 
 export type Follows = {

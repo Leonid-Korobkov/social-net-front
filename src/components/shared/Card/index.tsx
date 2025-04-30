@@ -26,10 +26,11 @@ import CardActionWidget from '../CardActionWidget'
 import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
 import { useToggleCommentLike } from '@/services/api/commentLike.api'
 import { useTopLoader } from 'nextjs-toploader'
+import { UserSettingsStore } from '@/store/userSettings.store'
 
 export interface ICard {
   avatarUrl: string
-  name: string
+  username: string
   authorId: string
   content: string
   commentId?: string
@@ -62,7 +63,7 @@ const getLocale = (): Locale => {
 const Card = memo(
   ({
     avatarUrl = '',
-    name = '',
+    username = '',
     content = '',
     authorId = '',
     id = '',
@@ -83,6 +84,7 @@ const Card = memo(
     const [isLikeInProgress, setIsLikeInProgress] = useState(false)
     const router = useRouter()
     const loader = useTopLoader()
+    const setReduce = UserSettingsStore.getState().setReduceAnimation
 
     const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
@@ -104,6 +106,7 @@ const Card = memo(
               userId: authorId,
             })
           } else {
+            setReduce()
             await likePost({
               postId: id,
               userId: authorId,
@@ -134,7 +137,7 @@ const Card = memo(
             className="flex-1"
           >
             <User
-              name={name}
+              username={username}
               className="text-small font-semibold leading-none text-default-600"
               avatarUrl={avatarUrl}
               description={

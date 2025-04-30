@@ -82,14 +82,14 @@ function Header({ className }: { className?: string }) {
                   }}
                   className="transition-transform [&>span]:order-1 [&>div]:items-end"
                   description={currentUser?.email}
-                  name={currentUser?.name}
+                  name={currentUser?.userName}
                 />
               </DropdownTrigger>
               <DropdownMenu aria-label="User Actions" variant="flat">
                 <DropdownSection showDivider>
                   <DropdownItem key="user" className="h-14 gap-2">
                     <p className="font-light">Вы вошли как</p>
-                    <p className="font-bold">{currentUser?.name}</p>
+                    <p className="font-bold">{currentUser?.userName}</p>
                   </DropdownItem>
                   <DropdownItem
                     key="profile"
