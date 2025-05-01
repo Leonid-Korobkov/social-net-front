@@ -1,11 +1,5 @@
-import CardSkeleton from "@/components/ui/CardSkeleton";
+import FollowSkeleton from '@/components/ui/FollowSkeleton'
 
 export default function Loading() {
-  return (
-    <div>
-      {Array.from({ length: 5 }).map((_, index) => (
-        <CardSkeleton key={index} />
-      ))}
-    </div>
-  )
+  return <FollowSkeleton />
 }

@@ -1,4 +1,7 @@
 'use client'
+import { ApiErrorResponse } from '@/services/ApiConfig'
+import { useUpdateUser } from '@/services/api/user.api'
+import { User } from '@/store/types'
 import {
   Alert,
   Button,
@@ -11,27 +14,25 @@ import {
   ModalHeader,
   Textarea,
 } from '@heroui/react'
+import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { IoMdMail } from 'react-icons/io'
+import { IoCloseOutline } from 'react-icons/io5'
+import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
+import { formatDateToISO } from '../../../utils/formatToClientDate'
 import { hasErrorField } from '../../../utils/hasErrorField'
 import {
   validateEmailPattern,
   validateUserName,
 } from '../../../utils/validateFieldsForm'
-import { IoMdMail } from 'react-icons/io'
-import { IoCloseOutline } from 'react-icons/io5'
-import { formatDateToISO } from '../../../utils/formatToClientDate'
-import { parseDate, getLocalTimeZone, today } from '@internationalized/date'
-import toast from 'react-hot-toast'
 import ImageUpload from '../ImageUpload'
-import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
-import { User } from '@/store/types'
-import { useUpdateUser } from '@/services/api/user.api'
 
 interface IEditProfile {
   isOpen: boolean
   onClose: () => void
-  user?: User
+  user?: User | null
   params: {
     id: string
   }
@@ -46,7 +47,7 @@ function EditProfile({
   const { mutateAsync: updateUser, isPending: isLoading } = useUpdateUser()
 
   const [error, setError] = useState('')
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | string | null>(null)
   const { id } = params
   const { getOptimizedUrl } = useCloudinaryImage({
     src: user?.avatarUrl,
@@ -94,15 +95,19 @@ function EditProfile({
         formData.append('userName', data.userName?.trim() || '')
 
         if (selectedFile) {
-          formData.append(
-            'avatar',
-            new File([selectedFile], `${data.email}_${Date.now()}.png`, {
-              type: selectedFile.type,
-            })
-          )
+          if (typeof selectedFile == 'string') {
+            formData.append('avatar', selectedFile)
+          } else if (typeof selectedFile == 'object') {
+            formData.append(
+              'avatar',
+              new File([selectedFile], `${data.email}_${Date.now()}.png`, {
+                type: selectedFile.type,
+              })
+            )
+          }
         }
 
-        const promise = updateUser({ body: formData, id })
+        const promise = updateUser({ body: formData, id: id.toString() })
 
         const toastId = toast.loading('Сохранение...')
 
@@ -110,21 +115,16 @@ function EditProfile({
           .then(() => {
             toast.success('Профиль обновлен!')
             setSelectedFile(null)
+            onClose()
+            setError('')
           })
-          .catch(err => {
-            if (hasErrorField(err)) {
-              setError(err.data.error)
-              toast.error('Не удалось сохранить: ' + err.data.error)
-            } else {
-              setError('Произошла ошибка при обновлении профиля')
-              toast.error('Произошла ошибка при обновлении профиля')
-            }
+          .catch((err: ApiErrorResponse) => {
+            setError(err.errorMessage)
+            toast.error('Не удалось сохранить: ' + err.errorMessage)
           })
           .finally(() => {
             toast.dismiss(toastId)
           })
-
-        onClose()
       } catch (err) {
         if (hasErrorField(err)) {
           setError(err.data.error)
@@ -136,7 +136,10 @@ function EditProfile({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        setError('')
+        onClose()
+      }}
       backdrop="blur"
       placement="top"
       isDismissable={false}
@@ -272,7 +275,7 @@ function EditProfile({
                         isInvalid={errors.dateOfBirth ? true : false}
                         showMonthAndYearPickers
                         selectorButtonPlacement="start"
-                        description="Формат даты: ДД.ММ.ГГГГ"
+                        description="Формат даты: ММ.ДД.ГГГГ"
                       />
                     )
                   }}
@@ -307,7 +310,7 @@ function EditProfile({
                 <div className="flex gap-2 justify-end">
                   <Button
                     fullWidth
-                    color="primary"
+                    color="secondary"
                     type="submit"
                     isLoading={isLoading}
                   >
@@ -317,7 +320,14 @@ function EditProfile({
               </form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button
+                color="danger"
+                variant="light"
+                onPress={() => {
+                  setError('')
+                  onClose()
+                }}
+              >
                 Закрыть
               </Button>
             </ModalFooter>

@@ -1,61 +1,53 @@
 'use client'
+import { useUpdateUserSettings } from '@/services/api/user.api'
+import { User } from '@/store/types'
+import { IUserSettings } from '@/types/user.interface'
 import {
-  Alert,
   Button,
-  DatePicker,
-  Input,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Textarea,
+  Switch,
 } from '@heroui/react'
 import { useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { hasErrorField } from '../../../utils/hasErrorField'
-import {
-  validateEmailPattern,
-  validateUserName,
-} from '../../../utils/validateFieldsForm'
+import { useForm } from 'react-hook-form'
+import { IoIosSettings } from 'react-icons/io'
 import { IoMdMail } from 'react-icons/io'
-import { IoCloseOutline } from 'react-icons/io5'
-import { formatDateToISO } from '../../../utils/formatToClientDate'
-import { parseDate, getLocalTimeZone, today } from '@internationalized/date'
+import { BiSolidBookContent } from 'react-icons/bi'
+import { FaMapMarkerAlt, FaBirthdayCake } from 'react-icons/fa'
+import { MdAnimation } from 'react-icons/md'
 import toast from 'react-hot-toast'
-import ImageUpload from '../ImageUpload'
-import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
-import { User } from '@/store/types'
-import { useUpdateUser } from '@/services/api/user.api'
+import { ApiErrorResponse } from '@/services/ApiConfig'
+import { UserSettingsStore } from '@/store/userSettings.store'
 
-interface ISettingsProfile {
+interface SettingsProfileProps {
   isOpen: boolean
   onClose: () => void
-  user?: User
+  user: User | null
   params: {
     id: string
   }
 }
 
-function SettingsProfile({
-  isOpen = false,
-  onClose = () => null,
+export default function SettingsProfile({
+  isOpen,
+  onClose,
   user,
   params,
-}: ISettingsProfile) {
-  const { mutateAsync: updateUser, isPending: isLoading } = useUpdateUser()
-
-  const [error, setError] = useState('')
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+}: SettingsProfileProps) {
+  const { mutateAsync: updateSettings, isPending: isUpdatingSettings } =
+    useUpdateUserSettings()
   const { id } = params
-  const { getOptimizedUrl } = useCloudinaryImage({
-    src: user?.avatarUrl,
-  })
+  const setReduce = UserSettingsStore.getState().setReduceAnimation
+  const [showReloadConfirm, setShowReloadConfirm] = useState(false)
 
   const {
-    register,
-    handleSubmit,
-    control,
     reset,
     formState: { errors },
   } = useForm<User>({
@@ -71,261 +63,190 @@ function SettingsProfile({
     },
   })
 
+  const [settings, setSettings] = useState<IUserSettings>({
+    showEmail: user?.showEmail ?? false,
+    showBio: user?.showBio ?? false,
+    showLocation: user?.showLocation ?? false,
+    showDateOfBirth: user?.showDateOfBirth ?? false,
+    reduceAnimation: user?.reduceAnimation ?? false,
+  })
+
   useEffect(() => {
     if (user) {
       reset(user)
     }
   }, [user, reset])
 
-  const onSubmit = async (data: User) => {
-    if (id) {
-      try {
-        const formData = new FormData()
-        formData.append('name', data.name?.trim() || '')
-        if (data.email !== user?.email) {
-          formData.append('email', data.email?.trim() || '')
-        }
-        formData.append(
-          'dateOfBirth',
-          data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : ''
-        )
-        formData.append('bio', data.bio?.trim() || '')
-        formData.append('location', data.location?.trim() || '')
-        formData.append('userName', data.userName?.trim() || '')
+  const handleToggle = (field: keyof IUserSettings) => {
+    setSettings(prev => ({
+      ...prev,
+      [field]: !prev[field],
+    }))
+  }
 
-        if (selectedFile) {
-          formData.append(
-            'avatar',
-            new File([selectedFile], `${data.email}_${Date.now()}.png`, {
-              type: selectedFile.type,
-            })
-          )
-        }
+  const handleSave = async () => {
+    try {
+      const promise = updateSettings({ userId: id.toString(), data: settings })
 
-        const promise = updateUser({ body: formData, id })
+      const toastId = toast.loading('Сохранение...')
 
-        const toastId = toast.loading('Сохранение...')
-
-        promise
-          .then(() => {
-            toast.success('Профиль обновлен!')
-            setSelectedFile(null)
-          })
-          .catch(err => {
-            if (hasErrorField(err)) {
-              setError(err.data.error)
-              toast.error('Не удалось сохранить: ' + err.data.error)
-            } else {
-              setError('Произошла ошибка при обновлении профиля')
-              toast.error('Произошла ошибка при обновлении профиля')
-            }
-          })
-          .finally(() => {
-            toast.dismiss(toastId)
-          })
-
-        onClose()
-      } catch (err) {
-        if (hasErrorField(err)) {
-          setError(err.data.error)
-        }
-      }
+      promise
+        .then(() => {
+          toast.success('Настройки сохранены!')
+          if (user!.reduceAnimation !== settings.reduceAnimation) {
+            console.log('reduce')
+            setReduce(settings.reduceAnimation)
+            setShowReloadConfirm(true)
+          } else {
+            onClose()
+          }
+        })
+        .catch((err: ApiErrorResponse) => {
+          toast.error(err.errorMessage)
+        })
+        .finally(() => {
+          toast.dismiss(toastId)
+        })
+    } catch (error) {
+      console.error('Error updating settings:', error)
     }
   }
 
+  const handleReload = () => {
+    location.reload()
+    onClose()
+  }
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      backdrop="blur"
-      placement="top"
-      isDismissable={false}
-    >
-      <ModalContent>
-        {onClose => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Изменения профиля
-            </ModalHeader>
-            <ModalBody>
-              <form
-                className="flex flex-col gap-4"
-                onSubmit={handleSubmit(onSubmit)}
-              >
-                <ImageUpload
-                  onChange={file => setSelectedFile(file)}
-                  currentImageUrl={getOptimizedUrl()}
-                  className="mb-2"
-                  onError={message => {
-                    toast.error(message)
-                  }}
-                />
-                <Input
-                  label="Email"
-                  labelPlacement="outside"
-                  type="email"
-                  errorMessage={errors.email?.message || ''}
-                  isInvalid={errors.email ? true : false}
-                  variant="bordered"
-                  endContent={<IoMdMail className="form-icon" />}
-                  {...register('email', {
-                    required: 'Обязательное поле',
-                    pattern: {
-                      value: validateEmailPattern,
-                      message: `Некорректный email`,
-                    },
-                  })}
-                />
-                <Input
-                  label="Имя пользователя"
-                  labelPlacement="outside"
-                  type="text"
-                  errorMessage={errors.userName?.message || ''}
-                  isInvalid={errors.userName ? true : false}
-                  placeholder="username_100500"
-                  variant="bordered"
-                  {...register('userName', {
-                    required: 'Обязательное поле',
-                    pattern: {
-                      value: validateUserName,
-                      message: `Имя пользователя может содержать только латинские маленькие буквы, цифры, символы "_" и "-"`,
-                    },
-                  })}
-                />
-                <Input
-                  label="Имя"
-                  labelPlacement="outside"
-                  type="text"
-                  errorMessage={errors.name?.message || ''}
-                  isInvalid={errors.name ? true : false}
-                  variant="bordered"
-                  {...register('name', {
-                    required: 'Обязательное поле',
-                    minLength: { value: 3, message: 'Минимум 3 символа' },
-                  })}
-                />
-
-                <Controller
-                  name="dateOfBirth"
-                  control={control}
-                  rules={{
-                    validate: {
-                      dateOfBirth: value => {
-                        if (value) {
-                          const date = new Date(value)
-                          const now = new Date()
-                          if (date > now) {
-                            return 'Дата рождения не может быть в будущем'
-                          }
-                        }
-                        return true
-                      },
-                      dateOfBirthAge: value => {
-                        if (value) {
-                          const date = new Date(value)
-                          const now = new Date()
-                          if (now.getFullYear() - date.getFullYear() > 120) {
-                            return 'Дата рождения не может быть больше 120 лет'
-                          }
-                        }
-                        return true
-                      },
-                    },
-                  }}
-                  render={({ field }) => {
-                    let parsedDate = null
-                    if (field.value) {
-                      try {
-                        parsedDate = parseDate(formatDateToISO(field.value))
-                      } catch (error) {
-                        console.error('Ошибка парсинга даты:', error)
-                      }
-                    }
-
-                    return (
-                      <DatePicker
-                        {...field}
-                        label="Дата Рождения"
-                        labelPlacement="outside"
-                        value={parsedDate}
-                        maxValue={today(getLocalTimeZone())}
-                        minValue={today(getLocalTimeZone()).subtract({
-                          years: 120,
-                        })}
-                        onChange={date => {
-                          if (date) {
-                            field.onChange(date.toString())
-                          }
-                        }}
-                        endContent={
-                          field.value && (
-                            <div className="flex items-center">
-                              <IoCloseOutline
-                                className="text-xl text-default-400 cursor-pointer hover:text-default-foreground hover:scale-125 transition-transform"
-                                onClick={() => field.onChange(null)}
-                              />
-                            </div>
-                          )
-                        }
-                        variant="bordered"
-                        errorMessage={errors.dateOfBirth?.message || ''}
-                        isInvalid={errors.dateOfBirth ? true : false}
-                        showMonthAndYearPickers
-                        selectorButtonPlacement="start"
-                        description="Формат даты: ДД.ММ.ГГГГ"
-                      />
-                    )
-                  }}
-                />
-                <Controller
-                  name="bio"
-                  control={control}
-                  render={({ field }) => (
-                    <Textarea
-                      {...field}
-                      label="Ваша биография"
-                      labelPlacement="outside"
-                      placeholder="Кратко о себе"
-                      errorMessage={errors.bio?.message || ''}
-                      isInvalid={errors.bio ? true : false}
-                      variant="bordered"
-                      maxRows={10}
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        scrollBehavior="inside"
+        size="2xl"
+      >
+        <ModalContent>
+          <ModalHeader>Настройки профиля</ModalHeader>
+          <ModalBody>
+            <div className="space-y-4">
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-[#9353D3]">
+                  <IoIosSettings className="text-2xl" />
+                  <h3 className="text-lg font-semibold">Приватность</h3>
+                </CardHeader>
+                <CardBody className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <IoMdMail className="text-xl" />
+                      <span>Показывать email</span>
+                    </div>
+                    <Switch
+                      isSelected={settings.showEmail}
+                      onValueChange={() => handleToggle('showEmail')}
                     />
-                  )}
-                />
-                <Input
-                  label="Местоположение"
-                  labelPlacement="outside"
-                  placeholder='Например: "Москва, Россия"'
-                  type="text"
-                  errorMessage={errors.location?.message || ''}
-                  isInvalid={errors.location ? true : false}
-                  variant="bordered"
-                  {...register('location')}
-                />
-                {error && <Alert color="danger" title={error} />}
-                <div className="flex gap-2 justify-end">
-                  <Button
-                    fullWidth
-                    color="primary"
-                    type="submit"
-                    isLoading={isLoading}
-                  >
-                    Обновить профиль
-                  </Button>
-                </div>
-              </form>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                Закрыть
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <BiSolidBookContent className="text-xl" />
+                      <span>Показывать биографию</span>
+                    </div>
+                    <Switch
+                      isSelected={settings.showBio}
+                      onValueChange={() => handleToggle('showBio')}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <FaMapMarkerAlt className="text-xl" />
+                      <span>Показывать местоположение</span>
+                    </div>
+                    <Switch
+                      isSelected={settings.showLocation}
+                      onValueChange={() => handleToggle('showLocation')}
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <FaBirthdayCake className="text-xl" />
+                      <span>Показывать дату рождения</span>
+                    </div>
+                    <Switch
+                      isSelected={settings.showDateOfBirth}
+                      onValueChange={() => handleToggle('showDateOfBirth')}
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-[#9353D3]">
+                  <MdAnimation className="text-2xl" />
+                  <h3 className="text-lg font-semibold">Анимация</h3>
+                </CardHeader>
+                <CardBody>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <MdAnimation className="text-xl" />
+                      <span>Уменьшить анимацию</span>
+                    </div>
+                    <Switch
+                      isSelected={settings.reduceAnimation}
+                      onValueChange={() => handleToggle('reduceAnimation')}
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
+          </ModalBody>
+          <Divider />
+          <ModalFooter>
+            <Button variant="ghost" onPress={onClose}>
+              Отмена
+            </Button>
+            <Button
+              color="primary"
+              onPress={handleSave}
+              isLoading={isUpdatingSettings}
+            >
+              Сохранить
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={showReloadConfirm}
+        onClose={() => setShowReloadConfirm(false)}
+        size="sm"
+      >
+        <ModalContent>
+          <ModalHeader className="flex gap-2 items-center text-[#9353D3]">
+            <MdAnimation className="text-2xl" />
+            <h3 className="text-lg font-semibold">Обновление анимации</h3>
+          </ModalHeader>
+          <ModalBody>
+            <p>
+              Для применения новых настроек анимации необходимо обновить
+              страницу. Хотите сделать это сейчас?
+            </p>
+          </ModalBody>
+          <Divider />
+          <ModalFooter>
+            <Button
+              variant="ghost"
+              onPress={() => {
+                setShowReloadConfirm(false)
+                onClose()
+              }}
+            >
+              Позже
+            </Button>
+            <Button color="primary" onPress={handleReload}>
+              Обновить сейчас
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   )
 }
-
-export default SettingsProfile

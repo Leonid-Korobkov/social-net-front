@@ -1,7 +1,7 @@
 'use client'
 import { useLogin } from '@/services/api/user.api'
 import { Alert, Button, Input, Link } from '@heroui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
 import { IoEye, IoEyeOff } from 'react-icons/io5'
@@ -9,7 +9,7 @@ import {
   validateEmailPattern,
   validatePassword,
 } from '../../utils/validateFieldsForm'
-
+import { useRouter } from 'next/navigation'
 interface IForm {
   email: string
   password: string
@@ -22,6 +22,7 @@ interface LoginProps {
 
 function Login({ setSelected, isRegisterSuccess }: LoginProps) {
   const [isVisiblePass, setIsVisiblePass] = useState(false)
+  const router = useRouter()
 
   const {
     register,
@@ -42,6 +43,12 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
   const onSubmit: SubmitHandler<IForm> = async data => {
     await login(data)
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      router.push('/')
+    }
+  }, [isSuccess, router])
 
   return (
     <form

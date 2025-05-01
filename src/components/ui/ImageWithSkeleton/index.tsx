@@ -24,7 +24,9 @@ function ImageWithSkeleton({
     useCloudinaryImage({ src, width })
 
   return (
-    <div className={`relative aspect-square lg:w-full lg:h-full min-h-[200px] min-w-[200px]`}>
+    <div
+      className={`relative aspect-square lg:min-h-[300px] lg:min-w-[300px] min-h-[200px] min-w-[200px]`}
+    >
       {/* {isLoading && (
         <Skeleton className="h-full w-full rounded-xl">
           <div className="aspect-square rounded-xl bg-default-300 absolute inset-0 min-h-[200px]"></div>
@@ -78,7 +80,7 @@ function ImageWithSkeleton({
             src={src}
             alt={alt}
             fill={true}
-            className={`w-full h-full object-cover rounded-xl aspect-square z-10 ${className}`}
+            className={`object-cover rounded-xl z-10 ${className}`}
             onLoad={handleLoad}
             onError={handleError}
             onClick={onClick}

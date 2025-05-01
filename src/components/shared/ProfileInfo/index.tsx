@@ -1,21 +1,26 @@
 'use client'
-import RawHTML from '../../ui/EscapeHtml'
 
-interface IProfileInfo {
+import RawHTML from '@/components/ui/EscapeHtml'
+
+interface ProfileInfoProps {
   title: string
-  info?: string
+  info?: string | null
+  isPrivate?: boolean
 }
 
-function ProfileInfo({ title, info }: IProfileInfo) {
-  if (!info) return null
+export default function ProfileInfo({
+  title,
+  info,
+  isPrivate = false,
+}: ProfileInfoProps) {
+  if (!info || isPrivate) return null
+
   return (
-    <div className="font-semibold flex flex-row items-baseline flex-wrap">
-      <div className="text-gray-500 text-medium mr-2">{title}:</div>
-      <div className="text-gray-400 text-small">
+    <div className="flex flex-col">
+      <span className="text-medium text-gray-500">{title}</span>
+      <span className="text-base">
         <RawHTML>{info}</RawHTML>
-      </div>
+      </span>
     </div>
   )
 }
-
-export default ProfileInfo

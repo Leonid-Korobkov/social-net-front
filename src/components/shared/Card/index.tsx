@@ -18,15 +18,15 @@ import RawHTML from '@/components/ui/EscapeHtml'
 import MetaInfo from '@/components/ui/MetaInfo'
 import Typography from '@/components/ui/Typography'
 import User from '@/components/ui/User'
+import { useToggleCommentLike } from '@/services/api/commentLike.api'
+import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
 import { CommentLike, Like } from '@/store/types'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { formatDistance, Locale } from 'date-fns'
 import * as locales from 'date-fns/locale'
-import CardActionWidget from '../CardActionWidget'
-import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
-import { useToggleCommentLike } from '@/services/api/commentLike.api'
 import { useTopLoader } from 'nextjs-toploader'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import CardActionWidget from '../CardActionWidget'
+import CollapsibleText from '@/components/ui/CollapsibleText'
 
 export interface ICard {
   avatarUrl: string
@@ -131,7 +131,7 @@ const Card = memo(
         <CardHeader className="relative z-[1] justify-between items-center bg-transparent">
           <Link
             href={`/users/${authorId}`}
-            title={`Переход на страницу автора ${name}`}
+            title={`Переход на страницу автора ${username}`}
             className="flex-1"
           >
             <User
@@ -213,13 +213,16 @@ const Card = memo(
           />
         </CardHeader>
         <CardBody
-          className={`card-body px-3 py-2 cursor-pointer ${
+          className={`card-body px-3 py-2 ${
             cardFor === 'comment' ? 'pb-0' : 'pb-5'
           }`}
           onClick={e => {
             if (cardFor === 'post') {
-              // Если пользователь выделял текст, не переходим по ссылке
-              if (window.getSelection()?.toString()) {
+              // Если пользователь выделял текст или кликнул по кнопке "Читать далее", не переходим по ссылке
+              if (
+                window.getSelection()?.toString() ||
+                (e.target as HTMLElement).closest('button')
+              ) {
                 e.preventDefault()
                 return
               }
@@ -228,9 +231,13 @@ const Card = memo(
             }
           }}
         >
-          <Typography size={cardFor === 'comment' ? 'text-lg' : undefined}>
-            <RawHTML>{content}</RawHTML>
-          </Typography>
+          {cardFor === 'post' || cardFor === 'comment' ? (
+            <CollapsibleText content={content} />
+          ) : (
+            <Typography>
+              <RawHTML>{content}</RawHTML>
+            </Typography>
+          )}
         </CardBody>
         <CardFooter className="gap-3 -ml-2">
           <div className="flex gap-1 items-center">

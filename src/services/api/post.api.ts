@@ -47,17 +47,14 @@ export const useCreatePost = () => {
       }
     },
     onSuccess: newPost => {
-      console.log(newPost)
       // 1) Вставляем новый пост на первую страницу
       queryClient.setQueryData<InfiniteData<PostsDTO>>(postKeys.all, old => {
         if (!old) return old
-        console.log(old)
         const newPages = [...old.pages]
         newPages[0] = {
           ...newPages[0],
           data: [newPost, ...newPages[0].data],
         }
-        console.log({ ...old, pages: newPages })
         return { ...old, pages: newPages }
       })
 
@@ -108,9 +105,9 @@ export const useGetAllPosts = ({ limit }: PostsRequest) => {
     },
     retry: 0,
     select: result => result.pages.map(page => page.data).flat(),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    // refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnReconnect: false,
   })
 }
 

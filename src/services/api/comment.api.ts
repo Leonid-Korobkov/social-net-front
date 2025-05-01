@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { apiClient, ErrorResponseData, handleAxiosError } from '../ApiConfig'
+import { postKeys } from './post.api'
 
 export interface CommentsRequest {
   limit: number
@@ -40,8 +41,12 @@ export const useCreateComment = () => {
       }
     },
     onSuccess: (data, comment) => {
+      console.log(console.log(comment, data))
       queryClient.invalidateQueries({
         queryKey: commentKeys.postId(comment.postId.toString()),
+      })
+      queryClient.invalidateQueries({
+        queryKey: postKeys.postId(comment.postId.toString()),
       })
     },
   })
@@ -79,9 +84,9 @@ export const useGetCommentsByPostId = ({
       return lastPageParam + 1
     },
     select: result => result.pages.map(page => page.data).flat(),
-    refetchOnMount: false,
+    // refetchOnMount: false,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    // refetchOnReconnect: false,
   })
 }
 

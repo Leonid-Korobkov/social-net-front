@@ -17,7 +17,14 @@ export type User = {
   following: Follows[]
   isFollowing?: boolean
   postCount: number
-  reduceAnimation?: boolean
+
+  // Настройки приватности
+  showEmail?: boolean
+  showBio?: boolean
+  showLocation?: boolean
+  showDateOfBirth?: boolean
+  // Настройки анимации
+  reduceAnimation: boolean
 }
 
 export type Follows = {

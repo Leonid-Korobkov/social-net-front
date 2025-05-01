@@ -15,6 +15,8 @@ import Cookies from 'js-cookie'
 import { AxiosError } from 'axios'
 import { useUserStore } from '@/store/user.store'
 import { PostsDTO, PostsRequest } from './post.api'
+import { IUserSettings } from '@/types/user.interface'
+import axios from 'axios'
 
 // Типы для запросов и для ответов API, которые приходят с backend
 type LoginRequest = {
@@ -39,6 +41,7 @@ type RegisterDTO = {
 // Ключи для кэширования
 export const userKeys = {
   all: ['users'] as const,
+  randomImage: ['random-image'] as const,
   current: () => [...userKeys.all, 'current'] as const,
   profile: (id: string) => [...userKeys.all, 'profile', id] as const,
   friends: (id: string) => [...userKeys.all, 'friends', id] as const,
@@ -106,9 +109,9 @@ export const useGetCurrentUser = () => {
   return useQuery<User, ApiErrorResponse>({
     queryKey: userKeys.current(),
     retry: 0,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    // refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnReconnect: false,
     queryFn: async () => {
       try {
         const user = await apiClient.get<void, User>('/current')
@@ -125,7 +128,7 @@ export const useGetCurrentUser = () => {
 export const useGetUserById = (id: string) => {
   return useQuery({
     queryKey: userKeys.profile(id),
-    retry: 1,
+    retry: 0,
     queryFn: async () => {
       try {
         return await apiClient.get<number, User>(`/users/${id}`)
@@ -133,9 +136,9 @@ export const useGetUserById = (id: string) => {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    // refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnReconnect: false,
   })
 }
 
@@ -151,50 +154,51 @@ export const useUpdateUser = () => {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
-    onMutate: async ({ id, body }) => {
-      await queryClient.cancelQueries({ queryKey: userKeys.profile(id) })
-      await queryClient.cancelQueries({ queryKey: userKeys.current() })
+    // onMutate: async ({ id, body }) => {
+    //   await queryClient.cancelQueries({ queryKey: userKeys.profile(id) })
+    //   await queryClient.cancelQueries({ queryKey: userKeys.current() })
 
-      const previousUserData = queryClient.getQueryData(userKeys.profile(id))
-      const previousCurrentUser = queryClient.getQueryData(userKeys.current())
+    //   const previousUserData = queryClient.getQueryData(userKeys.profile(id))
+    //   const previousCurrentUser = queryClient.getQueryData(userKeys.current())
 
-      // Создаем объект изменений из FormData
-      const previewChanges: Partial<User> = {}
-      for (const [key, value] of body.entries()) {
-        if (key !== 'avatar') {
-          // Пропускаем файл аватара
-          previewChanges[key as keyof User] = value as any
-        }
-      }
+    //   // Создаем объект изменений из FormData
+    //   const previewChanges: Partial<User> = {}
+    //   for (const [key, value] of body.entries()) {
+    //     if (key !== 'avatar') {
+    //       // Пропускаем файл аватара
+    //       previewChanges[key as keyof User] = value as any
+    //     }
+    //   }
 
-      queryClient.setQueryData(
-        userKeys.profile(id),
-        (old: User | undefined) => {
-          return old ? { ...old, ...previewChanges } : old
-        }
-      )
+    //   queryClient.setQueryData(
+    //     userKeys.profile(id),
+    //     (old: User | undefined) => {
+    //       return old ? { ...old, ...previewChanges } : old
+    //     }
+    //   )
 
-      queryClient.setQueryData(userKeys.current(), (old: User | undefined) => {
-        return old && old.id === id ? { ...old, ...previewChanges } : old
-      })
+    //   queryClient.setQueryData(userKeys.current(), (old: User | undefined) => {
+    //     return old && old.id === id ? { ...old, ...previewChanges } : old
+    //   })
 
-      return { previousUserData, previousCurrentUser }
-    },
-    onError: (error: ApiErrorResponse, { id }, context) => {
-      if (context?.previousUserData) {
-        queryClient.setQueryData(userKeys.profile(id), context.previousUserData)
-      }
-      if (context?.previousCurrentUser) {
-        queryClient.setQueryData(
-          userKeys.current(),
-          context.previousCurrentUser
-        )
-      }
-      console.error('Ошибка обновления пользователя:', error.errorMessage)
-    },
+    //   return { previousUserData, previousCurrentUser }
+    // },
+    // onError: (error: ApiErrorResponse, { id }, context) => {
+    //   if (context?.previousUserData) {
+    //     queryClient.setQueryData(userKeys.profile(id), context.previousUserData)
+    //   }
+    //   if (context?.previousCurrentUser) {
+    //     queryClient.setQueryData(
+    //       userKeys.current(),
+    //       context.previousCurrentUser
+    //     )
+    //   }
+    //   console.error('Ошибка обновления пользователя:', error.errorMessage)
+    // },
     onSuccess: (data, { id }) => {
       queryClient.invalidateQueries({ queryKey: userKeys.profile(id) })
       queryClient.invalidateQueries({ queryKey: userKeys.current() })
+      queryClient.invalidateQueries({ queryKey: userKeys.posts(id) })
     },
   })
 }
@@ -231,8 +235,65 @@ export const useGetPostsByUserId = ({
       return lastPageParam + 1
     },
     select: result => result.pages.map(page => page.data).flat(),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    // refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnReconnect: false,
+  })
+}
+
+export const useUpdateUserSettings = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      data,
+    }: {
+      userId: string
+      data: IUserSettings
+    }) => {
+      try {
+        return await apiClient.put<IUserSettings, IUserSettings>(
+          `/users/settings`,
+          data
+        )
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    onSuccess: (data, { userId }) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
+      queryClient.invalidateQueries({ queryKey: userKeys.current() })
+      queryClient.invalidateQueries({ queryKey: userKeys.posts(userId) })
+    },
+  })
+}
+
+export const useGetUserSettings = (userId: string) => {
+  return useQuery({
+    queryKey: ['userSettings', userId],
+    queryFn: () =>
+      axios
+        .get<IUserSettings>(`/api/users/${userId}/settings`)
+        .then(res => res.data),
+  })
+}
+
+// Хук для получения случайного изображения
+export const useGetNewRandomImage = () => {
+  return useQuery({
+    retry: 0,
+    queryKey: userKeys.randomImage,
+    queryFn: async () => {
+      try {
+        return await apiClient.get<string, string>(`/users/getRandomImage`)
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    enabled: false,
+    // refetchOnMount: false,
+    // refetchOnWindowFocus: false,
+    // refetchOnReconnect: false,
   })
 }

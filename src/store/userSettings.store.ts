@@ -6,20 +6,20 @@ import { User } from './types'
 
 interface initialUserSettingsStore {
   reduceAnimation: boolean
-  setReduceAnimation: () => void
+  setReduceAnimation: (bool: boolean) => void
 }
 
 const initialState: initialUserSettingsStore = {
   reduceAnimation: false,
-  setReduceAnimation: () => {},
+  setReduceAnimation: (bool: boolean) => {},
 }
 
 export const UserSettingsStore = createStore<initialUserSettingsStore>()(
   persist(
     set => ({
       ...initialState,
-      setReduceAnimation: () => {
-        set(state => ({ reduceAnimation: !state.reduceAnimation }))
+      setReduceAnimation: (bool: boolean) => {
+        set(state => ({ reduceAnimation: bool }))
       },
     }),
     {

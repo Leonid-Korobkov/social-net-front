@@ -1,5 +1,6 @@
 'use client'
 import GoBack from '@/components/layout/GoBack'
+import FollowSkeleton from '@/components/ui/FollowSkeleton'
 import User from '@/components/ui/User'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
@@ -59,7 +60,7 @@ function Followers({ params }: PageProps) {
   }
 
   if (isLoading) {
-    return <Spinner />
+    return <FollowSkeleton />
   }
 
   if (!user) {

@@ -24,13 +24,16 @@ import { notFound } from 'next/navigation'
 import { use, useState } from 'react'
 import Confetti from 'react-confetti'
 import { BsPostcardFill } from 'react-icons/bs'
-import { CiEdit } from 'react-icons/ci'
+import { AiFillEdit } from 'react-icons/ai'
 import { FaUsers } from 'react-icons/fa'
 import {
   MdOutlinePersonAddAlt1,
   MdOutlinePersonAddDisabled,
 } from 'react-icons/md'
 import { RiUserFollowFill } from 'react-icons/ri'
+import SettingsProfile from '@/components/shared/SettingsProfile'
+import { useModalsStore } from '@/store/modals.store'
+import { IoIosSettings } from 'react-icons/io'
 
 type PageProps = {
   params: Promise<{
@@ -45,8 +48,18 @@ function UserProfile({ params }: PageProps) {
 
   const [party, setParty] = useState(false)
   const [isImageOpen, setImageOpen] = useState(false)
+  const { openEditProfile, openSettings } = useModalsStore()
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure()
+  const {
+    isOpen: isSettingsOpen,
+    onOpen: onSettingsOpen,
+    onClose: onSettingsClose,
+  } = useDisclosure()
   const currentUser = useUserStore.use.current()
 
   const { data: user, isPending: isLoading } = useGetUserById(id)
@@ -84,10 +97,12 @@ function UserProfile({ params }: PageProps) {
   }
 
   function handleEditProfile() {
-    onOpen()
+    onEditOpen()
   }
 
-  function handleSettingProfile() {}
+  function handleSettingProfile() {
+    onSettingsOpen()
+  }
 
   const handleImageClick = () => {
     setImageOpen(true)
@@ -133,11 +148,10 @@ function UserProfile({ params }: PageProps) {
               src={`${user.avatarUrl}`}
               width={200}
               height={200}
-              // isBlurred
               className="max-w-full max-h-full border-4 border-white rounded-xl cursor-pointer"
               onClick={handleImageClick}
             />
-            <div className="flex flex-col text-2xl font-bold gap-4 items-center">
+            <div className="flex flex-col text-2xl font-bold gap-4 items-center w-full">
               {user.name}
               {currentUser?.id !== user.id ? (
                 <Button
@@ -157,20 +171,22 @@ function UserProfile({ params }: PageProps) {
                   {user?.isFollowing ? 'Отписаться' : 'Подписаться'}
                 </Button>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-col w-full">
                   <Button
-                    endContent={<CiEdit />}
-                    onPress={handleEditProfile}
+                    endContent={<AiFillEdit />}
+                    onPress={() => openEditProfile(id)}
                     variant="ghost"
                     color="warning"
+                    fullWidth
                   >
                     Редактировать
                   </Button>
                   <Button
-                    endContent={<CiEdit />}
-                    onPress={handleSettingProfile}
+                    endContent={<IoIosSettings />}
+                    onPress={() => openSettings(id)}
                     variant="ghost"
                     color="secondary"
+                    fullWidth
                   >
                     Настройки
                   </Button>
@@ -202,10 +218,19 @@ function UserProfile({ params }: PageProps) {
             </Card>
             <ProfileInfo title="Никнейм" info={`@${user.userName}`} />
             <ProfileInfo
+              title="Email"
+              info={user.email}
+              isPrivate={!user.showEmail}
+            />
+            <ProfileInfo
               title="Зарегистрирован"
               info={formatToClientDate(user.createdAt, false)}
             />
-            <ProfileInfo title="Местоположение" info={user.location} />
+            <ProfileInfo
+              title="Местоположение"
+              info={user.location}
+              isPrivate={!user.showLocation}
+            />
             <ProfileInfo
               title="Дата рождения"
               info={
@@ -213,8 +238,13 @@ function UserProfile({ params }: PageProps) {
                   ? formatToClientDate(user.dateOfBirth, false)
                   : ''
               }
+              isPrivate={!user.showDateOfBirth}
             />
-            <ProfileInfo title="Обо мне" info={user.bio} />
+            <ProfileInfo
+              title="Обо мне"
+              info={user.bio}
+              isPrivate={!user.showBio}
+            />
           </Card>
         </div>
         <PostList
@@ -225,14 +255,6 @@ function UserProfile({ params }: PageProps) {
           onLoadMore={handleLoadMore}
           isFetchingMore={isFetchingNextPage && !isLoading}
           skeletonClassName="mt-10"
-        />
-        <EditProfile
-          isOpen={isOpen}
-          onClose={onClose}
-          user={user}
-          params={{
-            id: id,
-          }}
         />
         <Modal
           closeButton={true}

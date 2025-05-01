@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/Providers/ThemeProvider'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import './globals.css'
+import ModalsProvider from '@/components/providers/ModalsProvider'
 
 export const metadata: Metadata = {
   title: 'Zling',
@@ -30,7 +31,10 @@ export default function RootLayout({
             <Suspense>
               <ScrollRestoration>
                 <MotionConfigProvider>
-                  <ProgressProvider>{children}</ProgressProvider>
+                  <ProgressProvider>
+                    {children}
+                    <ModalsProvider />
+                  </ProgressProvider>
                 </MotionConfigProvider>
               </ScrollRestoration>
             </Suspense>

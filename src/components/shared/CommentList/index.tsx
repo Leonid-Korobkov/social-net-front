@@ -64,6 +64,7 @@ function CommentList({
                   transition={{ duration: 0.5, bounce: 0 }}
                   layout="position"
                 >
+                  
                   <Card
                     cardFor="comment"
                     avatarUrl={comment.user?.avatarUrl ?? ''}

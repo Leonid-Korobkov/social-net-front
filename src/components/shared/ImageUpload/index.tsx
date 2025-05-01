@@ -1,10 +1,12 @@
 'use client'
 import { useCallback, useState, useEffect } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
-import { Image } from '@heroui/react'
+import { Button, Image } from '@heroui/react'
+import { useGetNewRandomImage } from '@/services/api/user.api'
+import { FaWandMagicSparkles } from 'react-icons/fa6'
 
 interface ImageUploadProps {
-  onChange: (file: File) => void
+  onChange: (file: File | string) => void
   currentImageUrl?: string
   className?: string
   onError?: (message: string) => void
@@ -17,6 +19,11 @@ function ImageUpload({
   onError = (message: string) => console.error(message),
 }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(null)
+  const {
+    data: newImageUrl,
+    refetch: refetchNewImage,
+    isPending: isLoadingNewImage,
+  } = useGetNewRandomImage()
 
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
@@ -142,6 +149,21 @@ function ImageUpload({
           </p>
         </div>
       </div>
+      <Button
+        fullWidth
+        color="default"
+        type="button"
+        startContent={<FaWandMagicSparkles />}
+        onClick={async () => {
+          await refetchNewImage()
+          if (newImageUrl) {
+            setPreview(newImageUrl)
+            onChange(newImageUrl)
+          }
+        }}
+      >
+        Сгенерировать случайное изображение
+      </Button>
     </div>
   )
 }

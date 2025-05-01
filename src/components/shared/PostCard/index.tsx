@@ -1,9 +1,10 @@
 'use client'
-import { Card, CardBody, Avatar } from "@heroui/react"
+import { Card, CardBody, Avatar } from '@heroui/react'
 import { Post } from '@/store/types'
 import Link from 'next/link'
 import { formatDistance } from 'date-fns'
 import { ru } from 'date-fns/locale'
+import CollapsibleText from '@/components/ui/CollapsibleText'
 
 interface PostCardProps {
   post: Post
@@ -33,7 +34,7 @@ function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         <Link href={`/posts/${post.id}`}>
-          <p className="text-default-700">{post.content}</p>
+          <CollapsibleText content={post.content} maxLength={300} />
         </Link>
       </CardBody>
     </Card>
