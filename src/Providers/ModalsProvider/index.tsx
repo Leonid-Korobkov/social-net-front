@@ -1,7 +1,7 @@
 'use client'
 import { useModalsStore } from '@/store/modals.store'
-import EditProfile from '../shared/EditProfile'
-import SettingsProfile from '../shared/SettingsProfile'
+import EditProfile from '../../components/shared/EditProfile'
+import SettingsProfile from '../../components/shared/SettingsProfile'
 import { useGetUserById } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
 

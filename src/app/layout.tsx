@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/Providers/ThemeProvider'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import './globals.css'
-import ModalsProvider from '@/components/providers/ModalsProvider'
+import ModalsProvider from '@/Providers/ModalsProvider'
 
 export const metadata: Metadata = {
   title: 'Zling',

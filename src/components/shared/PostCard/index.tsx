@@ -34,7 +34,7 @@ function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         <Link href={`/posts/${post.id}`}>
-          <CollapsibleText content={post.content} maxLength={300} />
+          <CollapsibleText content={post.content} />
         </Link>
       </CardBody>
     </Card>
