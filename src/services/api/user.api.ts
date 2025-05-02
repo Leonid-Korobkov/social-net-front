@@ -138,7 +138,7 @@ export const useGetUserById = (id: string) => {
     },
     // refetchOnMount: false,
     // refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    // refetchOnReconnect: false,
   })
 }
 
