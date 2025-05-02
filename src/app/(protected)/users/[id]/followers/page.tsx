@@ -55,9 +55,9 @@ function Followers({ params }: PageProps) {
     }
   }
 
-  if (isLoading) {
-    return <FollowSkeleton />
-  }
+  // if (isLoading) {
+  //   return <FollowSkeleton />
+  // }
 
   if (!user) {
     return <h2>Пользователь не найден</h2>
