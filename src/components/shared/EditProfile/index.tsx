@@ -142,7 +142,6 @@ function EditProfile({
       }}
       backdrop="blur"
       placement="top"
-      isDismissable={false}
     >
       <ModalContent>
         {onClose => (

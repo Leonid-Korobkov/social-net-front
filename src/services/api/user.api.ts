@@ -127,7 +127,7 @@ export const useGetCurrentUser = () => {
 // Хук для получения пользователя по ID
 export const useGetUserById = (id: string) => {
   return useQuery({
-    queryKey: userKeys.profile(id),
+    queryKey: userKeys.profile(id.toString()),
     retry: 0,
     queryFn: async () => {
       try {
@@ -138,7 +138,7 @@ export const useGetUserById = (id: string) => {
     },
     // refetchOnMount: false,
     // refetchOnWindowFocus: false,
-    // refetchOnReconnect: false,
+    refetchOnReconnect: false,
   })
 }
 
@@ -235,9 +235,9 @@ export const useGetPostsByUserId = ({
       return lastPageParam + 1
     },
     select: result => result.pages.map(page => page.data).flat(),
-    // refetchOnMount: false,
-    // refetchOnWindowFocus: false,
-    // refetchOnReconnect: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 }
 

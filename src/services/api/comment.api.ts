@@ -41,7 +41,6 @@ export const useCreateComment = () => {
       }
     },
     onSuccess: (data, comment) => {
-      console.log(console.log(comment, data))
       queryClient.invalidateQueries({
         queryKey: commentKeys.postId(comment.postId.toString()),
       })

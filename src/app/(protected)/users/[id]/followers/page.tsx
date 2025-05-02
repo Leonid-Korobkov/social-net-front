@@ -5,10 +5,8 @@ import User from '@/components/ui/User'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
-import { Button, Card, CardBody, Spinner } from '@heroui/react'
+import { Button, Card, CardBody } from '@heroui/react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useTopLoader } from 'nextjs-toploader'
 import { use } from 'react'
 
 interface PageProps {
@@ -20,8 +18,6 @@ interface PageProps {
 function Followers({ params }: PageProps) {
   const unwrappedParams = use(params)
   const { id } = unwrappedParams
-  const loader = useTopLoader()
-  const router = useRouter()
 
   const currentUser = useUserStore.use.current()
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)

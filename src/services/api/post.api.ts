@@ -172,9 +172,21 @@ export const useDeletePost = () => {
       queryClient.removeQueries({ queryKey: postKeys.postId(id) })
 
       // c) Инвалидируем пользовательские посты
-      queryClient.invalidateQueries({
-        queryKey: userKeys.posts(currentUser.id.toString()),
-      })
+      // 3) Обновляем кэш постов пользователя
+      if (currentUser?.id) {
+        const key = userKeys.posts(currentUser.id.toString())
+        queryClient.setQueryData<InfiniteData<PostsDTO>>(key, old => {
+          if (!old) return old
+          const filteredPages = old.pages.map(page => ({
+            ...page,
+            data: page.data.filter(post => post.id !== id),
+          }))
+          return { ...old, pages: filteredPages }
+        })
+      }
+      // queryClient.invalidateQueries({
+      //   queryKey: userKeys.posts(currentUser.id.toString()),
+      // })
     },
   })
 }

@@ -21,7 +21,7 @@ function Following({ params }: PageProps) {
   const { id } = unwrappedParams
 
   const currentUser = useUserStore.use.current()
-  const { data: user, isPending: isLoading } = useGetUserById(id)
+  const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
 
   const {
     mutateAsync: followUser,

@@ -1,4 +1,5 @@
-import { Follows, User } from '@/store/types'
+import { Follows } from '@/store/types'
+import { UserStore } from '@/store/user.store'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import {
@@ -71,8 +72,13 @@ export const useCreateFollow = () => {
       }
     },
     onSuccess: (data, { followingId, userId }) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
-      queryClient.invalidateQueries({ queryKey: userKeys.profile(followingId) })
+      console.log(followingId, userId)
+      queryClient.invalidateQueries({
+        queryKey: userKeys.profile(userId.toString()),
+      })
+      queryClient.invalidateQueries({
+        queryKey: userKeys.profile(followingId.toString()),
+      })
     },
   })
 }
@@ -81,7 +87,6 @@ export const useCreateFollow = () => {
 // Хук для поставления лайка
 export const useDeleteFollow = () => {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: async ({
       followingId,
@@ -135,8 +140,12 @@ export const useDeleteFollow = () => {
       }
     },
     onSuccess: (data, { followingId, userId }) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
-      queryClient.invalidateQueries({ queryKey: userKeys.profile(followingId) })
+      queryClient.invalidateQueries({
+        queryKey: userKeys.profile(userId.toString()),
+      })
+      queryClient.invalidateQueries({
+        queryKey: userKeys.profile(followingId.toString()),
+      })
     },
   })
 }

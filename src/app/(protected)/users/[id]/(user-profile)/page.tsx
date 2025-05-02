@@ -85,9 +85,9 @@ function UserProfile({ params }: PageProps) {
     try {
       if (id) {
         if (user?.isFollowing) {
-          unfollowUser({ followingId: id, userId: currentUser?.id || '' })
+          unfollowUser({ followingId: id, userId: currentUser?.id.toString() || '' })
         } else {
-          followUser({ followingId: id, userId: currentUser?.id || '' })
+          followUser({ followingId: id, userId: currentUser?.id.toString() || '' })
           setParty(true)
         }
       }
