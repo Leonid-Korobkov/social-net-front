@@ -6,6 +6,7 @@ import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
 import { Button, Card, CardBody } from '@heroui/react'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { use } from 'react'
 
@@ -72,99 +73,111 @@ function Followers({ params }: PageProps) {
           : `Подписчики ${user.userName}`}
       </h1>
       {user.followers?.length > 0 ? (
-        <div className="gap-5 flex flex-col">
-          {user.followers.map(followerItem => {
-            if (!followerItem.follower) {
-              return null
-            }
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <AnimatePresence mode="popLayout">
+            <div className="gap-5 flex flex-col">
+              {user.followers.map(followerItem => {
+                if (!followerItem.follower) {
+                  return null
+                }
 
-            const isFollowing = followerItem.follower.isFollowing ?? false
+                const isFollowing = followerItem.follower.isFollowing ?? false
 
-            const isPending = !isFollowing
-              ? (isPendingFollow &&
-                  variablesFollow?.followingId === followerItem.follower.id) ||
-                (isPendingUnfollow &&
-                  variablesFollow?.followingId === followerItem.follower.id)
-              : (isPendingFollow &&
-                  variablesUnfollow?.followingId ===
-                    followerItem.follower.id) ||
-                (isPendingUnfollow &&
-                  variablesUnfollow?.followingId === followerItem.follower.id)
+                const isPending = !isFollowing
+                  ? (isPendingFollow &&
+                      variablesFollow?.followingId ===
+                        followerItem.follower.id) ||
+                    (isPendingUnfollow &&
+                      variablesFollow?.followingId === followerItem.follower.id)
+                  : (isPendingFollow &&
+                      variablesUnfollow?.followingId ===
+                        followerItem.follower.id) ||
+                    (isPendingUnfollow &&
+                      variablesUnfollow?.followingId ===
+                        followerItem.follower.id)
 
-            const isFetchingUser = !isFollowing
-              ? (isFetching &&
-                  variablesFollow?.followingId === followerItem.follower.id) ||
-                (isFetching &&
-                  variablesFollow?.followingId === followerItem.follower.id)
-              : (isFetching &&
-                  variablesUnfollow?.followingId ===
-                    followerItem.follower.id) ||
-                (isFetching &&
-                  variablesUnfollow?.followingId === followerItem.follower.id)
+                const isFetchingUser = !isFollowing
+                  ? (isFetching &&
+                      variablesFollow?.followingId ===
+                        followerItem.follower.id) ||
+                    (isFetching &&
+                      variablesFollow?.followingId === followerItem.follower.id)
+                  : (isFetching &&
+                      variablesUnfollow?.followingId ===
+                        followerItem.follower.id) ||
+                    (isFetching &&
+                      variablesUnfollow?.followingId ===
+                        followerItem.follower.id)
 
-            return (
-              // <div
-              //   onClick={e => {
-              //     if (followerItem.follower) {
-              //       router.push(`/users/${followerItem.follower.id}`)
-              //     }
-              //   }}
-              //   key={followerItem.follower.id}
-              // >
-              <Link
-                href={`/users/${followerItem.follower.id}`}
-                key={followerItem.follower.id}
-              >
-                <Card>
-                  <CardBody className="flex flex-row items-center justify-between">
-                    <User
-                      username={followerItem.follower.userName ?? ''}
-                      avatarUrl={followerItem.follower.avatarUrl ?? ''}
-                      description={followerItem.follower.name ?? ''}
-                      className="!justify-start"
-                    />
-                    {currentUser &&
-                      currentUser.id !== followerItem.follower.id && (
-                        <Button
-                          color={isFollowing ? 'default' : 'secondary'}
-                          variant="flat"
-                          className="gap-2"
-                          isLoading={isPending || isFetchingUser}
-                          onClick={e => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            handleFollow(
-                              followerItem.follower?.id ?? '',
-                              isFollowing
-                            )
-                          }}
-                          onMouseDown={e => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                          }}
-                          onMouseUp={e => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                          }}
-                          onPointerDown={e => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                          }}
-                          onPointerUp={e => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                          }}
-                        >
-                          {isFollowing ? 'Отписаться' : 'Подписаться'}
-                        </Button>
-                      )}
-                  </CardBody>
-                </Card>
-              </Link>
-              // </div>
-            )
-          })}
-        </div>
+                return (
+                  // <div
+                  //   onClick={e => {
+                  //     if (followerItem.follower) {
+                  //       router.push(`/users/${followerItem.follower.id}`)
+                  //     }
+                  //   }}
+                  //   key={followerItem.follower.id}
+                  // >
+                  <Link
+                    href={`/users/${followerItem.follower.id}`}
+                    key={followerItem.follower.id}
+                  >
+                    <Card>
+                      <CardBody className="flex flex-row items-center justify-between">
+                        <User
+                          username={followerItem.follower.userName ?? ''}
+                          avatarUrl={followerItem.follower.avatarUrl ?? ''}
+                          description={followerItem.follower.name ?? ''}
+                          className="!justify-start"
+                        />
+                        {currentUser &&
+                          currentUser.id !== followerItem.follower.id && (
+                            <Button
+                              color={isFollowing ? 'default' : 'secondary'}
+                              variant="flat"
+                              className="gap-2"
+                              isLoading={isPending || isFetchingUser}
+                              onClick={e => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                handleFollow(
+                                  followerItem.follower?.id ?? '',
+                                  isFollowing
+                                )
+                              }}
+                              onMouseDown={e => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                              }}
+                              onMouseUp={e => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                              }}
+                              onPointerDown={e => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                              }}
+                              onPointerUp={e => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                              }}
+                            >
+                              {isFollowing ? 'Отписаться' : 'Подписаться'}
+                            </Button>
+                          )}
+                      </CardBody>
+                    </Card>
+                  </Link>
+                  // </div>
+                )
+              })}
+            </div>
+          </AnimatePresence>
+        </motion.div>
       ) : (
         <h2>У пользователя нет подписчиков</h2>
       )}
