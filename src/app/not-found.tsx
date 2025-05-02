@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 
 function ErrorPage() {
   const router = useRouter()
-  // Сделайть перезагрузку страницы
   const reloadPage = () => {
     router.push('/')
   }
