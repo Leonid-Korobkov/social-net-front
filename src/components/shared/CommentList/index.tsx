@@ -64,7 +64,6 @@ function CommentList({
                   transition={{ duration: 0.5, bounce: 0 }}
                   layout="position"
                 >
-                  
                   <Card
                     cardFor="comment"
                     avatarUrl={comment.user?.avatarUrl ?? ''}
@@ -86,7 +85,7 @@ function CommentList({
       {(hasMore || isFetchingMore) && (
         <div ref={loadMoreRef} className="py-4 flex justify-center">
           {isFetchingMore ? (
-            <Spinner size="lg" />
+            <Spinner size="lg" color="secondary" variant="gradient" />
           ) : (
             hasMore && <div className="h-20" />
           )}

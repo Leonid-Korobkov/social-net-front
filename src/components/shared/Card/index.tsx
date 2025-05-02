@@ -26,7 +26,7 @@ import { formatDistance, Locale } from 'date-fns'
 import * as locales from 'date-fns/locale'
 import { useTopLoader } from 'nextjs-toploader'
 import CardActionWidget from '../CardActionWidget'
-import CollapsibleText from '@/components/ui/CollapsibleText'
+import CollapsibleText from '@/components/shared/CollapsibleText'
 
 export interface ICard {
   avatarUrl: string
@@ -128,7 +128,7 @@ const Card = memo(
             : ''
         }`}
       >
-        <CardHeader className="relative z-[1] justify-between items-center bg-transparent">
+        <CardHeader className="relative z-[1] justify-between items-center bg-transparent pb-0">
           <Link
             href={`/users/${authorId}`}
             title={`Переход на страницу автора ${username}`}
@@ -214,7 +214,7 @@ const Card = memo(
         </CardHeader>
         <CardBody
           className={`card-body px-3 py-2 ${
-            cardFor === 'comment' ? 'pb-0' : 'pb-5'
+            cardFor === 'comment' ? 'pb-0' : 'pb-2'
           }`}
           onClick={e => {
             if (cardFor === 'post') {

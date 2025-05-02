@@ -253,7 +253,9 @@ function CardActionWidget({
                 exit={{ opacity: 0 }}
               >
                 <ModalBody className="flex flex-col gap-2">
-                  {isLoadingLikes && <Spinner size="sm" />}
+                  {isLoadingLikes && (
+                    <Spinner size="sm" color="secondary" variant="gradient" />
+                  )}
                   {!isLoadingLikes &&
                     likes?.length !== 0 &&
                     likes?.map(like => (

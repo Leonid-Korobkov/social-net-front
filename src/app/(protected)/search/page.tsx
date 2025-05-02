@@ -87,7 +87,7 @@ function Search() {
           <div className="mt-4">
             {isLoading ? (
               <div className="flex justify-center">
-                <Spinner size="lg" />
+                <Spinner size="lg" color="secondary" variant="gradient" />
               </div>
             ) : posts.length > 0 ? (
               <div className="space-y-4">
@@ -108,7 +108,7 @@ function Search() {
           <div className="mt-4">
             {isLoading ? (
               <div className="flex justify-center">
-                <Spinner size="lg" />
+                <Spinner size="lg" color="secondary" variant="gradient" />
               </div>
             ) : users.length > 0 ? (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">

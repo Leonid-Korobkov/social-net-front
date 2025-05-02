@@ -26,7 +26,7 @@ function PostList({
   hasMore,
   onLoadMore,
   isFetchingMore,
-  skeletonClassName
+  skeletonClassName,
 }: PostListProps) {
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
@@ -104,7 +104,7 @@ function PostList({
       {(hasMore || isFetchingMore) && (
         <div ref={loadMoreRef} className="py-4 flex justify-center">
           {isFetchingMore ? (
-            <Spinner size="lg" />
+            <Spinner size="lg" color="secondary" variant="gradient" />
           ) : (
             hasMore && <div className="h-20" />
           )}

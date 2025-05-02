@@ -1,8 +1,8 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
 import { Button } from '@heroui/react'
+import { useEffect, useRef, useState } from 'react'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
-import RawHTML from '../EscapeHtml'
+import RawHTML from '../../ui/EscapeHtml'
 
 interface CollapsibleTextProps {
   content: string
@@ -42,9 +42,7 @@ export default function CollapsibleText({
     <div className="relative">
       <div
         ref={contentRef}
-        className={`${
-          !isExpanded ? `line-clamp-${maxLines} overflow-hidden` : ''
-        }`}
+        className={`${!isExpanded ? `line-clamp-5 overflow-hidden` : ''}`}
       >
         <RawHTML>{content}</RawHTML>
       </div>
