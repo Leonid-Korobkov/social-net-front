@@ -136,9 +136,9 @@ export const useGetUserById = (id: string) => {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
-    // refetchOnMount: false,
-    // refetchOnWindowFocus: false,
-    // refetchOnReconnect: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 }
 
