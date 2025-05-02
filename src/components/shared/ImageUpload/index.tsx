@@ -22,7 +22,7 @@ function ImageUpload({
   const {
     data: newImageUrl,
     refetch: refetchNewImage,
-    isPending: isLoadingNewImage,
+    isFetching: isLoadingNewImage,
   } = useGetNewRandomImage()
 
   const onDrop = useCallback(
@@ -154,6 +154,7 @@ function ImageUpload({
         color="default"
         type="button"
         startContent={<FaWandMagicSparkles />}
+        isLoading={isLoadingNewImage}
         onClick={async () => {
           await refetchNewImage()
           if (newImageUrl) {

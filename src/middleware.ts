@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (token && isAuthPage) {
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL(request.nextUrl.pathname, request.url))
   }
 
   return NextResponse.next()

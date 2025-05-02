@@ -25,7 +25,7 @@ function ImageWithSkeleton({
 
   return (
     <div
-      className={`relative aspect-square lg:min-h-[300px] lg:min-w-[300px] min-h-[200px] min-w-[200px]`}
+      className={`relative aspect-square min-h-[200px] min-w-[200px] max-h-[200px] max-w-[200px] lg:max-h-[300px] w-full lg:max-w-[300px]`}
     >
       {/* {isLoading && (
         <Skeleton className="h-full w-full rounded-xl">
