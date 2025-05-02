@@ -2,6 +2,7 @@ import { BASE_URL } from '@/app/constants'
 import { useUserStore } from '@/store/user.store'
 import axios, { AxiosError, AxiosHeaders } from 'axios'
 import Cookies from 'js-cookie'
+import toast from 'react-hot-toast'
 
 // Типизация для ошибок
 export interface ApiErrorResponse {
@@ -32,8 +33,18 @@ apiClient.interceptors.request.use(config => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  config.timeout = 5000
   return config
 })
+
+// apiClient.interceptors.response.use(
+//   response => response.data,
+//   error => {
+//     if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
+//       toast.error('Сервер не отвечает. Пожалуйста, попробуйте позже.')
+//     }
+//   }
+// )
 
 // Интерцептор для обработки ошибок
 apiClient.interceptors.response.use(
@@ -64,6 +75,7 @@ export const handleAxiosError = (
     }
   } else if (error.request) {
     // Запрос был сделан, но ответ не получен
+    toast.error('Сервер не отвечает. Пожалуйста, попробуйте позже.')
     return {
       errorMessage:
         (error.request.message as string) ||
