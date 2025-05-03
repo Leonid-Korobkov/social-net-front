@@ -167,7 +167,7 @@ function CardActionWidget({
         <DropdownMenu aria-label="Post actions">
           <DropdownItem
             key="likes"
-            color="primary"
+            color="secondary"
             startContent={<AiOutlineLike />}
             onMouseDown={handleOpenModalLikes}
             onPress={handleOpenModalLikes}
@@ -176,7 +176,7 @@ function CardActionWidget({
           </DropdownItem>
           <DropdownItem
             key="share"
-            color="primary"
+            color="secondary"
             startContent={<FaShareFromSquare />}
             onMouseDown={handleShare}
             onPress={handleShare}
@@ -219,7 +219,7 @@ function CardActionWidget({
                   Отмена
                 </Button>
                 <Button
-                  color="primary"
+                  color="secondary"
                   onPress={() => {
                     onClose()
                     handleDelete()
@@ -293,7 +293,7 @@ function CardActionWidget({
                 </ModalBody>
               </motion.div>
               <ModalFooter>
-                <Button color="primary" onPress={onClose}>
+                <Button color="secondary" onPress={onClose}>
                   Закрыть
                 </Button>
               </ModalFooter>

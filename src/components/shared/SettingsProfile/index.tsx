@@ -141,6 +141,7 @@ export default function SettingsProfile({
                       <span>Показывать email</span>
                     </div>
                     <Switch
+                      color='secondary'
                       isSelected={settings.showEmail}
                       onValueChange={() => handleToggle('showEmail')}
                     />
@@ -151,6 +152,7 @@ export default function SettingsProfile({
                       <span>Показывать биографию</span>
                     </div>
                     <Switch
+                      color='secondary'
                       isSelected={settings.showBio}
                       onValueChange={() => handleToggle('showBio')}
                     />
@@ -161,6 +163,7 @@ export default function SettingsProfile({
                       <span>Показывать местоположение</span>
                     </div>
                     <Switch
+                      color='secondary'
                       isSelected={settings.showLocation}
                       onValueChange={() => handleToggle('showLocation')}
                     />
@@ -171,6 +174,7 @@ export default function SettingsProfile({
                       <span>Показывать дату рождения</span>
                     </div>
                     <Switch
+                      color='secondary'
                       isSelected={settings.showDateOfBirth}
                       onValueChange={() => handleToggle('showDateOfBirth')}
                     />
@@ -190,6 +194,7 @@ export default function SettingsProfile({
                       <span>Уменьшить анимацию</span>
                     </div>
                     <Switch
+                      color='secondary'
                       isSelected={settings.reduceAnimation}
                       onValueChange={() => handleToggle('reduceAnimation')}
                     />
@@ -204,7 +209,7 @@ export default function SettingsProfile({
               Отмена
             </Button>
             <Button
-              color="primary"
+              color="secondary"
               onPress={handleSave}
               isLoading={isUpdatingSettings}
             >
@@ -241,7 +246,7 @@ export default function SettingsProfile({
             >
               Позже
             </Button>
-            <Button color="primary" onPress={handleReload}>
+            <Button color="secondary" onPress={handleReload}>
               Обновить сейчас
             </Button>
           </ModalFooter>
