@@ -1,14 +1,15 @@
 'use client'
 import GoBack from '@/components/layout/GoBack'
+import FollowSkeleton from '@/components/ui/FollowSkeleton'
 import User from '@/components/ui/User'
-import { AnimatePresence, motion } from 'framer-motion'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
 import { Button, Card, CardBody } from '@heroui/react'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
-import { use } from 'react'
-import FollowSkeleton from '@/components/ui/FollowSkeleton'
+import { useTopLoader } from 'nextjs-toploader'
+import { MouseEvent, use, useRef } from 'react'
 
 interface PageProps {
   params: Promise<{
@@ -19,6 +20,8 @@ interface PageProps {
 function Following({ params }: PageProps) {
   const unwrappedParams = use(params)
   const { id } = unwrappedParams
+  const subscriptionsRef = useRef<HTMLButtonElement | null>(null)
+  const topLoader = useTopLoader()
 
   const currentUser = useUserStore.use.current()
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
@@ -92,6 +95,20 @@ function Following({ params }: PageProps) {
                       variablesUnfollow?.followingId ===
                         followingItem.following.id)
 
+                const isFetchingUser = !isFollowing
+                  ? (isFetching &&
+                      variablesFollow?.followingId ===
+                        followingItem.following.id) ||
+                    (isFetching &&
+                      variablesFollow?.followingId ===
+                        followingItem.following.id)
+                  : (isFetching &&
+                      variablesUnfollow?.followingId ===
+                        followingItem.following.id) ||
+                    (isFetching &&
+                      variablesUnfollow?.followingId ===
+                        followingItem.following.id)
+
                 return (
                   <motion.div
                     key={followingItem.following.id}
@@ -120,19 +137,18 @@ function Following({ params }: PageProps) {
                                 color={isFollowing ? 'default' : 'secondary'}
                                 variant="flat"
                                 className="gap-2"
-                                isLoading={isPending}
-                                onPress={e => {
+                                isLoading={isPending || isFetchingUser}
+                                ref={subscriptionsRef}
+                                onClick={e => {
                                   handleFollow(
                                     followingItem.following?.id ?? '',
                                     isFollowing
                                   )
-                                }}
-                                onMouseDown={e => {
                                   e.preventDefault()
-                                  handleFollow(
-                                    followingItem.following?.id ?? '',
-                                    isFollowing
-                                  )
+                                  e.stopPropagation()
+                                  setTimeout(() => {
+                                    topLoader.done(true)
+                                  }, 0)
                                 }}
                               >
                                 {isFollowing ? 'Отписаться' : 'Подписаться'}

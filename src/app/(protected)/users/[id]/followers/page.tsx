@@ -8,7 +8,8 @@ import { useUserStore } from '@/store/user.store'
 import { Button, Card, CardBody } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
-import { use } from 'react'
+import { useTopLoader } from 'nextjs-toploader'
+import { use, useRef } from 'react'
 
 interface PageProps {
   params: Promise<{
@@ -22,6 +23,9 @@ function Followers({ params }: PageProps) {
 
   const currentUser = useUserStore.use.current()
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
+
+  const subscriptionsRef = useRef<HTMLButtonElement | null>(null)
+  const topLoader = useTopLoader()
 
   const {
     mutateAsync: followUser,
@@ -114,14 +118,6 @@ function Followers({ params }: PageProps) {
                         followerItem.follower.id)
 
                 return (
-                  // <div
-                  //   onClick={e => {
-                  //     if (followerItem.follower) {
-                  //       router.push(`/users/${followerItem.follower.id}`)
-                  //     }
-                  //   }}
-                  //   key={followerItem.follower.id}
-                  // >
                   <Link
                     href={`/users/${followerItem.follower.id}`}
                     key={followerItem.follower.id}
@@ -141,29 +137,17 @@ function Followers({ params }: PageProps) {
                               variant="flat"
                               className="gap-2"
                               isLoading={isPending || isFetchingUser}
+                              ref={subscriptionsRef}
                               onClick={e => {
-                                e.preventDefault()
-                                e.stopPropagation()
                                 handleFollow(
                                   followerItem.follower?.id ?? '',
                                   isFollowing
                                 )
-                              }}
-                              onMouseDown={e => {
                                 e.preventDefault()
                                 e.stopPropagation()
-                              }}
-                              onMouseUp={e => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                              }}
-                              onPointerDown={e => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                              }}
-                              onPointerUp={e => {
-                                e.preventDefault()
-                                e.stopPropagation()
+                                setTimeout(() => {
+                                  topLoader.done(true)
+                                }, 0)
                               }}
                             >
                               {isFollowing ? 'Отписаться' : 'Подписаться'}

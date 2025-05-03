@@ -142,7 +142,7 @@ function UserProfile({ params }: PageProps) {
           }}
         />
         <div className="flex lg:flex-row flex-col items-stretch gap-4">
-          <Card className="flex flex-col items-center text-center space-y-4 p-5 flex-grow-[1]">
+          <Card className="flex flex-col items-center text-center space-y-4 p-5 flex-grow-[1] min-w-[300px]">
             <Image
               alt={`Изображение профиля ${user.name}`}
               src={`${user.avatarUrl}`}
