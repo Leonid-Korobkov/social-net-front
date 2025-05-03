@@ -75,7 +75,7 @@ export const handleAxiosError = (
     }
   } else if (error.request) {
     // Запрос был сделан, но ответ не получен
-    toast.error('Сервер не отвечает. Пожалуйста, попробуйте позже.')
+    toast.error('Сервер не отвечает. Пожалуйста, попробуйте позже (зайдите через 1-2 минуты).')
     return {
       errorMessage:
         (error.request.message as string) ||
