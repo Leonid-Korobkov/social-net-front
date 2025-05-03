@@ -72,7 +72,6 @@ export const useCreateFollow = () => {
       }
     },
     onSuccess: (data, { followingId, userId }) => {
-      console.log(followingId, userId)
       queryClient.invalidateQueries({
         queryKey: userKeys.profile(userId.toString()),
       })

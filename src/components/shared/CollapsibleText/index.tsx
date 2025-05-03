@@ -15,34 +15,54 @@ export default function CollapsibleText({
 }: CollapsibleTextProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldCollapse, setShouldCollapse] = useState(false)
+  const [maxHeight, setMaxHeight] = useState<number | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const scrollPosRef = useRef<number>(0)
 
+  const TRANSITION_MS = 400
+
+  // измеряем, нужно ли резать текст, и задаём начальный max-height
   useEffect(() => {
-    const checkHeight = () => {
+    if (!contentRef.current) return
+    const style = window.getComputedStyle(contentRef.current)
+    const lineHeight = parseInt(style.lineHeight)
+    const fullHeight = contentRef.current.scrollHeight
+    const lines = Math.ceil(fullHeight / lineHeight)
+
+    setShouldCollapse(lines > maxLines)
+    setMaxHeight(isExpanded ? fullHeight : lineHeight * maxLines)
+  }, [content, maxLines, isExpanded])
+
+  const toggleExpand = () => {
+    if (isExpanded) {
+      window.scrollTo({ top: scrollPosRef.current, behavior: 'smooth' })
+
       if (contentRef.current) {
         const lineHeight = parseInt(
           window.getComputedStyle(contentRef.current).lineHeight
         )
-        const height = contentRef.current.scrollHeight
-        const lines = Math.ceil(height / lineHeight)
-        setShouldCollapse(lines > maxLines)
+        setMaxHeight(lineHeight * maxLines)
       }
+      setIsExpanded(false)
+    } else {
+      scrollPosRef.current = window.pageYOffset
+
+      if (contentRef.current) {
+        setMaxHeight(contentRef.current.scrollHeight)
+      }
+      setIsExpanded(true)
     }
-
-    checkHeight()
-    window.addEventListener('resize', checkHeight)
-    return () => window.removeEventListener('resize', checkHeight)
-  }, [content, maxLines])
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded)
   }
 
   return (
     <div className="relative">
       <div
         ref={contentRef}
-        className={`${!isExpanded ? `line-clamp-5 overflow-hidden` : ''}`}
+        style={{
+          maxHeight: maxHeight !== null ? `${maxHeight}px` : 'none',
+          overflow: 'hidden',
+          transition: `max-height ${TRANSITION_MS}ms ease`,
+        }}
       >
         <RawHTML>{content}</RawHTML>
       </div>

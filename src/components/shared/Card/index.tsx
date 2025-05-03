@@ -120,13 +120,7 @@ const Card = memo(
 
     return (
       <NextUiCard
-        className={`mb-5 transform ${
-          cardFor === 'post'
-            ? `transition-all duration-500 
-    ease-in-out [&:has(>div.card-body:hover)]:scale-[1.01]
-    [&:has(>div.card-body:hover)]:shadow-lg overflow-visible`
-            : ''
-        }`}
+        className={`mb-5 transform `}
       >
         <CardHeader className="relative z-[1] justify-between items-center bg-transparent pb-0">
           <Link
@@ -231,12 +225,10 @@ const Card = memo(
             }
           }}
         >
-          {cardFor === 'post' || cardFor === 'comment' ? (
+          {cardFor !== 'current-post' ? (
             <CollapsibleText content={content} />
           ) : (
-            <Typography>
-              <RawHTML>{content}</RawHTML>
-            </Typography>
+            <CollapsibleText content={content} maxLines={15}/>
           )}
         </CardBody>
         <CardFooter className="gap-3 -ml-2">
