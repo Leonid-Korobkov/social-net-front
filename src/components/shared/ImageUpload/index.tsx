@@ -112,6 +112,13 @@ function ImageUpload({
     }
   }, [preview])
 
+  useEffect(() => {
+    if (newImageUrl) {
+      setPreview(newImageUrl)
+      onChange(newImageUrl)
+    }
+  }, [newImageUrl])
+
   const displayImage =
     preview || (currentImageUrl ? `${currentImageUrl}` : null)
 
@@ -157,10 +164,6 @@ function ImageUpload({
         isLoading={isLoadingNewImage}
         onClick={async () => {
           await refetchNewImage()
-          if (newImageUrl) {
-            setPreview(newImageUrl)
-            onChange(newImageUrl)
-          }
         }}
       >
         Сгенерировать случайное изображение
