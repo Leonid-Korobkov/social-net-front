@@ -3,7 +3,11 @@ import { NextRequest } from 'next/server'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
+// Указываем, что этот роут должен использовать Node.js runtime
 export const runtime = 'nodejs'
+
+// Позволяем этому роуту быть публично доступным
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,6 +16,9 @@ export async function GET(request: NextRequest) {
       searchParams.get('title') || 'Zling: Социальная сеть для своих'
     const type = searchParams.get('type') || 'default'
     const id = searchParams.get('id')
+
+    // Логируем запрос для отладки
+    console.log(`OG Image Request: type=${type}, title=${title}, id=${id}`)
 
     // Загрузка шрифта
     let fontData
@@ -30,6 +37,14 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Устанавливаем правильные заголовки для кэширования
+    const headers = new Headers()
+    headers.set(
+      'Cache-Control',
+      'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800'
+    )
+    headers.set('Content-Type', 'image/png')
+
     if (type === 'profile' && id) {
       // Возвращаем изображение профиля пользователя
       return generateProfileImage(id, fontData)
@@ -45,6 +60,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('Error generating image:', error)
+    // Даже в случае ошибки, возвращаем резервное изображение
     return new ImageResponse(
       (
         <div
