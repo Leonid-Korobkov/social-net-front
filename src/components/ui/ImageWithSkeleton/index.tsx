@@ -24,63 +24,16 @@ function ImageWithSkeleton({
     useCloudinaryImage({ src, width })
 
   return (
-    <div
-      className={`relative aspect-square min-h-[200px] min-w-[200px] max-h-[200px] max-w-[200px] lg:max-h-[300px] w-full lg:max-w-[300px]`}
-    >
-      {/* {isLoading && (
-        <Skeleton className="h-full w-full rounded-xl">
-          <div className="aspect-square rounded-xl bg-default-300 absolute inset-0 min-h-[200px]"></div>
-        </Skeleton>
-      )} */}
-      {/* <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isLoading ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
-      > */}
+    <div className={`relative object-contain aspect-square ${className}`}>
       {src && !error && (
-        <picture className={error ? 'hidden' : ''}>
-          {/* <source
-            type="image/avif"
-            sizes={sizes}
-            srcSet={`
-                ${getOptimizedUrl('avif', 400)} 400w,
-                ${getOptimizedUrl('avif', 800)} 800w,
-                ${getOptimizedUrl('avif', 1200)} 1200w
-              `}
-          />
-          <source
-            type="image/webp"
-            sizes={sizes}
-            srcSet={`
-                ${getOptimizedUrl('webp', 400)} 400w,
-                ${getOptimizedUrl('webp', 800)} 800w,
-                ${getOptimizedUrl('webp', 1200)} 1200w
-              `}
-          />
-          <source
-            type="image/png"
-            sizes={sizes}
-            srcSet={`
-                ${getOptimizedUrl('png', 400)} 400w,
-                ${getOptimizedUrl('png', 800)} 800w,
-                ${getOptimizedUrl('png', 1200)} 1200w
-              `}
-          />
-          <source
-            type="image/jpg"
-            sizes={sizes}
-            srcSet={`
-                ${getOptimizedUrl('jpg', 400)} 400w,
-                ${getOptimizedUrl('jpg', 800)} 800w,
-                ${getOptimizedUrl('jpg', 1200)} 1200w
-              `}
-          /> */}
-          {/* Оригинальный формат как fallback */}
+        <>
           <NextImage
             src={src}
             alt={alt}
             fill={true}
-            className={`object-cover rounded-xl z-10 ${className}`}
+            className={`absolute inset-0 w-full h-full object-contain rounded-xl z-10 ${
+              error ? 'hidden' : ''
+            }`}
             onLoad={handleLoad}
             onError={handleError}
             onClick={onClick}
@@ -88,11 +41,10 @@ function ImageWithSkeleton({
           <img
             src={getOptimizedUrl()}
             alt={alt}
-            className={`absolute z-0 inset-0 w-full h-full object-cover aspect-square filter blur-xl scale-105 saturate-150 opacity-70 translate-y-1 rounded-large`}
+            className={`absolute z-0 inset-0 w-full h-full object-contain filter blur-xl scale-105 saturate-150 opacity-70 translate-y-1 rounded-large`}
           />
-        </picture>
+        </>
       )}
-      {/* </motion.div> */}
 
       {error && (
         <div

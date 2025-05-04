@@ -130,7 +130,7 @@ function UserProfileClient({ params }: PageProps) {
               src={`${user.avatarUrl}`}
               width={200}
               height={200}
-              className="max-w-full max-h-full border-4 border-white rounded-xl cursor-pointer"
+              className="min-h-[200px] min-w-[200px] max-h-[200px] max-w-[200px] lg:max-h-[300px] w-full lg:max-w-[300px] max-w-full max-h-full border-4 border-white rounded-xl cursor-pointer"
               onClick={handleImageClick}
             />
             <div className="flex flex-col text-2xl font-bold gap-4 items-center w-full">

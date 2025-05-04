@@ -255,7 +255,7 @@ export default async function Image({ params }: { params: { id: string } }) {
                 ? user.bio.length > 100
                   ? `${user.bio.substring(0, 100)}...`
                   : user.bio
-                : ''}
+                : ' '}
             </div>
 
             <div

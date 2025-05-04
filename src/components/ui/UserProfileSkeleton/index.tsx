@@ -1,5 +1,5 @@
 'use client'
-import { Card, Skeleton } from "@heroui/react"
+import { Card, Skeleton } from '@heroui/react'
 import { FaUsers } from 'react-icons/fa'
 import { FiUsers } from 'react-icons/fi'
 import CountInfo from '../CountInfo'
@@ -15,7 +15,7 @@ function UserProfileSkeleton() {
       <div className="flex lg:flex-row flex-col items-stretch gap-4 mt-10">
         {/* Левая карточка с аватаром */}
         <Card className="flex flex-col items-center text-center space-y-6 p-5 flex-2">
-          <Skeleton className="rounded-xl w-[200px] h-[200px]" />
+          <Skeleton className="min-h-[200px] min-w-[200px] max-h-[200px] max-w-[200px] lg:max-h-[300px] w-full lg:max-w-[300px] rounded-xl" />
           <div className="flex flex-col gap-4 items-center w-full">
             <Skeleton className="h-6 w-32 rounded-lg" />
             <Skeleton className="h-9 w-40 rounded-lg" />
@@ -26,11 +26,7 @@ function UserProfileSkeleton() {
         <Card className="flex flex-col space-y-4 p-5 flex-1">
           {/* Блок с подписчиками и подписками */}
           <Card className="flex gap-2 justify-center flex-row flex-wrap mb-2">
-            <CountInfo
-              Icon={BsPostcardFill}
-              title="Публикации"
-              isLoading
-            />
+            <CountInfo Icon={BsPostcardFill} title="Публикации" isLoading />
             <CountInfo Icon={FaUsers} title="Подписчики" isLoading />
             <CountInfo Icon={FiUsers} title="Подписки" isLoading />
           </Card>

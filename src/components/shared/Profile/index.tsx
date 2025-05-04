@@ -19,7 +19,7 @@ function Profile() {
         <Image
           alt="Изображение профиля"
           src={`${avatarUrl}`}
-          className="w-full"
+          className="w-full min-w-full"
         />
       </CardHeader>
       <CardBody className="overflow-visible py-2">
