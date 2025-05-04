@@ -2,10 +2,11 @@ import Header from '@/components/layout/Header'
 import Container from '@/components/layout/Container'
 import LayoutNavigation from '@/components/layout/LayoutNavigation'
 import ProfileSidebar from '@/components/layout/ProfileSidebar'
+import ProtectedRoute from '@/components/layout/ProtectedRoute'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <ProtectedRoute>
       <Header />
       <Container className="flex-grow">
         <LayoutNavigation />
@@ -14,7 +15,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         </div>
         <ProfileSidebar />
       </Container>
-    </>
+    </ProtectedRoute>
   )
 }
 
