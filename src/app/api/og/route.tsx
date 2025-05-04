@@ -36,6 +36,9 @@ export async function GET(request: NextRequest) {
     } else if (type === 'post' && id) {
       // Возвращаем изображение поста
       return generatePostImage(id, fontData)
+    } else if (title === 'Лента') {
+      // Возвращаем изображение для главной страницы (ленты)
+      return generateFeedImage(fontData)
     } else {
       // Возвращаем стандартное изображение
       return generateDefaultImage(title, fontData)
@@ -65,6 +68,72 @@ export async function GET(request: NextRequest) {
       }
     )
   }
+}
+
+async function generateFeedImage(fontData: Buffer | null) {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          fontSize: 60,
+          backgroundColor: '#000',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          textAlign: 'center',
+          padding: 40,
+        }}
+      >
+        <img
+          src={
+            'https://res.cloudinary.com/djsmqdror/image/upload/v1746202177/social-net/wbk0hwzwrswxcwtfhnit.png'
+          }
+          width={400}
+          alt={'Zling логотип'}
+          style={{ objectFit: 'cover' }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            gap: 30,
+            marginTop: 20,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#1E102B',
+              padding: '16px 32px',
+              borderRadius: 20,
+              fontSize: 46,
+              fontWeight: 'bold',
+              letterSpacing: '1.4',
+              color: '#AE7EDE',
+            }}
+          >
+            Главная
+          </div>
+        </div>
+      </div>
+    ),
+    {
+      width: 1200,
+      height: 630,
+      fonts: fontData
+        ? [
+            {
+              name: 'Rubik',
+              data: fontData,
+              style: 'normal',
+              weight: 600,
+            },
+          ]
+        : undefined,
+    }
+  )
 }
 
 async function generateDefaultImage(title: string, fontData: Buffer | null) {

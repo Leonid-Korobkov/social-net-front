@@ -13,14 +13,22 @@ export const metadata: Metadata = {
       'Следите за публикациями ваших друзей и популярных пользователей',
     url: `${APP_URL}`,
     siteName: 'Zling',
+    images: [
+      {
+        url: `${APP_URL}/api/og?title=Лента`,
+        width: 1200,
+        height: 630,
+        alt: 'Лента Zling',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Лента | Zling',
     description:
       'Следите за публикациями ваших друзей и популярных пользователей',
-
     creator: '@krbln',
+    images: [`${APP_URL}/api/og?title=Лента`],
   },
   robots: {
     index: true,
