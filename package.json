@@ -13,6 +13,7 @@
     "@heroui/react": "2.7.5",
     "@internationalized/date": "^3.7.0",
     "@tanstack/react-query": "^5.72.2",
+    "@tanstack/react-virtual": "^3.13.6",
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
