@@ -7,11 +7,13 @@ import { User } from './types'
 interface initialUserSettingsStore {
   reduceAnimation: boolean
   setReduceAnimation: (bool: boolean) => void
+  logout: () => void
 }
 
 const initialState: initialUserSettingsStore = {
   reduceAnimation: false,
   setReduceAnimation: (bool: boolean) => {},
+  logout: () => {},
 }
 
 export const UserSettingsStore = createStore<initialUserSettingsStore>()(
@@ -20,6 +22,9 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
       ...initialState,
       setReduceAnimation: (bool: boolean) => {
         set(state => ({ reduceAnimation: bool }))
+      },
+      logout: () => {
+        set(initialState)
       },
     }),
     {

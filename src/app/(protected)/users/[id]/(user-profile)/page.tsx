@@ -96,14 +96,6 @@ function UserProfile({ params }: PageProps) {
     }
   }
 
-  function handleEditProfile() {
-    onEditOpen()
-  }
-
-  function handleSettingProfile() {
-    onSettingsOpen()
-  }
-
   const handleImageClick = () => {
     setImageOpen(true)
   }
@@ -254,7 +246,7 @@ function UserProfile({ params }: PageProps) {
           hasMore={hasNextPage}
           onLoadMore={handleLoadMore}
           isFetchingMore={isFetchingNextPage && !isLoading}
-          skeletonClassName="mt-10"
+          skeletonClassName="mt-4"
         />
         <Modal
           closeButton={true}

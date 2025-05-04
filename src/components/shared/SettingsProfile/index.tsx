@@ -141,7 +141,7 @@ export default function SettingsProfile({
                       <span>Показывать email</span>
                     </div>
                     <Switch
-                      color='secondary'
+                      color="secondary"
                       isSelected={settings.showEmail}
                       onValueChange={() => handleToggle('showEmail')}
                     />
@@ -152,7 +152,7 @@ export default function SettingsProfile({
                       <span>Показывать биографию</span>
                     </div>
                     <Switch
-                      color='secondary'
+                      color="secondary"
                       isSelected={settings.showBio}
                       onValueChange={() => handleToggle('showBio')}
                     />
@@ -163,7 +163,7 @@ export default function SettingsProfile({
                       <span>Показывать местоположение</span>
                     </div>
                     <Switch
-                      color='secondary'
+                      color="secondary"
                       isSelected={settings.showLocation}
                       onValueChange={() => handleToggle('showLocation')}
                     />
@@ -174,7 +174,7 @@ export default function SettingsProfile({
                       <span>Показывать дату рождения</span>
                     </div>
                     <Switch
-                      color='secondary'
+                      color="secondary"
                       isSelected={settings.showDateOfBirth}
                       onValueChange={() => handleToggle('showDateOfBirth')}
                     />
@@ -191,10 +191,15 @@ export default function SettingsProfile({
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <MdAnimation className="text-xl" />
-                      <span>Уменьшить анимацию</span>
+                      <div className="flex flex-col">
+                        <span>Уменьшить анимацию</span>
+                        <span className="text-sm text-gray-400">
+                          Если настройка не применилась - перезагрузите страницу
+                        </span>
+                      </div>
                     </div>
                     <Switch
-                      color='secondary'
+                      color="secondary"
                       isSelected={settings.reduceAnimation}
                       onValueChange={() => handleToggle('reduceAnimation')}
                     />

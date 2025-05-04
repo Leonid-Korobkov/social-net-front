@@ -119,7 +119,7 @@ function Followers({ params }: PageProps) {
 
                 return (
                   <Link
-                    href={`/users/${followerItem.follower.id}`}
+                    href={`/users/${followerItem.follower.userName}`}
                     key={followerItem.follower.id}
                   >
                     <Card>

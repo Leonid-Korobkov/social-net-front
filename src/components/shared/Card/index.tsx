@@ -119,12 +119,10 @@ const Card = memo(
     }
 
     return (
-      <NextUiCard
-        className={`mb-5 transform `}
-      >
+      <NextUiCard className={`mb-5 transform `}>
         <CardHeader className="relative z-[1] justify-between items-center bg-transparent pb-0">
           <Link
-            href={`/users/${authorId}`}
+            href={`/users/${username}`}
             title={`Переход на страницу автора ${username}`}
             className="flex-1"
           >
@@ -228,7 +226,7 @@ const Card = memo(
           {cardFor !== 'current-post' ? (
             <CollapsibleText content={content} />
           ) : (
-            <CollapsibleText content={content} maxLines={15}/>
+            <CollapsibleText content={content} maxLines={15} />
           )}
         </CardBody>
         <CardFooter className="gap-3 -ml-2">

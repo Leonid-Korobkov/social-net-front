@@ -17,6 +17,7 @@ import { useUserStore } from '@/store/user.store'
 import { PostsDTO, PostsRequest } from './post.api'
 import { IUserSettings } from '@/types/user.interface'
 import axios from 'axios'
+import { UserSettingsStore } from '@/store/userSettings.store'
 
 // Типы для запросов и для ответов API, которые приходят с backend
 type LoginRequest = {
@@ -68,6 +69,7 @@ export const useLogin = () => {
             sameSite: 'strict',
           })
         }
+        
         return response
       } catch (error) {
         console.log(error)
@@ -116,6 +118,7 @@ export const useGetCurrentUser = () => {
       try {
         const user = await apiClient.get<void, User>('/current')
         useUserStore.setState({ current: user, isAuthenticated: true }) // Прямой вызов setState
+        UserSettingsStore.setState({reduceAnimation: user.reduceAnimation})
         return user
       } catch (error) {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
