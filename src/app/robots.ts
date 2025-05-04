@@ -7,7 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       disallow: [
-        '/api/', // Закрываем API эндпоинты
         '/_next/', // Закрываем технические файлы
         '/images/', // Закрываем доступ к папке с изображениями
       ],
