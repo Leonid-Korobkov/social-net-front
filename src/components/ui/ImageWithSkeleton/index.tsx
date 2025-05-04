@@ -24,14 +24,14 @@ function ImageWithSkeleton({
     useCloudinaryImage({ src, width })
 
   return (
-    <div className={`relative object-contain aspect-square ${className}`}>
+    <div className={`relative object-cover aspect-square ${className}`}>
       {src && !error && (
         <>
           <NextImage
             src={src}
             alt={alt}
             fill={true}
-            className={`absolute inset-0 w-full h-full object-contain rounded-xl z-10 ${
+            className={`absolute inset-0 w-full h-full object-cover rounded-xl z-10 ${
               error ? 'hidden' : ''
             }`}
             onLoad={handleLoad}
@@ -41,7 +41,7 @@ function ImageWithSkeleton({
           <img
             src={getOptimizedUrl()}
             alt={alt}
-            className={`absolute z-0 inset-0 w-full h-full object-contain filter blur-xl scale-105 saturate-150 opacity-70 translate-y-1 rounded-large`}
+            className={`absolute z-0 inset-0 w-full h-full object-cover filter blur-xl scale-105 saturate-150 opacity-70 translate-y-1 rounded-large`}
           />
         </>
       )}

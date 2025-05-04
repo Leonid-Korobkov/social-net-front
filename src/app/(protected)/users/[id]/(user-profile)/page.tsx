@@ -31,6 +31,9 @@ export async function generateMetadata({
     const description =
       user.bio || `Профиль ${user.name} в социальной сети Zling`
 
+    // Формируем URL для OG изображения
+    const ogImageUrl = `${APP_URL}/api/og?type=profile&id=${user.id}`
+
     return {
       title,
       description,
@@ -43,12 +46,21 @@ export async function generateMetadata({
         firstName: user.name?.split(' ')[0] || '',
         lastName: user.name?.split(' ')[1] || '',
         username: user.userName,
+        images: [
+          {
+            url: ogImageUrl,
+            width: 1200,
+            height: 630,
+            alt: `Профиль ${user.name} в Zling`,
+          },
+        ],
       },
       twitter: {
         card: 'summary_large_image',
         title,
         description,
         creator: '@krbln',
+        images: [ogImageUrl],
       },
       alternates: {
         canonical: `${APP_URL}/users/${paramsResolved.id}`,
@@ -69,12 +81,21 @@ function defaultMetadata(): Metadata {
       description: 'Профиль пользователя в социальной сети Zling',
       url: APP_URL,
       siteName: 'Zling',
+      images: [
+        {
+          url: `${APP_URL}/api/og?title=Профиль пользователя`,
+          width: 1200,
+          height: 630,
+          alt: 'Профиль пользователя в Zling',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: 'Профиль пользователя | Zling',
       description: 'Профиль пользователя в социальной сети Zling',
       creator: '@krbln',
+      images: [`${APP_URL}/api/og?title=Профиль пользователя`],
     },
   }
 }
