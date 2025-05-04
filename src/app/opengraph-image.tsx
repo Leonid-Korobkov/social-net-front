@@ -33,7 +33,6 @@ export default async function OpImage() {
             'https://res.cloudinary.com/djsmqdror/image/upload/v1746202177/social-net/wbk0hwzwrswxcwtfhnit.png'
           }
           width={500}
-          height={500}
           alt={'Zling логотип'}
           style={{ objectFit: 'cover' }}
         />

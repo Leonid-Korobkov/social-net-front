@@ -76,65 +76,65 @@ function PostList({
     <div className={className}>
       <div ref={parentRef} className="relative w-full">
         {/* <AnimatePresence mode="popLayout"> */}
-          <div
-            style={{ height: `${virtualizer.getTotalSize()}px` }}
-            className="w-full"
-          >
-            {virtualizer.getVirtualItems().map(virtualItem => {
-              const post = data[virtualItem.index]
-              if (!post || !post.authorId) return null
+        <div
+          style={{ height: `${virtualizer.getTotalSize()}px` }}
+          className="w-full"
+        >
+          {virtualizer.getVirtualItems().map(virtualItem => {
+            const post = data[virtualItem.index]
+            if (!post || !post.authorId) return null
 
-              const {
-                author,
-                authorId,
-                commentCount,
-                content,
-                createdAt,
-                id,
-                likeCount,
-                likedByUser = false,
-                isFollowing = false,
-              } = post
+            const {
+              author,
+              authorId,
+              commentCount,
+              content,
+              createdAt,
+              id,
+              likeCount,
+              likedByUser = false,
+              isFollowing = false,
+            } = post
 
-              return (
-                <div
-                  key={id}
-                  ref={node => virtualizer.measureElement(node)}
-                  data-index={virtualItem.index}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    transform: `translateY(${virtualItem.start}px)`,
-                  }}
+            return (
+              <div
+                key={id}
+                ref={node => virtualizer.measureElement(node)}
+                data-index={virtualItem.index}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2, bounce: 0 }}
+                  layout="position"
                 >
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2, bounce: 0 }}
-                    layout="position"
-                  >
-                    <Card
-                      id={id}
-                      authorId={authorId}
-                      avatarUrl={author?.avatarUrl || ''}
-                      cardFor={'post'}
-                      content={content}
-                      username={author?.userName || ''}
-                      likedByUser={likedByUser}
-                      commentsCount={commentCount}
-                      createdAt={createdAt}
-                      likesCount={likeCount}
-                      isFollowing={isFollowing}
-                      onClick={handleCardClick}
-                    />
-                  </motion.div>
-                </div>
-              )
-            })}
-          </div>
+                  <Card
+                    id={id}
+                    authorId={authorId}
+                    avatarUrl={author?.avatarUrl || ''}
+                    cardFor={'post'}
+                    content={content}
+                    username={author?.userName || ''}
+                    likedByUser={likedByUser}
+                    commentsCount={commentCount}
+                    createdAt={createdAt}
+                    likesCount={likeCount}
+                    isFollowing={isFollowing}
+                    onClick={handleCardClick}
+                  />
+                </motion.div>
+              </div>
+            )
+          })}
+        </div>
         {/* </AnimatePresence> */}
       </div>
       {(hasMore || isFetchingMore) && (

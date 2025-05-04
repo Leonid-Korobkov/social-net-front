@@ -1,124 +1,101 @@
-'use client'
-import GoBack from '@/components/layout/GoBack'
-import Card from '@/components/shared/Card'
-import CreateComment from '@/components/shared/CommentCreate'
-import CommentList from '@/components/shared/CommentList'
-import CardCommentSkeleton from '@/components/ui/CardCommentSkeleton'
-import CardSkeleton from '@/components/ui/CardSkeleton'
-import CreateCommentSkeleton from '@/components/ui/CommentCreateSkeleton'
-import { useGetCommentsByPostId } from '@/services/api/comment.api'
-import { useGetPostById } from '@/services/api/post.api'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import { use, useEffect } from 'react'
+import { use } from 'react'
+import CurrentPostClient from './page-client'
 
 type PageProps = {
-  params: Promise<{
-    [x: string]: string
-    id: string
-  }>
-  searchParams: Promise<{
-    [x: string]: string
-    comment: string
-  }>
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-function CurrentPost({ params, searchParams }: PageProps) {
-  const paramsIn = use(params)
-  const searchParamsIn = use(searchParams)
+import { Metadata } from 'next'
+import { APP_URL } from '@/app/constants'
+import { apiClient } from '@/services/ApiConfig'
+import { Post } from '@/store/types'
 
-  const {
-    data: comments,
-    fetchNextPage: fetchNextPageComments,
-    hasNextPage: hasNextPageComments,
-    isLoading: isLoadingComments,
-    isFetchingNextPage: isFetchingNextPageComments,
-  } = useGetCommentsByPostId({
-    limit: 10,
-    postId: paramsIn.id,
-  })
-
-  const commentId = searchParamsIn.comment
-  const router = useRouter()
-  const { data, isLoading } = useGetPostById(paramsIn.id)
-
-  // Скролл к комменту при открытии страницы
-  useEffect(() => {
-    if (commentId && !isLoading && data?.comments) {
-      const commentElement = document.getElementById(`comment-${commentId}`)
-      if (commentElement) {
-        setTimeout(() => {
-          commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          commentElement.classList.add('highlight')
-          setTimeout(() => {
-            commentElement.classList.remove('highlight')
-            router.push(`/posts/${paramsIn.id}`)
-          }, 2000)
-        }, 200)
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const paramsResolved = await params
+  try {
+    const response = await apiClient<string, Post>(
+      `posts/${paramsResolved.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
+        },
       }
-    }
-  }, [commentId, isLoading, data])
-
-  if (isLoading) {
-    return (
-      <>
-        <GoBack />
-        <CardSkeleton />
-        <div className="mt-10">
-          <CreateCommentSkeleton />
-        </div>
-        <div className="mt-10">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CardCommentSkeleton key={index} />
-          ))}
-        </div>
-      </>
     )
+    const post = response
+
+    if (!post) {
+      return defaultMetadata()
+    }
+
+    // Обрезаем контент до 200 символов для description
+    const truncatedContent =
+      post.content.length > 200
+        ? `${post.content.substring(0, 200)}...`
+        : post.content
+
+    const title = `Пост от ${post.author?.name || 'пользователя'} | Zling`
+    const description = truncatedContent
+
+    return {
+      title,
+      description,
+      openGraph: {
+        type: 'article',
+        title,
+        description,
+        url: `${APP_URL}/posts/${paramsResolved.id}`,
+        siteName: 'Zling',
+        publishedTime: post.createdAt.toString(),
+        authors: [`${post.author?.name || 'Пользователь Zling'}`],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        creator: post.author?.userName ? `@${post.author.userName}` : '@krbln',
+      },
+      alternates: {
+        canonical: `${APP_URL}/posts/${paramsResolved.id}`,
+      },
+    }
+  } catch (error) {
+    return defaultMetadata()
   }
+}
 
-  if (!data) return <h1>Поста не существует</h1>
+function defaultMetadata(): Metadata {
+  return {
+    title: 'Пост | Zling',
+    description: 'Пост в социальной сети Zling',
+    openGraph: {
+      type: 'article',
+      title: 'Пост | Zling',
+      description: 'Пост в социальной сети Zling',
+      url: APP_URL,
+      siteName: 'Zling',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Пост | Zling',
+      description: 'Пост в социальной сети Zling',
+      creator: '@krbln',
+    },
+  }
+}
 
-  const {
-    content,
-    author,
-    authorId,
-    likeCount,
-    commentCount,
-    createdAt,
-    id,
-    likedByUser,
-    isFollowing,
-  } = data
-
+async function CurrentPost({ params, searchParams }: PageProps) {
+  const paramsIn = await params
+  const searchParamsIn = await searchParams
   return (
-    <>
-      <GoBack />
-      <Card
-        cardFor="current-post"
-        avatarUrl={author?.avatarUrl ?? ''}
-        content={content}
-        username={author?.userName ?? ''}
-        likesCount={likeCount}
-        commentsCount={commentCount}
-        authorId={authorId}
-        id={id}
-        likedByUser={likedByUser}
-        createdAt={createdAt}
-        isFollowing={isFollowing}
-      />
-      <div className="mt-10">
-        <CreateComment params={paramsIn} />
-      </div>
-      <div className="mt-10">
-        <CommentList
-          data={comments}
-          isLoading={isLoadingComments}
-          hasMore={hasNextPageComments}
-          onLoadMore={fetchNextPageComments}
-          isFetchingMore={isFetchingNextPageComments}
-        />
-      </div>
-    </>
+    <CurrentPostClient
+      params={paramsIn}
+      searchParams={searchParamsIn}
+    ></CurrentPostClient>
   )
 }
 
