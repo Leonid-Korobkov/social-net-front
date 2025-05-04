@@ -60,7 +60,7 @@ body {
     @apply text-xl text-default-200 pointer-events-none flex-shrink-0 self-center;
   }
   .color-icon-for-settings {
-    @apply text-[#9353D3]
+    @apply text-[#9353D3];
   }
 }
 
@@ -97,4 +97,9 @@ code {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+html {
+  scrollbar-color: #9353d3 #e0e0e0;
+  scrollbar-width: thin;
 }

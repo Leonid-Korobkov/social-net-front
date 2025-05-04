@@ -4,8 +4,9 @@ import CardSkeleton from '../../ui/CardSkeleton'
 import Card from '../Card'
 import { Spinner } from '@heroui/react'
 import { useInView } from 'react-intersection-observer'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Post } from '@/store/types'
+import { useWindowVirtualizer } from '@tanstack/react-virtual'
 
 interface PostListProps {
   data: Post[]
@@ -28,6 +29,15 @@ function PostList({
   isFetchingMore,
   skeletonClassName,
 }: PostListProps) {
+  const parentRef = useRef<HTMLDivElement>(null)
+
+  const virtualizer = useWindowVirtualizer({
+    count: data.length,
+    estimateSize: () => 300,
+    overscan: 5,
+    measureElement: element => element?.getBoundingClientRect().height || 300,
+  })
+
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
   })
@@ -36,7 +46,21 @@ function PostList({
     if (inView && !isLoading && !isFetchingMore && hasMore && onLoadMore) {
       onLoadMore()
     }
-  }, [inView, isLoading, isFetchingMore, hasMore])
+  }, [inView, isLoading, isFetchingMore, hasMore, onLoadMore])
+
+  // Обновляем scrollMargin при монтировании и изменении позиции родительского элемента
+  useEffect(() => {
+    if (parentRef.current) {
+      const updateScrollMargin = () => {
+        const offset = parentRef.current?.offsetTop || 0
+        virtualizer.options.scrollMargin = offset
+      }
+
+      updateScrollMargin()
+      window.addEventListener('resize', updateScrollMargin)
+      return () => window.removeEventListener('resize', updateScrollMargin)
+    }
+  }, [virtualizer])
 
   if (isLoading && !data.length) {
     return (
@@ -50,37 +74,44 @@ function PostList({
 
   return (
     <div className={className}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <AnimatePresence mode="popLayout">
-          {data &&
-            data.length > 0 &&
-            data.map(post => {
-              if (!post || !post.authorId) return null
+      <div ref={parentRef} className="relative w-full">
+        <div
+          style={{ height: `${virtualizer.getTotalSize()}px` }}
+          className="w-full"
+        >
+          {virtualizer.getVirtualItems().map(virtualItem => {
+            const post = data[virtualItem.index]
+            if (!post || !post.authorId) return null
 
-              const {
-                author,
-                authorId,
-                commentCount,
-                content,
-                createdAt,
-                id,
-                likeCount,
-                likedByUser = false,
-                isFollowing = false,
-              } = post
+            const {
+              author,
+              authorId,
+              commentCount,
+              content,
+              createdAt,
+              id,
+              likeCount,
+              likedByUser = false,
+              isFollowing = false,
+            } = post
 
-              return (
+            return (
+              <div
+                key={id}
+                ref={node => virtualizer.measureElement(node)}
+                data-index={virtualItem.index}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
                 <motion.div
-                  key={id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5, bounce: 0 }}
-                  layout="position"
+                  transition={{ duration: 0.3, bounce: 0 }}
                 >
                   <Card
                     id={id}
@@ -97,10 +128,11 @@ function PostList({
                     onClick={handleCardClick}
                   />
                 </motion.div>
-              )
-            })}
-        </AnimatePresence>
-      </motion.div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
       {(hasMore || isFetchingMore) && (
         <div ref={loadMoreRef} className="py-4 flex justify-center">
           {isFetchingMore ? (
