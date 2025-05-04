@@ -15,56 +15,46 @@ export default function CollapsibleText({
 }: CollapsibleTextProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldCollapse, setShouldCollapse] = useState(false)
-  const [maxHeight, setMaxHeight] = useState<number | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const scrollPosRef = useRef<number>(0)
-
+  const [collapsedScale, setCollapsedScale] = useState(1)  // во сколько раз надо сжать
   const TRANSITION_MS = 400
 
-  // измеряем, нужно ли резать текст, и задаём начальный max-height
+  // при каждом контенте / ресайзе считаем:
+  // fullHeight — полная высота, collapsedHeight — высота maxLines
   useEffect(() => {
     if (!contentRef.current) return
     const style = window.getComputedStyle(contentRef.current)
     const lineHeight = parseInt(style.lineHeight)
     const fullHeight = contentRef.current.scrollHeight
-    const lines = Math.ceil(fullHeight / lineHeight)
+    const collapsedHeight = lineHeight * maxLines
 
-    setShouldCollapse(lines > maxLines)
-    setMaxHeight(isExpanded ? fullHeight : lineHeight * maxLines)
-  }, [content, maxLines, isExpanded])
+    setShouldCollapse(fullHeight > collapsedHeight)
+    // во сколько раз нужно сжать, чтобы влезло collapsedHeight
+    setCollapsedScale(collapsedHeight / fullHeight)
+  }, [content, maxLines])
 
   const toggleExpand = () => {
-    if (isExpanded) {
-      window.scrollTo({ top: scrollPosRef.current, behavior: 'smooth' })
-
-      if (contentRef.current) {
-        const lineHeight = parseInt(
-          window.getComputedStyle(contentRef.current).lineHeight
-        )
-        setMaxHeight(lineHeight * maxLines)
-      }
-      setIsExpanded(false)
-    } else {
-      scrollPosRef.current = window.pageYOffset
-
-      if (contentRef.current) {
-        setMaxHeight(contentRef.current.scrollHeight)
-      }
-      setIsExpanded(true)
-    }
+    setIsExpanded(prev => !prev)
   }
 
   return (
     <div className="relative">
       <div
-        ref={contentRef}
         style={{
-          maxHeight: maxHeight !== null ? `${maxHeight}px` : 'none',
           overflow: 'hidden',
-          transition: `max-height ${TRANSITION_MS}ms ease`,
+          // контейнером будет «сжимаемый» inner-блок
         }}
       >
-        <RawHTML>{content}</RawHTML>
+        <div
+          ref={contentRef}
+          style={{
+            transform: isExpanded ? 'scaleY(1)' : `scaleY(${collapsedScale})`,
+            transformOrigin: 'top',
+            transition: `transform ${TRANSITION_MS}ms ease`,
+          }}
+        >
+          <RawHTML>{content}</RawHTML>
+        </div>
       </div>
 
       {shouldCollapse && (
