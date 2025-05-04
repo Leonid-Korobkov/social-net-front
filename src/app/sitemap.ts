@@ -1,36 +1,27 @@
-import type { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next'
+import axios from 'axios'
+import { APP_URL } from './constants'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Основные статические страницы
   return [
     {
-      url: 'https://zling.vercel.app',
+      url: `${APP_URL}`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'daily' as const,
       priority: 1,
     },
     {
-      url: 'https://zling.vercel.app/auth',
+      url: `${APP_URL}/auth`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
     {
-      url: 'https://zling.vercel.app/search',
+      url: `${APP_URL}/search`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: 'https://zling.vercel.app/search',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: 'https://zling.vercel.app/search',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
     },
   ]
 }

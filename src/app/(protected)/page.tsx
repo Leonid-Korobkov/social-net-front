@@ -1,33 +1,40 @@
-'use client'
-import PostList from '@/components/shared/PostList'
-import { useGetAllPosts } from '@/services/api/post.api'
+import PostsClient from './page-client'
+import { Metadata } from 'next'
+
+import { APP_URL } from '@/app/constants'
+
+export const metadata: Metadata = {
+  title: 'Лента | Zling',
+  description:
+    'Следите за публикациями ваших друзей и популярных пользователей',
+  openGraph: {
+    title: 'Лента | Zling',
+    description:
+      'Следите за публикациями ваших друзей и популярных пользователей',
+    url: `${APP_URL}`,
+    siteName: 'Zling',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Лента | Zling',
+    description:
+      'Следите за публикациями ваших друзей и популярных пользователей',
+
+    creator: '@krbln',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+}
 
 function Posts() {
-  const {
-    data: data,
-    fetchNextPage,
-    hasNextPage,
-    isLoading,
-    isFetchingNextPage,
-  } = useGetAllPosts({
-    limit: 10,
-  })
-
-  const handleLoadMore = () => {
-    fetchNextPage()
-  }
-
-  return (
-    <>
-      <PostList
-        data={data ?? []}
-        isLoading={isLoading}
-        hasMore={hasNextPage}
-        onLoadMore={handleLoadMore}
-        isFetchingMore={isFetchingNextPage && !isLoading}
-      />
-    </>
-  )
+  return <PostsClient />
 }
 
 export default Posts

@@ -11,10 +11,7 @@ import ModalsProvider from '@/Providers/ModalsProvider'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://zling.vercel.app'),
-  title: {
-    template: '%s | Zling',
-    default: 'Zling - социальная сеть',
-  },
+  title: 'Zling - социальная сеть',
   description: 'Zling - социальная сеть для людей, которые любят общаться',
   applicationName: 'Zling',
   authors: [{ name: 'krbln' }],
@@ -36,21 +33,12 @@ export const metadata: Metadata = {
     description: 'Zling - социальная сеть для людей, которые любят общаться',
     url: 'https://zling.vercel.app',
     locale: 'ru_RU',
-    images: [
-      {
-        url: '/images/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Zling - социальная сеть',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Zling - социальная сеть',
     description: 'Zling - социальная сеть для людей, которые любят общаться',
     creator: '@krbln',
-    images: ['/images/og-image.png'],
   },
   category: 'social',
 }
