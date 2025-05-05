@@ -9,7 +9,7 @@ interface CollapsibleTextProps {
   content: string
   href: string
   title: string
-  className: any
+  className?: any
   maxLines?: number
 }
 

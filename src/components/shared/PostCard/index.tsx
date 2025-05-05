@@ -34,7 +34,12 @@ function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         <Link href={`/posts/${post.id}`}>
-          <CollapsibleText content={post.content} />
+          <CollapsibleText
+            content={post.content}
+            maxLines={15}
+            href={`/users/${post.author.userName}`}
+            title={`Переход на страницу автора ${post.author.userName}`}
+          />
         </Link>
       </CardBody>
     </Card>
