@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { apiClient } from '@/services/ApiConfig'
 import { User } from '@/store/types'
 import { RiUserFollowFill } from 'react-icons/ri'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 
 export const alt = 'Подписки пользователя в Zling'
 export const size = {
@@ -194,7 +195,14 @@ export default async function Image({ params }: { params: { id: string } }) {
                 }}
               >
                 <RiUserFollowFill />
-                <span>{user.following?.length || 0} подписок</span>
+                <span>
+                  {user.following?.length || 0}{' '}
+                  {pluralizeRu(user.following?.length || 0, [
+                    'подписка',
+                    'подписки',
+                    'подписок',
+                  ])}
+                </span>
               </div>
             </div>
 

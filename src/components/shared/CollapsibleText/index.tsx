@@ -16,7 +16,7 @@ interface CollapsibleTextProps {
 export default function CollapsibleText({
   className = '',
   content,
-  maxLines = 5,
+  maxLines = 15,
   href = '',
   title,
 }: CollapsibleTextProps) {
@@ -46,7 +46,7 @@ export default function CollapsibleText({
       <div
         ref={contentRef}
         className={`${
-          !isExpanded ? `line-clamp-[${maxLines}] overflow-hidden` : ''
+          !isExpanded ? `line-clamp-[15] overflow-hidden` : ''
         }`}
       >
         <RawHTML className={className}>{content}</RawHTML>

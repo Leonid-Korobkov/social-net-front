@@ -85,6 +85,8 @@ function SearchClient() {
       <Tabs
         selectedKey={activeTab}
         onSelectionChange={key => setActiveTab(key.toString())}
+        fullWidth
+        color="secondary"
       >
         <Tab key="all" title="Все">
           <div className="mt-4 space-y-6">
@@ -98,15 +100,18 @@ function SearchClient() {
                   <div>
                     <h2 className="text-xl font-bold mb-3">Пользователи</h2>
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                      {users.slice(0, 2).map(user => (
+                      {users.slice(0, 5).map(user => (
                         <UserCard key={user.id} user={user} />
                       ))}
                     </div>
-                    {users.length > 2 && (
+                    {users.length > 5 && (
                       <Button
                         className="mt-2"
-                        variant="light"
                         onPress={() => setActiveTab('users')}
+                        type="button"
+                        fullWidth
+                        variant="ghost"
+                        color={'secondary'}
                       >
                         Показать больше пользователей
                       </Button>
@@ -138,7 +143,10 @@ function SearchClient() {
                     {posts.length > 3 && (
                       <Button
                         className="mt-2"
-                        variant="light"
+                        type="button"
+                        fullWidth
+                        variant="ghost"
+                        color={'secondary'}
                         onPress={() => setActiveTab('posts')}
                       >
                         Показать больше постов
@@ -180,7 +188,10 @@ function SearchClient() {
                     {comments.length > 3 && (
                       <Button
                         className="mt-2"
-                        variant="light"
+                        type="button"
+                        fullWidth
+                        variant="ghost"
+                        color={'secondary'}
                         onPress={() => setActiveTab('comments')}
                       >
                         Показать больше комментариев
@@ -232,6 +243,9 @@ function SearchClient() {
                   <div className="flex justify-center mt-4">
                     <Button
                       color="secondary"
+                      type="button"
+                      fullWidth
+                      variant="ghost"
                       onClick={() => fetchNextPage()}
                       isLoading={isFetchingNextPage}
                     >
@@ -264,7 +278,10 @@ function SearchClient() {
                 {hasNextPage && (
                   <div className="flex justify-center mt-4 col-span-1 xl:col-span-2">
                     <Button
-                      color="secondary"
+                      type="button"
+                      fullWidth
+                      variant="ghost"
+                      color={'secondary'}
                       onClick={() => fetchNextPage()}
                       isLoading={isFetchingNextPage}
                     >
@@ -317,7 +334,10 @@ function SearchClient() {
                 {hasNextPage && (
                   <div className="flex justify-center mt-4">
                     <Button
-                      color="secondary"
+                      type="button"
+                      fullWidth
+                      variant="ghost"
+                      color={'secondary'}
                       onClick={() => fetchNextPage()}
                       isLoading={isFetchingNextPage}
                     >

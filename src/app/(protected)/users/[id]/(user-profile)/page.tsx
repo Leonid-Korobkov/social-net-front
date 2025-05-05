@@ -46,21 +46,12 @@ export async function generateMetadata({
         firstName: user.name?.split(' ')[0] || '',
         lastName: user.name?.split(' ')[1] || '',
         username: user.userName,
-        images: [
-          {
-            url: ogImageUrl,
-            width: 1200,
-            height: 630,
-            alt: `Профиль ${user.name} в Zling`,
-          },
-        ],
       },
       twitter: {
         card: 'summary_large_image',
         title,
         description,
         creator: '@krbln',
-        images: [ogImageUrl],
       },
       alternates: {
         canonical: `${APP_URL}/users/${paramsResolved.id}`,

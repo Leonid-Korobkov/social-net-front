@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { apiClient } from '@/services/ApiConfig'
 import { User } from '@/store/types'
 import { FaUsers } from 'react-icons/fa6'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 
 export const alt = 'Подписчики пользователя в Zling'
 export const size = {
@@ -194,7 +195,14 @@ export default async function Image({ params }: { params: { id: string } }) {
                 }}
               >
                 <FaUsers />
-                <span>{user.followers?.length || 0} подписчиков</span>
+                <span>
+                  {user.followers?.length || 0}{' '}
+                  {pluralizeRu(user.followers?.length || 0, [
+                    'подписчик',
+                    'подписчика',
+                    'подписчиков',
+                  ])}
+                </span>
               </div>
             </div>
 

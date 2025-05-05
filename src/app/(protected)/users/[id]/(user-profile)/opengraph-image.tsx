@@ -7,6 +7,7 @@ import { apiClient } from '@/services/ApiConfig'
 import { BsPostcardFill } from 'react-icons/bs'
 import { FaUsers } from 'react-icons/fa6'
 import { RiUserFollowFill } from 'react-icons/ri'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 
 export const alt = 'Профиль пользователя Zling'
 export const size = {
@@ -197,7 +198,11 @@ export default async function Image({ params }: { params: { id: string } }) {
                   }}
                 >
                   <BsPostcardFill />
-                  публикаций
+                  {pluralizeRu(user.postCount || 0, [
+                    'публикация',
+                    'публикации',
+                    'публикаций',
+                  ])}
                 </span>
               </div>
               <div
@@ -223,7 +228,11 @@ export default async function Image({ params }: { params: { id: string } }) {
                   }}
                 >
                   <FaUsers />
-                  подписчиков
+                  {pluralizeRu(user.followers?.length || 0, [
+                    'подписчик',
+                    'подписчика',
+                    'подписчиков',
+                  ])}
                 </span>
               </div>
               <div
@@ -249,7 +258,11 @@ export default async function Image({ params }: { params: { id: string } }) {
                   }}
                 >
                   <RiUserFollowFill />
-                  подписок
+                  {pluralizeRu(user.following?.length || 0, [
+                    'подписка',
+                    'подписки',
+                    'подписок',
+                  ])}
                 </span>
               </div>
             </div>

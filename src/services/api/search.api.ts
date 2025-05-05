@@ -31,7 +31,7 @@ interface Comment {
 }
 
 export interface SearchResponse {
-  users: User[]
+  users: (User & { _count: { followers: number } })[]
   posts: Post[]
   comments: Comment[]
 }
@@ -79,7 +79,7 @@ export const useSearch = ({
     },
     enabled: query.trim().length > 0,
     refetchOnMount: false,
-    refetchOnReconnect: false, 
-    refetchOnWindowFocus: false
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   })
 }

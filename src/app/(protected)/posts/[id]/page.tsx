@@ -55,21 +55,12 @@ export async function generateMetadata({
         siteName: 'Zling',
         publishedTime: post.createdAt.toString(),
         authors: [`${post.author?.name || 'Пользователь Zling'}`],
-        images: [
-          {
-            url: ogImageUrl,
-            width: 1200,
-            height: 630,
-            alt: `Пост в Zling`,
-          },
-        ],
       },
       twitter: {
         card: 'summary_large_image',
         title,
         description,
         creator: post.author?.userName ? `@${post.author.userName}` : '@krbln',
-        images: [ogImageUrl],
       },
       alternates: {
         canonical: `${APP_URL}/posts/${paramsResolved.id}`,

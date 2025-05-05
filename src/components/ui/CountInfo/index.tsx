@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import MetaInfo from '../MetaInfo'
 import { IconType } from 'react-icons'
-import { Spinner, Skeleton } from '@heroui/react'
+import { Skeleton } from '@heroui/react'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 
 interface ICountInfo {
   Icon: IconType
@@ -33,7 +34,13 @@ function CountInfo({
         )}
         <div className="flex items-center gap-2">
           <Icon className="text-xl" />
-          {title ? title : <Skeleton className="h-4 w-16 rounded-lg" />}
+          {title === 'Подписчики' && typeof count === 'number'
+            ? pluralizeRu(count, ['подписчик', 'подписчика', 'подписчиков'])
+            : title === 'Подписки' && typeof count === 'number'
+            ? pluralizeRu(count, ['подписка', 'подписки', 'подписок'])
+            : title === 'Публикации' && typeof count === 'number'
+            ? pluralizeRu(count, ['публикация', 'публикации', 'публикаций'])
+            : title || <Skeleton className="h-4 w-16 rounded-lg" />}
         </div>
       </div>
     </div>

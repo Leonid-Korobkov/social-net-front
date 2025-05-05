@@ -5,6 +5,7 @@ import User from '@/components/ui/User'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 import { Button, Card, CardBody } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
@@ -18,7 +19,7 @@ type PageProps = {
 
 function FollowingClient({ params }: PageProps) {
   const { id } = use(params)
-  
+
   const subscriptionsRef = useRef<HTMLButtonElement | null>(null)
   const topLoader = useTopLoader()
 
@@ -126,7 +127,14 @@ function FollowingClient({ params }: PageProps) {
                           <User
                             username={followingItem.following.userName ?? ''}
                             avatarUrl={followingItem.following.avatarUrl ?? ''}
-                            description={followingItem.following.name ?? ''}
+                            description={`${followingItem.following.name} - ${
+                              followingItem.following._count.followers
+                            }
+                            ${pluralizeRu(followingItem.following._count.followers, [
+                              'подписчик',
+                              'подписчика',
+                              'подписчиков',
+                            ])}`}
                             className="!justify-start"
                           />
 

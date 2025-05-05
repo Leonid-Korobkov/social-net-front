@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useTopLoader } from 'nextjs-toploader'
 import { use, useRef } from 'react'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -125,7 +126,14 @@ function FollowersClient({ params }: PageProps) {
                         <User
                           username={followerItem.follower.userName ?? ''}
                           avatarUrl={followerItem.follower.avatarUrl ?? ''}
-                          description={followerItem.follower.name ?? ''}
+                          description={`${followerItem.follower.name} - ${
+                            followerItem.follower._count.followers
+                          }
+                          ${pluralizeRu(followerItem.follower._count.followers, [
+                            'подписчик',
+                            'подписчика',
+                            'подписчиков',
+                          ])}`}
                           className="!justify-start"
                         />
                         {currentUser &&

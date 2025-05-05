@@ -25,6 +25,10 @@ export type User = {
   showDateOfBirth?: boolean
   // Настройки анимации
   reduceAnimation: boolean
+
+  _count: {
+    followers: number
+  }
 }
 
 export type Follows = {
