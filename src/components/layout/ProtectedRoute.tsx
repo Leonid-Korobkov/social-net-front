@@ -28,15 +28,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     }
   }, [token, isAuthPage, router])
 
-  // Если нет токена и это не страница авторизации, не показываем детей (предотвращаем кратковременное отображение контента)
+  // Если нет токена и это не страница авторизации - выходим из системы
   if (!token && !isAuthPage) {
     logout()
-    return null
-  }
-
-  // Если есть токен и это страница авторизации, не показываем детей
-  if (token && isAuthPage) {
-    return null
   }
 
   return <>{children}</>

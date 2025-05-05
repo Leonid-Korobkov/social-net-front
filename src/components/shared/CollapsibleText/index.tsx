@@ -1,83 +1,63 @@
 'use client'
+import { useState, useRef, useEffect } from 'react'
 import { Button } from '@heroui/react'
-import { useEffect, useRef, useState } from 'react'
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
-import RawHTML from '../../ui/EscapeHtml'
+import { IoIosArrowDroprightCircle } from 'react-icons/io'
+import RawHTML from '@/components/ui/EscapeHtml'
+import Link from 'next/link'
 
 interface CollapsibleTextProps {
   content: string
+  href: string
+  title: string
+  className: any
   maxLines?: number
 }
 
 export default function CollapsibleText({
+  className = '',
   content,
   maxLines = 5,
+  href = '',
+  title,
 }: CollapsibleTextProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldCollapse, setShouldCollapse] = useState(false)
-  const [maxHeight, setMaxHeight] = useState<number | null>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const scrollPosRef = useRef<number>(0)
 
-  const TRANSITION_MS = 400
-
-  // измеряем, нужно ли резать текст, и задаём начальный max-height
   useEffect(() => {
-    if (!contentRef.current) return
-    const style = window.getComputedStyle(contentRef.current)
-    const lineHeight = parseInt(style.lineHeight)
-    const fullHeight = contentRef.current.scrollHeight
-    const lines = Math.ceil(fullHeight / lineHeight)
-
-    setShouldCollapse(lines > maxLines)
-    setMaxHeight(isExpanded ? fullHeight : lineHeight * maxLines)
-  }, [content, maxLines, isExpanded])
-
-  const toggleExpand = () => {
-    if (isExpanded) {
-      window.scrollTo({ top: scrollPosRef.current, behavior: 'smooth' })
-
+    const checkHeight = () => {
       if (contentRef.current) {
         const lineHeight = parseInt(
           window.getComputedStyle(contentRef.current).lineHeight
         )
-        setMaxHeight(lineHeight * maxLines)
+        const height = contentRef.current.scrollHeight
+        const lines = Math.ceil(height / lineHeight)
+        setShouldCollapse(lines > maxLines)
       }
-      setIsExpanded(false)
-    } else {
-      scrollPosRef.current = window.pageYOffset
-
-      if (contentRef.current) {
-        setMaxHeight(contentRef.current.scrollHeight)
-      }
-      setIsExpanded(true)
     }
-  }
+
+    checkHeight()
+    window.addEventListener('resize', checkHeight)
+    return () => window.removeEventListener('resize', checkHeight)
+  }, [content, maxLines])
 
   return (
     <div className="relative">
       <div
         ref={contentRef}
-        style={{
-          maxHeight: maxHeight !== null ? `${maxHeight}px` : 'none',
-          overflow: 'hidden',
-          transition: `max-height ${TRANSITION_MS}ms ease`,
-        }}
+        className={`${
+          !isExpanded ? `line-clamp-[${maxLines}] overflow-hidden` : ''
+        }`}
       >
-        <RawHTML>{content}</RawHTML>
+        <RawHTML className={className}>{content}</RawHTML>
       </div>
 
       {shouldCollapse && (
-        <div className="mt-2">
-          <Button
-            size="sm"
-            variant="flat"
-            color="default"
-            onClick={toggleExpand}
-            endContent={isExpanded ? <IoIosArrowUp /> : <IoIosArrowDown />}
-          >
-            {isExpanded ? 'Скрыть' : 'Читать далее'}
-          </Button>
+        <div className="mt-2 text-foreground-400 text-sm">
+          <Link href={href} className="flex gap-1 items-center" title={title}>
+            <span>Читать далее</span>
+            <IoIosArrowDroprightCircle />
+          </Link>
         </div>
       )}
     </div>

@@ -11,11 +11,23 @@ export const size = {
 export const contentType = 'image/png'
 
 export default async function Image() {
+  // Загрузка шрифта
+  let fontData
   try {
-    const rubik = await readFile(
-      join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
+    fontData = await readFile(
+      join(process.cwd(), 'assets/font/Rubik-SemiBold.ttf')
     )
-
+  } catch (error) {
+    try {
+      fontData = await readFile(
+        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
+      )
+    } catch (error) {
+      console.error('Не удалось загрузить шрифт:', error)
+      fontData = null
+    }
+  }
+  try {
     return new ImageResponse(
       (
         <div
@@ -200,26 +212,24 @@ export default async function Image() {
       ),
       {
         ...size,
-        fonts: [
-          {
-            name: 'Rubik',
-            data: rubik,
-            style: 'normal',
-            weight: 400,
-          },
-        ],
+        fonts: fontData
+          ? [
+              {
+                name: 'Rubik',
+                data: fontData,
+                style: 'normal',
+                weight: 600,
+              },
+            ]
+          : undefined,
       }
     )
   } catch (error) {
-    return fallbackImage()
+    return fallbackImage(fontData)
   }
 }
 
-async function fallbackImage() {
-  const rubik = await readFile(
-    join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
-  )
-
+async function fallbackImage(fontData: Buffer | null) {
   return new ImageResponse(
     (
       <div
@@ -256,14 +266,16 @@ async function fallbackImage() {
     ),
     {
       ...size,
-      fonts: [
-        {
-          name: 'Rubik',
-          data: rubik,
-          style: 'normal',
-          weight: 400,
-        },
-      ],
+      fonts: fontData
+        ? [
+            {
+              name: 'Rubik',
+              data: fontData,
+              style: 'normal',
+              weight: 600,
+            },
+          ]
+        : undefined,
     }
   )
 }

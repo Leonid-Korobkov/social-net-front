@@ -14,11 +14,22 @@ export const size = {
 export const contentType = 'image/png'
 
 export default async function Image({ params }: { params: { id: string } }) {
+  let fontData
   try {
-    const rubik = await readFile(
-      join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
+    fontData = await readFile(
+      join(process.cwd(), 'assets/font/Rubik-SemiBold.ttf')
     )
-
+  } catch (error) {
+    try {
+      fontData = await readFile(
+        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
+      )
+    } catch (error) {
+      console.error('Не удалось загрузить шрифт:', error)
+      fontData = null
+    }
+  }
+  try {
     const response = await apiClient<string, User>(`users/${params.id}`, {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
@@ -27,7 +38,7 @@ export default async function Image({ params }: { params: { id: string } }) {
     const user = response
 
     if (!user) {
-      return fallbackImage()
+      return fallbackImage(fontData)
     }
 
     return new ImageResponse(
@@ -212,26 +223,24 @@ export default async function Image({ params }: { params: { id: string } }) {
       ),
       {
         ...size,
-        fonts: [
-          {
-            name: 'Rubik',
-            data: rubik,
-            style: 'normal',
-            weight: 400,
-          },
-        ],
+        fonts: fontData
+          ? [
+              {
+                name: 'Rubik',
+                data: fontData,
+                style: 'normal',
+                weight: 600,
+              },
+            ]
+          : undefined,
       }
     )
   } catch (error) {
-    return fallbackImage()
+    return fallbackImage(fontData)
   }
 }
 
-async function fallbackImage() {
-  const rubik = await readFile(
-    join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
-  )
-
+async function fallbackImage(fontData: Buffer | null) {
   return new ImageResponse(
     (
       <div
@@ -268,14 +277,16 @@ async function fallbackImage() {
     ),
     {
       ...size,
-      fonts: [
-        {
-          name: 'Rubik',
-          data: rubik,
-          style: 'normal',
-          weight: 400,
-        },
-      ],
+      fonts: fontData
+        ? [
+            {
+              name: 'Rubik',
+              data: fontData,
+              style: 'normal',
+              weight: 600,
+            },
+          ]
+        : undefined,
     }
   )
 }

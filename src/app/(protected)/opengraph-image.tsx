@@ -10,10 +10,21 @@ export const size = {
 export const contentType = 'image/png'
 
 export default async function OpImage() {
-  const rubik = await readFile(
-    join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
-  )
-
+  let fontData
+  try {
+    fontData = await readFile(
+      join(process.cwd(), 'assets/font/Rubik-SemiBold.ttf')
+    )
+  } catch (error) {
+    try {
+      fontData = await readFile(
+        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
+      )
+    } catch (error) {
+      console.error('Не удалось загрузить шрифт:', error)
+      fontData = null
+    }
+  }
   return new ImageResponse(
     (
       <div
@@ -64,14 +75,16 @@ export default async function OpImage() {
     ),
     {
       ...size,
-      fonts: [
-        {
-          name: 'Rubik',
-          data: rubik,
-          style: 'normal',
-          weight: 400,
-        },
-      ],
+      fonts: fontData
+        ? [
+            {
+              name: 'Rubik',
+              data: fontData,
+              style: 'normal',
+              weight: 600,
+            },
+          ]
+        : undefined,
     }
   )
 }

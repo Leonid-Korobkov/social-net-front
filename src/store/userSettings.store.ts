@@ -1,18 +1,23 @@
-import Cookies from 'js-cookie'
-import { create, createStore } from 'zustand'
+import { createStore } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { createSelectors } from './createSelectors'
-import { User } from './types'
 
 interface initialUserSettingsStore {
   reduceAnimation: boolean
   setReduceAnimation: (bool: boolean) => void
+  searchText: string
+  setSearchText: (str: string) => void
+  postText: string
+  setPostText: (str: string) => void
   logout: () => void
 }
 
 const initialState: initialUserSettingsStore = {
   reduceAnimation: false,
   setReduceAnimation: (bool: boolean) => {},
+  searchText: '',
+  setSearchText: (str: string) => {},
+  postText: '',
+  setPostText: (str: string) => {},
   logout: () => {},
 }
 
@@ -22,6 +27,12 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
       ...initialState,
       setReduceAnimation: (bool: boolean) => {
         set(state => ({ reduceAnimation: bool }))
+      },
+      setSearchText: (str: string) => {
+        set(state => ({ searchText: str }))
+      },
+      setPostText: (str: string) => {
+        set(state => ({ postText: str }))
       },
       logout: () => {
         set(initialState)

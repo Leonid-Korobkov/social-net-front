@@ -4,7 +4,7 @@ import {
   CardFooter,
   CardHeader,
   Chip,
-  Card as NextUiCard,
+  Card as HeroCard,
   Tooltip,
 } from '@heroui/react'
 import Link from 'next/link'
@@ -12,11 +12,11 @@ import { useRouter } from 'next/navigation'
 import { memo, useState } from 'react'
 import { FaCircleInfo, FaRegComment } from 'react-icons/fa6'
 import { RiUserFollowFill } from 'react-icons/ri'
+import clsx from 'clsx'
 
 import AnimatedLike from '@/components/ui/AnimatedLike'
 import RawHTML from '@/components/ui/EscapeHtml'
 import MetaInfo from '@/components/ui/MetaInfo'
-import Typography from '@/components/ui/Typography'
 import User from '@/components/ui/User'
 import { useToggleCommentLike } from '@/services/api/commentLike.api'
 import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
@@ -38,7 +38,7 @@ export interface ICard {
   commentsCount?: number
   createdAt?: Date
   id?: string
-  cardFor: 'comment' | 'post' | 'current-post' // карточка комментария, карточка поста, карточка текущего поста
+  cardFor: 'comment' | 'post' | 'current-post' | 'search' // карточка комментария, карточка поста, карточка текущего поста
   likedByUser?: boolean
   isFollowing?: boolean
   likes?: Like[] | CommentLike[]
@@ -119,7 +119,7 @@ const Card = memo(
     }
 
     return (
-      <NextUiCard className={`mb-5 transform `}>
+      <HeroCard className={`mb-5 transform`}>
         <CardHeader className="relative z-[1] justify-between items-center bg-transparent pb-0">
           <Link
             href={`/users/${username}`}
@@ -209,7 +209,7 @@ const Card = memo(
             cardFor === 'comment' ? 'pb-0' : 'pb-2'
           }`}
           onClick={e => {
-            if (cardFor === 'post') {
+            if (cardFor === 'post' || cardFor === 'search') {
               // Если пользователь выделял текст или кликнул по кнопке "Читать далее", не переходим по ссылке
               if (
                 window.getSelection()?.toString() ||
@@ -223,33 +223,44 @@ const Card = memo(
             }
           }}
         >
-          {cardFor !== 'current-post' ? (
-            <CollapsibleText content={content} />
+          {cardFor === 'current-post' ? (
+            <RawHTML>{content}</RawHTML>
           ) : (
-            <CollapsibleText content={content} maxLines={15} />
+            <CollapsibleText
+              content={content}
+              className={clsx(
+                cardFor === 'search' && 'text-sm',
+                'leading-none'
+              )}
+              maxLines={15}
+              href={`/users/${username}`}
+              title={`Переход на страницу автора ${username}`}
+            />
           )}
         </CardBody>
-        <CardFooter className="gap-3 -ml-2">
-          <div className="flex gap-1 items-center">
-            <AnimatedLike
-              isLiked={likedByUser}
-              count={likesCount}
-              onClick={handleLike}
-            />
-            {cardFor === 'current-post' ? (
-              <MetaInfo count={commentsCount} Icon={FaRegComment} />
-            ) : cardFor !== 'comment' ? (
-              <Link
-                href={`/posts/${id}`}
-                onClick={onClick}
-                title={`Переход к посту ${content}`}
-              >
+        {cardFor !== 'search' && (
+          <CardFooter className="gap-3 -ml-2">
+            <div className="flex items-center gap-1">
+              <AnimatedLike
+                isLiked={likedByUser}
+                count={likesCount}
+                onClick={handleLike}
+              />
+              {cardFor === 'current-post' ? (
                 <MetaInfo count={commentsCount} Icon={FaRegComment} />
-              </Link>
-            ) : null}
-          </div>
-        </CardFooter>
-      </NextUiCard>
+              ) : cardFor !== 'comment' ? (
+                <Link
+                  href={`/posts/${id}`}
+                  onClick={onClick}
+                  title={`Переход к посту ${content}`}
+                >
+                  <MetaInfo count={commentsCount} Icon={FaRegComment} />
+                </Link>
+              ) : null}
+            </div>
+          </CardFooter>
+        )}
+      </HeroCard>
     )
   }
 )
