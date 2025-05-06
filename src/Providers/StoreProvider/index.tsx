@@ -14,9 +14,11 @@ function BatchViewSender() {
     }
     const interval = setInterval(sendBatch, 10000)
     window.addEventListener('beforeunload', sendBatch)
+    window.addEventListener('visibilitychange', sendBatch)
     return () => {
       clearInterval(interval)
       window.removeEventListener('beforeunload', sendBatch)
+      window.addEventListener('visibilitychange', sendBatch)
     }
   }, [mutate])
   return null
@@ -31,11 +33,9 @@ export const StoreProvider = ({
     () =>
       new QueryClient({
         defaultOptions: {
-          // queries: {
-          //   staleTime: 0,
-          //   retry: 1,
-          //   refetchOnWindowFocus: false,
-          // },
+          queries: {
+            retry: 0,
+          },
         },
       })
   )
