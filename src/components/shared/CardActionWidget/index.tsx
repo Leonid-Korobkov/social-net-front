@@ -146,15 +146,43 @@ function CardActionWidget({
       shareUrl = `${baseUrl}/posts/${id}`
     }
 
-    navigator.clipboard
-      .writeText(shareUrl)
-      .then(() => {
-        incrementShareCount(id)
-        toast.success('Ссылка скопирована в буфер обмена')
-      })
-      .catch(() => {
+    // Проверяем поддержку Web Share API
+    if ('share' in navigator) {
+      navigator
+        .share({
+          title: 'Zling',
+          text: 'Интересный пост в соцсети Zling',
+          url: shareUrl,
+        })
+        .then(() => {
+          incrementShareCount(id)
+          toast.success('Ссылка успешно отправлена')
+        })
+        .catch(error => {
+          // Пользователь мог отменить операцию шеринга,
+          // не показываем ошибку в этом случае
+          if (error.name !== 'AbortError') {
+            toast.error('Не удалось поделиться ссылкой')
+            console.error('Ошибка при шаринге:', error)
+          }
+        })
+    } else {
+      // Fallback для браузеров без поддержки Web Share API
+      try {
+        void (navigator as any).clipboard
+          .writeText(shareUrl)
+          .then(() => {
+            incrementShareCount(id)
+            toast.success('Ссылка скопирована в буфер обмена')
+          })
+          .catch(() => {
+            toast.error('Не удалось скопировать ссылку')
+          })
+      } catch (error) {
+        console.error('Clipboard API не поддерживается:', error)
         toast.error('Не удалось скопировать ссылку')
-      })
+      }
+    }
   }
 
   const handleOpenModalLikes = () => {

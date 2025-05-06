@@ -6,12 +6,13 @@ import { pluralizeRu } from '@/utils/pluralizeRu'
 
 interface UserCardProps {
   user: User & { _count: { followers: number } }
+  className?: string
 }
 
-function UserCard({ user }: UserCardProps) {
+function UserCard({ user, className }: UserCardProps) {
   return (
     <>
-      <Link href={`/users/${user.userName}`}>
+      <Link href={`/users/${user.userName}`} className={className}>
         <Card>
           <CardBody className="flex flex-row items-center gap-4">
             <div>

@@ -15,36 +15,74 @@ import { useEffect, useState } from 'react'
 import { IoSearch } from 'react-icons/io5'
 import Link from 'next/link'
 import Card from '@/components/shared/Card'
+import { UserSettingsStore } from '@/store/userSettings.store'
+import { useStore } from 'zustand'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 function SearchClient() {
-  const searchParams = useSearchParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const initialQuery = searchParams.get('q') || ''
-  const initialTab = searchParams.get('tab') || 'posts'
+  // Получение данных из URL или из хранилища
+  const urlQuery = searchParams.get('q')
+  const urlTab = searchParams.get('tab')
+
+  const searchTextFromStore = useStore(
+    UserSettingsStore,
+    state => state.searchText
+  )
+  const setSearchTextToStore = useStore(
+    UserSettingsStore,
+    state => state.setSearchText
+  )
+  const activeTabFromStore = useStore(
+    UserSettingsStore,
+    state => state.searchActiveTab
+  )
+  const setActiveTabToStore = useStore(
+    UserSettingsStore,
+    state => state.setSearchActiveTab
+  )
+
+  // Приоритет URL-параметрам, затем сохраненным значениям
+  const initialQuery = urlQuery || searchTextFromStore
+  const initialTab = urlTab || activeTabFromStore
 
   const [searchQuery, setSearchQuery] = useState(initialQuery)
   const [activeTab, setActiveTab] = useState(initialTab)
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery)
 
-  // Обновление URL при изменении параметров поиска
+  // Обновление URL и Zustand-хранилища при изменении параметров поиска
   useEffect(() => {
-    const params = new URLSearchParams()
+    // Обновляем URL
+    const params = new URLSearchParams(searchParams.toString())
 
     if (debouncedQuery) {
       params.set('q', debouncedQuery)
+    } else {
+      params.delete('q')
     }
 
     if (activeTab !== 'posts') {
       params.set('tab', activeTab)
-    } else if (params.has('tab')) {
+    } else {
       params.delete('tab')
     }
 
     const newUrl = params.toString() ? `?${params.toString()}` : ''
     router.replace(`/search${newUrl}`, { scroll: false })
-  }, [debouncedQuery, activeTab, router])
+
+    // Обновляем Zustand-хранилище
+    setSearchTextToStore(debouncedQuery)
+    setActiveTabToStore(activeTab)
+  }, [
+    debouncedQuery,
+    activeTab,
+    router,
+    searchParams,
+    setSearchTextToStore,
+    setActiveTabToStore,
+  ])
 
   // Состояние для дебаунса поискового запроса
   useEffect(() => {
@@ -129,7 +167,7 @@ function SearchClient() {
                 {users.length > 0 && (
                   <div>
                     <h2 className="text-xl font-bold mb-3">Пользователи</h2>
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 auto-rows-auto">
                       {users.slice(0, 5).map(user => (
                         <UserCard key={user.id} user={user} />
                       ))}
@@ -301,7 +339,7 @@ function SearchClient() {
                 <Spinner size="lg" color="secondary" variant="gradient" />
               </div>
             ) : users.length > 0 ? (
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 auto-rows-auto">
                 {users.map(user => (
                   <UserCard key={user.id} user={user} />
                 ))}

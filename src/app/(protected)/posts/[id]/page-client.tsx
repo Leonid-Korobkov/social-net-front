@@ -20,9 +20,6 @@ function CurrentPost({
   params: paramsIn,
   searchParams: searchParamsIn,
 }: PageProps) {
-  // const paramsIn = use(params)
-  // const searchParamsIn = use(searchParams)
-
   const {
     data: comments,
     fetchNextPage: fetchNextPageComments,
@@ -84,6 +81,8 @@ function CurrentPost({
     id,
     likedByUser,
     isFollowing,
+    viewCount,
+    shareCount,
   } = data
 
   return (
@@ -101,6 +100,8 @@ function CurrentPost({
         likedByUser={likedByUser}
         createdAt={createdAt}
         isFollowing={isFollowing}
+        shareCount={shareCount}
+        viewCount={viewCount}
       />
       <div className="mt-10">
         <CreateComment params={paramsIn} />

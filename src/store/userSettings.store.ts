@@ -7,6 +7,8 @@ interface initialUserSettingsStore {
   setReduceAnimation: (bool: boolean) => void
   searchText: string
   setSearchText: (str: string) => void
+  searchActiveTab: string
+  setSearchActiveTab: (tab: string) => void
   postText: string
   setPostText: (str: string) => void
   logout: () => void
@@ -27,6 +29,8 @@ const initialState: initialUserSettingsStore = {
   setReduceAnimation: (bool: boolean) => {},
   searchText: '',
   setSearchText: (str: string) => {},
+  searchActiveTab: 'posts',
+  setSearchActiveTab: (tab: string) => {},
   postText: '',
   setPostText: (str: string) => {},
   logout: () => {},
@@ -54,6 +58,9 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
       },
       setSearchText: (str: string) => {
         set(state => ({ searchText: str }))
+      },
+      setSearchActiveTab: (tab: string) => {
+        set(state => ({ searchActiveTab: tab }))
       },
       setPostText: (str: string) => {
         set(state => ({ postText: str }))

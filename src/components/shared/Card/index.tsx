@@ -23,7 +23,7 @@ import MetaInfo from '@/components/ui/MetaInfo'
 import User from '@/components/ui/User'
 import { useToggleCommentLike } from '@/services/api/commentLike.api'
 import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
-import { useIncrementViewCount } from '@/services/api/post.api'
+import { useIncrementShareCount } from '@/services/api/post.api'
 import { CommentLike, Like } from '@/store/types'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { formatDistance, Locale } from 'date-fns'
@@ -88,7 +88,8 @@ const Card = memo(
     const { mutateAsync: unlikePost } = useDeleteLike()
 
     const { mutateAsync: toggleLike } = useToggleCommentLike()
-    const { mutate: incrementViewCount } = useIncrementViewCount()
+    const { mutate: incrementShareCount, isPending: isSharing } =
+      useIncrementShareCount()
 
     const [isLikeInProgress, setIsLikeInProgress] = useState(false)
     const router = useRouter()
@@ -274,9 +275,21 @@ const Card = memo(
                 </Link>
               ) : null}
               <div className="flex flex-1">
-                <MetaInfo size="small" count={shareCount} Icon={LuSend} />
+                <MetaInfo
+                  count={shareCount}
+                  Icon={LuSend}
+                  postId={id}
+                  shareTitle={`Пост от ${username} в Zling`}
+                  shareText={
+                    content.substring(0, 100) +
+                    (content.length > 100 ? '...' : '')
+                  }
+                  onShare={() => incrementShareCount(id)}
+                />
               </div>
-              <MetaInfo count={viewCount} Icon={IoEyeOutline} />
+              {cardFor !== 'comment' && (
+                <MetaInfo count={viewCount} Icon={IoEyeOutline} size="small" />
+              )}
             </div>
           </CardFooter>
         )}
