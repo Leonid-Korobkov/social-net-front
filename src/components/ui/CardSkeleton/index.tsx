@@ -1,11 +1,5 @@
 'use client'
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Skeleton,
-} from "@heroui/react"
+import { Card, CardHeader, CardBody, CardFooter, Skeleton } from '@heroui/react'
 
 function CardSkeleton() {
   return (
@@ -30,17 +24,30 @@ function CardSkeleton() {
       </CardBody>
 
       <CardFooter className="gap-3">
-        <div className="flex gap-5 items-center">
+        <div className="flex gap-5 items-center w-full">
           <div className="flex items-center gap-1">
-            <Skeleton className="w-6 h-3 rounded-lg" />{' '}
+            {/* Иконка лайка */}
+            <Skeleton className="w-6 h-6 rounded-lg" />
             {/* Количество лайков */}
-            <Skeleton className="w-6 h-6 rounded-lg" /> {/* Иконка лайка */}
+            <Skeleton className="w-6 h-3 rounded-lg" />{' '}
           </div>
           <div className="flex items-center gap-1">
-            <Skeleton className="w-6 h-3 rounded-lg" />{' '}
-            {/* Количество комментариев */}
-            <Skeleton className="w-6 h-6 rounded-lg" />{' '}
             {/* Иконка комментариев */}
+            <Skeleton className="w-6 h-6 rounded-lg" />{' '}
+            {/* Количество комментариев */}
+            <Skeleton className="w-6 h-3 rounded-lg" />{' '}
+          </div>
+          <div className="flex items-center gap-1 flex-1">
+            {/* Иконка поделится */}
+            <Skeleton className="w-6 h-6 rounded-lg" />{' '}
+            {/* Количество поделиться */}
+            <Skeleton className="w-6 h-3 rounded-lg" />{' '}
+          </div>
+          <div className="flex items-center gap-1">
+            {/* Иконка поделится */}
+            <Skeleton className="w-4 h-4 rounded-md" />{' '}
+            {/* Количество поделиться */}
+            <Skeleton className="w-4 h-3 rounded-lg" />{' '}
           </div>
         </div>
       </CardFooter>

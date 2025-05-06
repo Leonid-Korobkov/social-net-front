@@ -75,7 +75,6 @@ function PostList({
   return (
     <div className={className}>
       <div ref={parentRef} className="relative w-full">
-        {/* <AnimatePresence mode="popLayout"> */}
         <div
           style={{ height: `${virtualizer.getTotalSize()}px` }}
           className="w-full"
@@ -139,7 +138,6 @@ function PostList({
             )
           })}
         </div>
-        {/* </AnimatePresence> */}
       </div>
       {(hasMore || isFetchingMore) && (
         <div ref={loadMoreRef} className="py-4 flex justify-center">
