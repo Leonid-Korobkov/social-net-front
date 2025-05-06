@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
+import { IoSearch } from 'react-icons/io5'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { IoSearch } from 'react-icons/io5'
 
 export const alt = 'Поиск в Zling'
 export const size = {
@@ -11,7 +11,6 @@ export const size = {
 export const contentType = 'image/png'
 
 export default async function Image() {
-  // Загрузка шрифта
   let fontData
   try {
     fontData = await readFile(
@@ -27,13 +26,14 @@ export default async function Image() {
       fontData = null
     }
   }
+
   try {
     return new ImageResponse(
       (
         <div
           style={{
             fontSize: 40,
-            background: 'linear-gradient(90deg, #f5f5f5 0%, #e0e0e0 100%)',
+            background: '#f2f2f2',
             width: '100%',
             height: '100%',
             display: 'flex',
@@ -45,167 +45,171 @@ export default async function Image() {
         >
           <div
             style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0,
-              backgroundImage:
-                'linear-gradient(to bottom, #9c66f6 0%, #663399 100%)',
-              opacity: 0.1,
-            }}
-          />
-          <div
-            style={{
               display: 'flex',
               flexDirection: 'column',
-              padding: 40,
               width: '100%',
-              height: '100%',
-              justifyContent: 'center',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              borderRadius: 20,
-              border: '4px solid #663399',
-              maxWidth: 1000,
-              maxHeight: 550,
-              margin: 'auto',
-              position: 'relative',
-              zIndex: 1,
-              alignItems: 'center',
+              maxWidth: 1100,
+              padding: '30px 40px',
             }}
           >
+            {/* Поисковая строка */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 80,
-                fontWeight: 'bold',
-                gap: 30,
+                width: '100%',
+                height: 90,
+                backgroundColor: 'white',
+                borderRadius: 40,
+                padding: '0 25px',
                 marginBottom: 30,
-                color: '#663399',
+                border: '1px solid #e0e0e0',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
               }}
             >
               <div
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  fontSize: 32,
+                  color: '#71717A',
+                  marginRight: 10,
                 }}
               >
                 <IoSearch />
-                <span style={{ marginLeft: 20 }}>Поиск</span>
+              </div>
+              <div style={{ color: '#333', marginRight: 'auto' }}>zling</div>
+              <div
+                style={{
+                  backgroundColor: '#7827C8',
+                  color: 'white',
+                  padding: '10px 30px',
+                  borderRadius: 25,
+                  fontSize: 30,
+                }}
+              >
+                Поиск
               </div>
             </div>
 
+            {/* Горизонтальное меню */}
             <div
               style={{
                 display: 'flex',
-                width: '80%',
-                height: 80,
-                backgroundColor: 'white',
-                borderRadius: 12,
-                border: '2px solid #663399',
-                padding: '0 20px',
-                fontSize: 30,
-                color: '#777',
                 alignItems: 'center',
+                width: '100%',
+                gap: 15,
                 marginBottom: 40,
-              }}
-            >
-              Найдите пользователей и посты...
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                gap: 30,
-                justifyContent: 'center',
-                marginTop: 20,
+                fontSize: 32,
               }}
             >
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  backgroundColor: '#E5D4F5',
-                  padding: '20px 20px',
-                  borderRadius: 15,
-                  width: 250,
+                  backgroundColor: '#7827C8',
+                  color: 'white',
+                  padding: '15px 50px',
+                  borderRadius: 20,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 'bold',
-                    color: '#663399',
-                    marginBottom: 10,
-                  }}
-                >
-                  Посты
-                </div>
-                <div
-                  style={{
-                    fontSize: 18,
-                    color: '#555',
-                  }}
-                >
-                  Ищите интересные публикации
-                </div>
+                Все
               </div>
-
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  backgroundColor: '#E5D4F5',
-                  padding: '20px 20px',
-                  borderRadius: 15,
-                  width: 250,
+                  color: '#71717A',
+                  padding: '15px 50px',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 'bold',
-                    color: '#663399',
-                    marginBottom: 10,
-                  }}
-                >
-                  Пользователи
-                </div>
-                <div
-                  style={{
-                    fontSize: 18,
-                    color: '#555',
-                  }}
-                >
-                  Находите новых друзей
-                </div>
+                Посты
+              </div>
+              <div
+                style={{
+                  color: '#71717A',
+                  padding: '15px 50px',
+                }}
+              >
+                Пользователи
+              </div>
+              <div
+                style={{
+                  color: '#71717A',
+                  padding: '15px 50px',
+                }}
+              >
+                Комментарии
               </div>
             </div>
 
+            {/* Заголовок "Пользователи" */}
             <div
               style={{
-                display: 'flex',
-                position: 'absolute',
-                bottom: 20,
-                right: 30,
-                fontSize: 20,
-                color: '#663399',
+                fontSize: 50,
                 fontWeight: 'bold',
+                color: '#333',
+                marginBottom: 20,
               }}
             >
-              <img
-                src={
-                  'https://res.cloudinary.com/djsmqdror/image/upload/v1746368138/social-net/uycc5eujwb3jvsfgnuac.png'
-                }
-                width={100}
-                alt={'Zling логотип'}
-                style={{ objectFit: 'cover' }}
-              />
+              Пользователи
+            </div>
+
+            {/* Карточка пользователя */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                padding: 20,
+                borderRadius: 15,
+                boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                width: '100%',
+              }}
+            >
+              <div
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                  backgroundColor: '#F4F4F5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 20,
+                  fontSize: 30,
+                  color: 'white',
+                }}
+              >
+                <img
+                  src={
+                    'https://res.cloudinary.com/djsmqdror/image/upload/v1746368138/social-net/uycc5eujwb3jvsfgnuac.png'
+                  }
+                  width={90}
+                  alt={'Zling логотип'}
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 35,
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  @zling
+                </div>
+                <div
+                  style={{
+                    color: '#71717A',
+                  }}
+                >
+                  zling official - 100k подписчиков
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -225,11 +229,11 @@ export default async function Image() {
       }
     )
   } catch (error) {
-    return fallbackImage(fontData)
+    return fallbackImage()
   }
 }
 
-async function fallbackImage(fontData: Buffer | null) {
+async function fallbackImage() {
   return new ImageResponse(
     (
       <div
@@ -266,16 +270,6 @@ async function fallbackImage(fontData: Buffer | null) {
     ),
     {
       ...size,
-      fonts: fontData
-        ? [
-            {
-              name: 'Rubik',
-              data: fontData,
-              style: 'normal',
-              weight: 600,
-            },
-          ]
-        : undefined,
     }
   )
 }
