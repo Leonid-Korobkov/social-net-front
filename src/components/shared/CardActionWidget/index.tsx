@@ -1,8 +1,8 @@
-import { APP_URL } from '@/app/constants'
 import User from '@/components/ui/User'
+import { useShare } from '@/hooks/useShare'
 import { useDeleteComment } from '@/services/api/comment.api'
 import { useGetLikes } from '@/services/api/like.api'
-import { useDeletePost, useIncrementShareCount } from '@/services/api/post.api'
+import { useDeletePost } from '@/services/api/post.api'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { hasErrorField } from '@/utils/hasErrorField'
@@ -27,11 +27,11 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { AiOutlineLike } from 'react-icons/ai'
-import { FaEllipsisVertical } from 'react-icons/fa6'
+import { FaEllipsisVertical, FaRegCopy, FaRegHeart } from 'react-icons/fa6'
 import { LuSend } from 'react-icons/lu'
 import { RiDeleteBinLine } from 'react-icons/ri'
-import { ICard } from '../Card'
 import { useStore } from 'zustand'
+import { ICard } from '../Card'
 
 function CardActionWidget({
   authorId,
@@ -55,8 +55,7 @@ function CardActionWidget({
   const { mutateAsync: deletePost } = useDeletePost()
   const { mutateAsync: deleteComment } = useDeleteComment()
 
-  const { mutate: incrementShareCount, isPending: isSharing } =
-    useIncrementShareCount()
+  const { handleShare, getShareUrl, copyToClipboard, isSharing } = useShare()
 
   const router = useRouter()
 
@@ -136,53 +135,18 @@ function CardActionWidget({
     }
   }
 
-  const handleShare = () => {
-    const baseUrl = APP_URL
-    let shareUrl = ''
+  const handleShareClick = () => {
+    handleShare({
+      postId: id,
+      commentId,
+      title: 'Zling',
+      text: 'Интересный пост в соцсети Zling',
+    })
+  }
 
-    if (cardFor === 'comment') {
-      shareUrl = `${baseUrl}/posts/${id}?comment=${commentId}`
-    } else {
-      shareUrl = `${baseUrl}/posts/${id}`
-    }
-
-    // Проверяем поддержку Web Share API
-    if ('share' in navigator) {
-      navigator
-        .share({
-          title: 'Zling',
-          text: 'Интересный пост в соцсети Zling',
-          url: shareUrl,
-        })
-        .then(() => {
-          incrementShareCount(id)
-          toast.success('Ссылка успешно отправлена')
-        })
-        .catch(error => {
-          // Пользователь мог отменить операцию шеринга,
-          // не показываем ошибку в этом случае
-          if (error.name !== 'AbortError') {
-            toast.error('Не удалось поделиться ссылкой')
-            console.error('Ошибка при шаринге:', error)
-          }
-        })
-    } else {
-      // Fallback для браузеров без поддержки Web Share API
-      try {
-        void (navigator as any).clipboard
-          .writeText(shareUrl)
-          .then(() => {
-            incrementShareCount(id)
-            toast.success('Ссылка скопирована в буфер обмена')
-          })
-          .catch(() => {
-            toast.error('Не удалось скопировать ссылку')
-          })
-      } catch (error) {
-        console.error('Clipboard API не поддерживается:', error)
-        toast.error('Не удалось скопировать ссылку')
-      }
-    }
+  const handleCopyLink = () => {
+    const shareUrl = getShareUrl(id, commentId)
+    copyToClipboard(shareUrl, id)
   }
 
   const handleOpenModalLikes = () => {
@@ -202,7 +166,7 @@ function CardActionWidget({
           <DropdownItem
             key="likes"
             color="secondary"
-            startContent={<AiOutlineLike />}
+            startContent={<FaRegHeart />}
             onClick={handleOpenModalLikes}
           >
             Просмотр лайков
@@ -211,9 +175,24 @@ function CardActionWidget({
             key="share"
             color="secondary"
             startContent={<LuSend />}
-            onClick={handleShare}
+            onClick={handleShareClick}
+            isDisabled={isSharing}
           >
-            Поделиться
+            {isSharing ? (
+              <>
+                <Spinner size="sm" className="mr-2" /> Отправка...
+              </>
+            ) : (
+              'Поделиться'
+            )}
+          </DropdownItem>
+          <DropdownItem
+            key="copy"
+            color="secondary"
+            startContent={<FaRegCopy />}
+            onClick={handleCopyLink}
+          >
+            Скопировать ссылку
           </DropdownItem>
           {authorId === currentUser?.id ? (
             <DropdownItem

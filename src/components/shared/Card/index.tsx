@@ -11,10 +11,10 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { memo, useEffect, useState } from 'react'
-import { FaCircleInfo, FaEye, FaRegComment } from 'react-icons/fa6'
+import { FaCircleInfo, FaRegComment } from 'react-icons/fa6'
+import { IoEyeOutline } from 'react-icons/io5'
 import { LuSend } from 'react-icons/lu'
 import { RiUserFollowFill } from 'react-icons/ri'
-import { IoEyeOutline } from 'react-icons/io5'
 
 import CollapsibleText from '@/components/shared/CollapsibleText'
 import AnimatedLike from '@/components/ui/AnimatedLike'
@@ -25,12 +25,12 @@ import { useToggleCommentLike } from '@/services/api/commentLike.api'
 import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
 import { useIncrementShareCount } from '@/services/api/post.api'
 import { CommentLike, Like } from '@/store/types'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { formatDistance, Locale } from 'date-fns'
 import * as locales from 'date-fns/locale'
 import { useTopLoader } from 'nextjs-toploader'
 import CardActionWidget from '../CardActionWidget'
-import { UserSettingsStore } from '@/store/userSettings.store'
 
 export interface ICard {
   avatarUrl: string
@@ -88,8 +88,7 @@ const Card = memo(
     const { mutateAsync: unlikePost } = useDeleteLike()
 
     const { mutateAsync: toggleLike } = useToggleCommentLike()
-    const { mutate: incrementShareCount, isPending: isSharing } =
-      useIncrementShareCount()
+    const { mutate: incrementShareCount } = useIncrementShareCount()
 
     const [isLikeInProgress, setIsLikeInProgress] = useState(false)
     const router = useRouter()
@@ -137,7 +136,7 @@ const Card = memo(
 
     return (
       <HeroCard className={`mb-5 transform`}>
-        <CardHeader className="relative z-[1] justify-between items-center bg-transparent pb-0">
+        <CardHeader className="relative z-[1] justify-between items-start bg-transparent pb-0">
           <Link
             href={`/users/${username}`}
             title={`Переход на страницу автора ${username}`}
@@ -159,7 +158,7 @@ const Card = memo(
                     <Tooltip
                       delay={500}
                       showArrow
-                      color="foreground"
+                      color="secondary"
                       content={`Дата создания - ${formatToClientDate(
                         new Date(createdAt?.toString() || '')
                       )}`}

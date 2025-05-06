@@ -1,12 +1,11 @@
 'use client'
-import { Spinner } from '@heroui/react'
-import { IconType } from 'react-icons'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FaHeart, FaRegHeart } from 'react-icons/fa6'
+import { useShare } from '@/hooks/useShare'
 import { UserSettingsStore } from '@/store/userSettings.store'
-import { toast } from 'react-hot-toast'
-import { useEffect, useState } from 'react'
-import { APP_URL } from '@/app/constants'
+import { Spinner } from '@heroui/react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useState } from 'react'
+import { IconType } from 'react-icons'
+import { FaHeart, FaRegHeart } from 'react-icons/fa6'
 
 interface IMetaInfo {
   count: number
@@ -36,12 +35,8 @@ function MetaInfo({
   onShare,
 }: IMetaInfo) {
   const reduce = UserSettingsStore.getState().reduceAnimation
-  const [canNativeShare, setCanNativeShare] = useState(false)
-
-  useEffect(() => {
-    // Проверяем поддержку Web Share API
-    setCanNativeShare('share' in navigator)
-  }, [])
+  const { handleShare, isSharing } = useShare()
+  const [isLoading, setIsLoading] = useState(false)
 
   const iconSizeClass = size === 'small' ? 'text-sm' : 'text-xl'
   const textSizeClass = size === 'small' ? 'text-xs' : 'text-l'
@@ -52,43 +47,23 @@ function MetaInfo({
       return
     }
 
-    if (postId && canNativeShare) {
-      const shareUrl = `${APP_URL}/posts/${postId}`
+    if (isLoading) return
 
+    if (postId) {
+      setIsLoading(true)
       try {
-        await navigator.share({
+        await handleShare({
+          postId,
           title: shareTitle,
           text: shareText,
-          url: shareUrl,
         })
 
         if (onShare) {
           onShare()
         }
-
-        toast.success('Ссылка успешно отправлена')
-      } catch (error) {
-        // Пользователь отменил шаринг или произошла ошибка
-        const err = error as Error
-        if (err.name !== 'AbortError') {
-          toast.error('Не удалось поделиться ссылкой')
-          console.error('Ошибка при шаринге:', err)
-        }
+      } finally {
+        setIsLoading(false)
       }
-    } else if (postId) {
-      // Fallback для браузеров без поддержки Web Share API
-      const shareUrl = `${APP_URL}/posts/${postId}`
-      navigator.clipboard
-        .writeText(shareUrl)
-        .then(() => {
-          if (onShare) {
-            onShare()
-          }
-          toast.success('Ссылка скопирована в буфер обмена')
-        })
-        .catch(() => {
-          toast.error('Не удалось скопировать ссылку')
-        })
     }
   }
 
@@ -105,7 +80,15 @@ function MetaInfo({
           classNameForIcon
         }
       >
-        {Icon ? <Icon /> : isLiked ? <FaHeart /> : <FaRegHeart />}
+        {isLoading || isSharing ? (
+          <Spinner size="sm" color='secondary' variant='gradient'/>
+        ) : Icon ? (
+          <Icon />
+        ) : isLiked ? (
+          <FaHeart />
+        ) : (
+          <FaRegHeart />
+        )}
       </div>
       {reduce ? (
         <span
