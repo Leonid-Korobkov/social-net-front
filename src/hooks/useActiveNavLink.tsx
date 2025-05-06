@@ -1,10 +1,11 @@
 'use client'
-import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import { usePathname } from 'next/navigation'
+import { useStore } from 'zustand'
 
 export function useActiveNavLink(path: string) {
   const pathname = usePathname()
-  const currentUser = useUserStore.use.current()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
 
   // Функция для проверки соответствия URL паттерну (замена matchPath из react-router)
   const matchPath = (pattern: string, pathname: string) => {

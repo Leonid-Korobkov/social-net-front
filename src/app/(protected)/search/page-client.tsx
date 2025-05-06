@@ -15,17 +15,44 @@ import { useEffect, useState } from 'react'
 import { IoSearch } from 'react-icons/io5'
 import Link from 'next/link'
 import Card from '@/components/shared/Card'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 function SearchClient() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeTab, setActiveTab] = useState('posts')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const initialQuery = searchParams.get('q') || ''
+  const initialTab = searchParams.get('tab') || 'posts'
+
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
+  const [activeTab, setActiveTab] = useState(initialTab)
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery)
+
+  // Обновление URL при изменении параметров поиска
+  useEffect(() => {
+    const params = new URLSearchParams()
+
+    if (debouncedQuery) {
+      params.set('q', debouncedQuery)
+    }
+
+    if (activeTab !== 'posts') {
+      params.set('tab', activeTab)
+    } else if (params.has('tab')) {
+      params.delete('tab')
+    }
+
+    const newUrl = params.toString() ? `?${params.toString()}` : ''
+    router.replace(`/search${newUrl}`, { scroll: false })
+  }, [debouncedQuery, activeTab, router])
 
   // Состояние для дебаунса поискового запроса
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchQuery.trim()) {
         setDebouncedQuery(searchQuery.trim())
+      } else {
+        setDebouncedQuery('')
       }
     }, 1000)
 
@@ -53,7 +80,10 @@ function SearchClient() {
   const comments = data?.pages.flatMap(page => page.comments) || []
 
   const handleSearch = () => {
-    if (!searchQuery.trim()) return
+    if (!searchQuery.trim()) {
+      setDebouncedQuery('')
+      return
+    }
     setDebouncedQuery(searchQuery.trim())
   }
 
@@ -107,7 +137,7 @@ function SearchClient() {
                     {users.length > 5 && (
                       <Button
                         className="mt-2"
-                        onPress={() => setActiveTab('users')}
+                        onClick={() => setActiveTab('users')}
                         type="button"
                         fullWidth
                         variant="ghost"
@@ -147,7 +177,7 @@ function SearchClient() {
                         fullWidth
                         variant="ghost"
                         color={'secondary'}
-                        onPress={() => setActiveTab('posts')}
+                        onClick={() => setActiveTab('posts')}
                       >
                         Показать больше постов
                       </Button>
@@ -192,7 +222,7 @@ function SearchClient() {
                         fullWidth
                         variant="ghost"
                         color={'secondary'}
-                        onPress={() => setActiveTab('comments')}
+                        onClick={() => setActiveTab('comments')}
                       >
                         Показать больше комментариев
                       </Button>

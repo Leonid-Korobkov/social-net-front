@@ -14,8 +14,8 @@ function UserProfileSkeleton() {
 
       <div className="flex lg:flex-row flex-col items-stretch gap-4 mt-10">
         {/* Левая карточка с аватаром */}
-        <Card className="flex flex-col items-center text-center space-y-6 p-5 flex-2">
-          <Skeleton className="min-h-[200px] min-w-[200px] max-h-[200px] max-w-[200px] lg:max-h-[300px] w-full lg:max-w-[300px] rounded-xl" />
+        <Card className="flex flex-col items-center text-center space-y-6 p-5 flex-2 min-h-[200px] min-w-[200px] lg:min-h-[300px] lg:min-w-[300px]">
+          <Skeleton className="lg:max-w-[300px] lg:max-h-[300px] max-w-[200px] max-h-[200px] aspect-square w-full rounded-xl" />
           <div className="flex flex-col gap-4 items-center w-full">
             <Skeleton className="h-6 w-32 rounded-lg" />
             <Skeleton className="h-9 w-40 rounded-lg" />

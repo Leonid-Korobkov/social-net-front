@@ -8,15 +8,17 @@ import { UserSettingsStore } from '@/store/userSettings.store'
 interface IMetaInfo {
   count: number
   Icon?: IconType | typeof Spinner
+  className?: string
   classNameForIcon?: string
   isLiked?: boolean
+  size?: 'small' | 'normal'
 }
 
-function MetaInfo({ count, Icon, classNameForIcon, isLiked }: IMetaInfo) {
+function MetaInfo({ count, Icon, classNameForIcon, isLiked, className = '', size = 'normal' }: IMetaInfo) {
   const reduce = UserSettingsStore.getState().reduceAnimation
 
   return (
-    <div className="flex items-center gap-1.5 cursor-pointer group px-2 py-1 rounded-xl transition-colors hover:bg-default-100">
+    <div className={`flex items-center gap-1.5 cursor-pointer group px-2 py-1 rounded-xl transition-colors hover:bg-default-100 ${className}`}>
       <div
         className={
           'text-xl transition-colors ' +

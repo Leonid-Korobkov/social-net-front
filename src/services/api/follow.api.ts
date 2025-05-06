@@ -1,5 +1,4 @@
 import { Follows } from '@/store/types'
-import { UserStore } from '@/store/user.store'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import {

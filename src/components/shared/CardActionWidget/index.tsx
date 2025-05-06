@@ -2,8 +2,8 @@ import { APP_URL } from '@/app/constants'
 import User from '@/components/ui/User'
 import { useDeleteComment } from '@/services/api/comment.api'
 import { useGetLikes } from '@/services/api/like.api'
-import { useDeletePost } from '@/services/api/post.api'
-import { useUserStore } from '@/store/user.store'
+import { useDeletePost, useIncrementShareCount } from '@/services/api/post.api'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { hasErrorField } from '@/utils/hasErrorField'
 import {
@@ -23,13 +23,15 @@ import {
 } from '@heroui/react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { AiOutlineLike } from 'react-icons/ai'
-import { FaEllipsisVertical, FaShareFromSquare } from 'react-icons/fa6'
+import { FaEllipsisVertical } from 'react-icons/fa6'
+import { LuSend } from 'react-icons/lu'
 import { RiDeleteBinLine } from 'react-icons/ri'
 import { ICard } from '../Card'
-import { useRouter } from 'next/navigation'
+import { useStore } from 'zustand'
 
 function CardActionWidget({
   authorId,
@@ -41,7 +43,7 @@ function CardActionWidget({
   ICard,
   'authorId' | 'id' | 'cardFor' | 'commentId' | 'likes' | 'onClick'
 >) {
-  const currentUser = useUserStore.use.current()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const {
@@ -52,6 +54,9 @@ function CardActionWidget({
 
   const { mutateAsync: deletePost } = useDeletePost()
   const { mutateAsync: deleteComment } = useDeleteComment()
+
+  const { mutate: incrementShareCount, isPending: isSharing } =
+    useIncrementShareCount()
 
   const router = useRouter()
 
@@ -144,6 +149,7 @@ function CardActionWidget({
     navigator.clipboard
       .writeText(shareUrl)
       .then(() => {
+        incrementShareCount(id)
         toast.success('Ссылка скопирована в буфер обмена')
       })
       .catch(() => {
@@ -169,17 +175,15 @@ function CardActionWidget({
             key="likes"
             color="secondary"
             startContent={<AiOutlineLike />}
-            onMouseDown={handleOpenModalLikes}
-            onPress={handleOpenModalLikes}
+            onClick={handleOpenModalLikes}
           >
             Просмотр лайков
           </DropdownItem>
           <DropdownItem
             key="share"
             color="secondary"
-            startContent={<FaShareFromSquare />}
-            onMouseDown={handleShare}
-            onPress={handleShare}
+            startContent={<LuSend />}
+            onClick={handleShare}
           >
             Поделиться
           </DropdownItem>
@@ -189,8 +193,7 @@ function CardActionWidget({
               className="text-danger"
               color="danger"
               startContent={<RiDeleteBinLine />}
-              onMouseDown={onOpen}
-              onPress={onOpen}
+              onClick={onOpen}
             >
               Удалить
             </DropdownItem>
@@ -215,12 +218,12 @@ function CardActionWidget({
                 возможности восстановления
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button color="danger" variant="light" onClick={onClose}>
                   Отмена
                 </Button>
                 <Button
                   color="secondary"
-                  onPress={() => {
+                  onClick={() => {
                     onClose()
                     handleDelete()
                   }}
@@ -293,7 +296,7 @@ function CardActionWidget({
                 </ModalBody>
               </motion.div>
               <ModalFooter>
-                <Button color="secondary" onPress={onClose}>
+                <Button color="secondary" onClick={onClose}>
                   Закрыть
                 </Button>
               </ModalFooter>

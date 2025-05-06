@@ -1,6 +1,6 @@
 'use client'
-import { useUserStore } from '@/store/user.store'
 import { useModalsStore } from '@/store/modals.store'
+import { useUserStore } from '@/store/user.store'
 import {
   Button,
   Dropdown,
@@ -26,36 +26,28 @@ import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { CiLogout } from 'react-icons/ci'
 import { AiFillEdit } from 'react-icons/ai'
+import { CiLogout } from 'react-icons/ci'
 
+import { UserSettingsStore } from '@/store/userSettings.store'
 import { FaMoon, FaPalette, FaUser } from 'react-icons/fa'
 import { IoIosSettings } from 'react-icons/io'
 import { LuSunMedium } from 'react-icons/lu'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import Logo from '../../shared/Logo'
-import EditProfile from '@/components/shared/EditProfile'
-import SettingsProfile from '@/components/shared/SettingsProfile'
+import { useStore } from 'zustand'
 
 function Header({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onClose: onEditClose,
-  } = useDisclosure()
-  const {
-    isOpen: isSettingsOpen,
-    onOpen: onSettingsOpen,
-    onClose: onSettingsClose,
-  } = useDisclosure()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const logout = useUserStore.use.logout()
-  const currentUser = useUserStore.use.current()
-  const isAuth = useUserStore.use.isAuthenticated()
+  const logout = useUserStore(state => state.logout)
+  const logoutSettings = useStore(UserSettingsStore, state => state.logout)
+
+  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const isAuth = currentUser != null
 
   const router = useRouter()
 
@@ -67,9 +59,10 @@ function Header({ className }: { className?: string }) {
   const { openEditProfile, openSettings } = useModalsStore()
 
   const handleLogout = () => {
+    logout()
+    logoutSettings()
     router.push('/auth')
     queryClient.removeQueries()
-    logout()
   }
 
   return (
@@ -107,8 +100,7 @@ function Header({ className }: { className?: string }) {
                   <DropdownSection showDivider>
                     <DropdownItem
                       key="profile"
-                      onPress={() => router.push(`/users/${currentUser?.id}`)}
-                      onMouseDown={() => router.push(`/users/${currentUser?.id}`)}
+                      onClick={() => router.push(`/users/${currentUser?.id}`)}
                       textValue="Мой профиль"
                       startContent={<FaUser />}
                     >
@@ -116,10 +108,7 @@ function Header({ className }: { className?: string }) {
                     </DropdownItem>
                     <DropdownItem
                       key="settings"
-                      onPress={() =>
-                        currentUser?.id && openSettings(currentUser.id)
-                      }
-                      onMouseDown={() =>
+                      onClick={() =>
                         currentUser?.id && openSettings(currentUser.id)
                       }
                       textValue="Настройки"
@@ -129,10 +118,7 @@ function Header({ className }: { className?: string }) {
                     </DropdownItem>
                     <DropdownItem
                       key="edit-profile"
-                      onPress={() =>
-                        currentUser?.id && openEditProfile(currentUser.id)
-                      }
-                      onMouseDown={() =>
+                      onClick={() =>
                         currentUser?.id && openEditProfile(currentUser.id)
                       }
                       textValue="Редактировать профиль"
@@ -170,8 +156,7 @@ function Header({ className }: { className?: string }) {
                     key="logout"
                     color="danger"
                     startContent={<CiLogout className="text-large" />}
-                    onPress={onOpen}
-                    onMouseDown={onOpen}
+                    onClick={onOpen}
                   >
                     Выйти
                   </DropdownItem>
@@ -210,10 +195,10 @@ function Header({ className }: { className?: string }) {
               </ModalHeader>
               <ModalBody></ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button color="danger" variant="light" onClick={onClose}>
                   Отмена
                 </Button>
-                <Button color="secondary" onPress={handleLogout}>
+                <Button color="secondary" onClick={handleLogout}>
                   Да, выйти
                 </Button>
               </ModalFooter>

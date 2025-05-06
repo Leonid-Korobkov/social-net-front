@@ -99,7 +99,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
         <Link
           size="sm"
           className="cursor-pointer"
-          onPress={() => setSelected('register')}
+          onClick={() => setSelected('register')}
         >
           Зарегистрируйтесь
         </Link>

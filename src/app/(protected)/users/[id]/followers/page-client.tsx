@@ -4,13 +4,14 @@ import FollowSkeleton from '@/components/ui/FollowSkeleton'
 import User from '@/components/ui/User'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
-import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 import { Button, Card, CardBody } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useTopLoader } from 'nextjs-toploader'
 import { use, useRef } from 'react'
-import { pluralizeRu } from '@/utils/pluralizeRu'
+import { useStore } from 'zustand'
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -20,7 +21,7 @@ type PageProps = {
 function FollowersClient({ params }: PageProps) {
   const { id } = use(params)
 
-  const currentUser = useUserStore.use.current()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
 
   const subscriptionsRef = useRef<HTMLButtonElement | null>(null)
@@ -129,11 +130,10 @@ function FollowersClient({ params }: PageProps) {
                           description={`${followerItem.follower.name} - ${
                             followerItem.follower._count.followers
                           }
-                          ${pluralizeRu(followerItem.follower._count.followers, [
-                            'подписчик',
-                            'подписчика',
-                            'подписчиков',
-                          ])}`}
+                          ${pluralizeRu(
+                            followerItem.follower._count.followers,
+                            ['подписчик', 'подписчика', 'подписчиков']
+                          )}`}
                           className="!justify-start"
                         />
                         {currentUser &&

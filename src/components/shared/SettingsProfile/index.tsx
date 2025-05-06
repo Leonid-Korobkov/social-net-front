@@ -210,12 +210,12 @@ export default function SettingsProfile({
           </ModalBody>
           <Divider />
           <ModalFooter>
-            <Button variant="ghost" onPress={onClose}>
+            <Button variant="ghost" onClick={onClose}>
               Отмена
             </Button>
             <Button
               color="secondary"
-              onPress={handleSave}
+              onClick={handleSave}
               isLoading={isUpdatingSettings}
             >
               Сохранить
@@ -244,14 +244,14 @@ export default function SettingsProfile({
           <ModalFooter>
             <Button
               variant="ghost"
-              onPress={() => {
+              onClick={() => {
                 setShowReloadConfirm(false)
                 onClose()
               }}
             >
               Позже
             </Button>
-            <Button color="secondary" onPress={handleReload}>
+            <Button color="secondary" onClick={handleReload}>
               Обновить сейчас
             </Button>
           </ModalFooter>

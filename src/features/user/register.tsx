@@ -130,7 +130,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         <Link
           size="sm"
           className="cursor-pointer"
-          onPress={() => setSelected('login')}
+          onClick={() => setSelected('login')}
         >
           Войдите
         </Link>

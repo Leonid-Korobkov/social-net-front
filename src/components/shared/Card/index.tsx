@@ -7,26 +7,30 @@ import {
   Card as HeroCard,
   Tooltip,
 } from '@heroui/react'
+import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { memo, useState } from 'react'
-import { FaCircleInfo, FaRegComment } from 'react-icons/fa6'
+import { memo, useEffect, useState } from 'react'
+import { FaCircleInfo, FaEye, FaRegComment } from 'react-icons/fa6'
+import { LuSend } from 'react-icons/lu'
 import { RiUserFollowFill } from 'react-icons/ri'
-import clsx from 'clsx'
+import { IoEyeOutline } from 'react-icons/io5'
 
+import CollapsibleText from '@/components/shared/CollapsibleText'
 import AnimatedLike from '@/components/ui/AnimatedLike'
 import RawHTML from '@/components/ui/EscapeHtml'
 import MetaInfo from '@/components/ui/MetaInfo'
 import User from '@/components/ui/User'
 import { useToggleCommentLike } from '@/services/api/commentLike.api'
 import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
+import { useIncrementViewCount } from '@/services/api/post.api'
 import { CommentLike, Like } from '@/store/types'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { formatDistance, Locale } from 'date-fns'
 import * as locales from 'date-fns/locale'
 import { useTopLoader } from 'nextjs-toploader'
 import CardActionWidget from '../CardActionWidget'
-import CollapsibleText from '@/components/shared/CollapsibleText'
+import { UserSettingsStore } from '@/store/userSettings.store'
 
 export interface ICard {
   avatarUrl: string
@@ -44,6 +48,8 @@ export interface ICard {
   likes?: Like[] | CommentLike[]
   refetch?: () => void
   onClick?: () => void
+  viewCount?: number
+  shareCount?: number
 }
 
 // Функция для получения локали
@@ -75,11 +81,14 @@ const Card = memo(
     commentId = '',
     isFollowing = false,
     onClick,
+    viewCount = 0,
+    shareCount = 0,
   }: ICard) => {
     const { mutateAsync: likePost } = useCreateLike()
     const { mutateAsync: unlikePost } = useDeleteLike()
 
     const { mutateAsync: toggleLike } = useToggleCommentLike()
+    const { mutate: incrementViewCount } = useIncrementViewCount()
 
     const [isLikeInProgress, setIsLikeInProgress] = useState(false)
     const router = useRouter()
@@ -117,6 +126,13 @@ const Card = memo(
         setIsLikeInProgress(false)
       }
     }
+
+    useEffect(() => {
+      if (cardFor !== 'post' || !id) return
+      if (UserSettingsStore.getState().wasPostViewed(id)) return
+      UserSettingsStore.getState().addViewedPost(id)
+      UserSettingsStore.getState().addPendingViewPost(id)
+    }, [cardFor, id])
 
     return (
       <HeroCard className={`mb-5 transform`}>
@@ -240,7 +256,7 @@ const Card = memo(
         </CardBody>
         {cardFor !== 'search' && (
           <CardFooter className="gap-3 -ml-2">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 w-full">
               <AnimatedLike
                 isLiked={likedByUser}
                 count={likesCount}
@@ -257,6 +273,10 @@ const Card = memo(
                   <MetaInfo count={commentsCount} Icon={FaRegComment} />
                 </Link>
               ) : null}
+              <div className="flex flex-1">
+                <MetaInfo size="small" count={shareCount} Icon={LuSend} />
+              </div>
+              <MetaInfo count={viewCount} Icon={IoEyeOutline} />
             </div>
           </CardFooter>
         )}

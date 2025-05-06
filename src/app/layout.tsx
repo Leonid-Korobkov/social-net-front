@@ -8,6 +8,7 @@ import type { Metadata, Viewport } from 'next'
 import { Suspense } from 'react'
 import './globals.css'
 import ModalsProvider from '@/Providers/ModalsProvider'
+import ProtectedRoute from '@/components/layout/ProtectedRoute'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://zling.vercel.app'),
@@ -59,24 +60,26 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" suppressHydrationWarning className="overflow-hidden">
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <meta name="apple-mobile-web-app-title" content="Zling" />
       </head>
       <body className={`antialiased`}>
         <ThemeProvider>
           <StoreProvider>
-            <PreLoader />
-            <Suspense>
-              <ScrollRestoration>
-                <MotionConfigProvider>
-                  <ProgressProvider>
-                    {children}
-                    <ModalsProvider />
-                  </ProgressProvider>
-                </MotionConfigProvider>
-              </ScrollRestoration>
-            </Suspense>
+            <ProtectedRoute>
+              <PreLoader />
+              <Suspense>
+                <ScrollRestoration>
+                  <MotionConfigProvider>
+                    <ProgressProvider>
+                      {children}
+                      <ModalsProvider />
+                    </ProgressProvider>
+                  </MotionConfigProvider>
+                </ScrollRestoration>
+              </Suspense>
+            </ProtectedRoute>
           </StoreProvider>
         </ThemeProvider>
       </body>

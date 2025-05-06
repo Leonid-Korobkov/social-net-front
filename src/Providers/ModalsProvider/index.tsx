@@ -2,8 +2,8 @@
 import { useModalsStore } from '@/store/modals.store'
 import EditProfile from '../../components/shared/EditProfile'
 import SettingsProfile from '../../components/shared/SettingsProfile'
-import { useGetUserById } from '@/services/api/user.api'
-import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
+import { useStore } from 'zustand'
 
 export default function ModalsProvider() {
   const {
@@ -13,7 +13,7 @@ export default function ModalsProvider() {
     closeEditProfile,
     closeSettings,
   } = useModalsStore()
-  const user = useUserStore.use.current()
+  const user = useStore(UserSettingsStore, state => state.current)
 
   if (!userId) return null
 

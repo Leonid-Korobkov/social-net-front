@@ -1,17 +1,18 @@
 'use client'
-import { Card, CardHeader, CardBody, Image as NextImage } from '@heroui/react'
+import { UserSettingsStore } from '@/store/userSettings.store'
+import { Card, CardBody, CardHeader } from '@heroui/react'
 import Link from 'next/link'
-import { MdAlternateEmail } from 'react-icons/md'
 import Image from '../../ui/Image'
-import { useUserStore } from '@/store/user.store'
+import ProfileSkeleton from '@/components/ui/ProfileSkeleton'
+import { useStore } from 'zustand'
 
 function Profile() {
-  const currentUser = useUserStore.use.current()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
 
   if (!currentUser) {
-    return <p>Не найден</p>
+    return <ProfileSkeleton />
   }
-  const { userName, name, email, avatarUrl, id } = currentUser
+  const { userName, name, avatarUrl, id } = currentUser
 
   return (
     <Card className="py-4 w-[302px]">

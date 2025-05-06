@@ -94,6 +94,8 @@ function PostList({
               likeCount,
               likedByUser = false,
               isFollowing = false,
+              viewCount = 0,
+              shareCount = 0,
             } = post
 
             return (
@@ -129,6 +131,8 @@ function PostList({
                     likesCount={likeCount}
                     isFollowing={isFollowing}
                     onClick={handleCardClick}
+                    viewCount={viewCount}
+                    shareCount={shareCount}
                   />
                 </motion.div>
               </div>

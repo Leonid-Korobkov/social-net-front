@@ -322,7 +322,7 @@ function EditProfile({
               <Button
                 color="danger"
                 variant="light"
-                onPress={() => {
+                onClick={() => {
                   setError('')
                   onClose()
                 }}

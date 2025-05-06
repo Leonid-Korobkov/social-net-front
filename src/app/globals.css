@@ -99,6 +99,26 @@ code {
   }
 }
 
+.fadeout {
+  animation: fadeout 0.3s ease-out forwards;
+}
+
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+    visibility: hidden;
+  }
+}
+
 html {
   scrollbar-color: #9353d3 #e0e0e0;
   scrollbar-width: thin;

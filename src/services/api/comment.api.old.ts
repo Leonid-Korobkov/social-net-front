@@ -1,4 +1,5 @@
 import { Comment, Post } from '@/store/types'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -12,7 +13,7 @@ import {
   ErrorResponseData,
   handleAxiosError,
 } from '../ApiConfig'
-import { UserStore } from '@/store/user.store'
+import { useStore } from 'zustand'
 
 export interface CommentsRequest {
   limit: number
@@ -39,7 +40,7 @@ interface MutationContext {
 // Хук для создания комментария
 export const useCreateComment = () => {
   const queryClient = useQueryClient()
-  const currentUser = UserStore(d => d.current)!
+  const currentUser = useStore(UserSettingsStore, state => state.current)!
 
   return useMutation<
     Comment,

@@ -23,6 +23,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Search() {
+export default function Search({
+  searchParams,
+}: {
+  searchParams: { q?: string; tab?: string }
+}) {
   return <SearchClient />
 }

@@ -1,8 +1,10 @@
 import { BASE_URL } from '@/app/constants'
 import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import axios, { AxiosError, AxiosHeaders } from 'axios'
 import Cookies from 'js-cookie'
 import toast from 'react-hot-toast'
+import { useStore } from 'zustand'
 
 // Типизация для ошибок
 export interface ApiErrorResponse {
@@ -18,9 +20,6 @@ export interface ErrorOptions {
 
 export const apiClient = axios.create({
   baseURL: `${BASE_URL}/api`,
-  // headers: {
-  //   'Content-Type': 'application/json',
-  // },
 })
 
 // Интерцептор для добавления токена
@@ -52,6 +51,7 @@ apiClient.interceptors.response.use(
   error => {
     if (error.response?.status === 401) {
       useUserStore.getState().logout()
+      useStore(UserSettingsStore, state => state.logout)
     }
     return Promise.reject(error)
   }
@@ -75,7 +75,9 @@ export const handleAxiosError = (
     }
   } else if (error.request) {
     // Запрос был сделан, но ответ не получен
-    toast.error('Сервер не отвечает. Пожалуйста, попробуйте позже (зайдите через 1-2 минуты).')
+    toast.error(
+      'Сервер не отвечает. Пожалуйста, попробуйте позже (зайдите через 1-2 минуты).'
+    )
     return {
       errorMessage:
         (error.request.message as string) ||

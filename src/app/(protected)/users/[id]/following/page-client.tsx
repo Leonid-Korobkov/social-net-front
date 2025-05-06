@@ -4,13 +4,14 @@ import FollowSkeleton from '@/components/ui/FollowSkeleton'
 import User from '@/components/ui/User'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
-import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import { pluralizeRu } from '@/utils/pluralizeRu'
 import { Button, Card, CardBody } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useTopLoader } from 'nextjs-toploader'
 import { use, useRef } from 'react'
+import { useStore } from 'zustand'
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -23,7 +24,7 @@ function FollowingClient({ params }: PageProps) {
   const subscriptionsRef = useRef<HTMLButtonElement | null>(null)
   const topLoader = useTopLoader()
 
-  const currentUser = useUserStore.use.current()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
 
   const {
@@ -130,11 +131,10 @@ function FollowingClient({ params }: PageProps) {
                             description={`${followingItem.following.name} - ${
                               followingItem.following._count.followers
                             }
-                            ${pluralizeRu(followingItem.following._count.followers, [
-                              'подписчик',
-                              'подписчика',
-                              'подписчиков',
-                            ])}`}
+                            ${pluralizeRu(
+                              followingItem.following._count.followers,
+                              ['подписчик', 'подписчика', 'подписчиков']
+                            )}`}
                             className="!justify-start"
                           />
 

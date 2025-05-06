@@ -1,4 +1,5 @@
 import { Post } from '@/store/types'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -13,8 +14,8 @@ import {
   ErrorResponseData,
   handleAxiosError,
 } from '../ApiConfig'
-import { UserStore } from '@/store/user.store'
 import { userKeys } from './user.api'
+import { useStore } from 'zustand'
 
 // Ключи для кэширования
 export const postKeys = {
@@ -36,7 +37,7 @@ export interface PostsDTO {
 // Хук для создания поста
 export const useCreatePost = () => {
   const queryClient = useQueryClient()
-  const currentUser = UserStore(d => d.current)
+  const currentUser = useStore(UserSettingsStore, state => state.current)!
 
   return useMutation({
     mutationFn: async (content: { content: string }) => {
@@ -128,32 +129,10 @@ export const useGetPostById = (id: string) => {
   })
 }
 
-// Хук для удаления поста по id
-// export const useDeletePost = () => {
-//   const queryClient = useQueryClient()
-//   const currentuser = UserStore(d => d.current)
-
-//   return useMutation({
-//     mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
-//       try {
-//         return await apiClient.delete<string, Post>(`/posts/${id}`)
-//       } catch (error) {
-//         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
-//       }
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: postKeys.all })
-//       queryClient.invalidateQueries({
-//         queryKey: userKeys.posts(currentuser?.id.toString() ?? ''),
-//       })
-//     },
-//   })
-// }
-
 // 4) Удаление поста с ручным вырезанием из кэша
 export const useDeletePost = () => {
   const queryClient = useQueryClient()
-  const currentUser = UserStore(d => d.current)!
+  const currentUser = useStore(UserSettingsStore, state => state.current)!
 
   return useMutation<Post, ApiErrorResponse, { id: string }>({
     mutationFn: ({ id }) => apiClient.delete<string, Post>(`/posts/${id}`),
@@ -187,6 +166,70 @@ export const useDeletePost = () => {
       // queryClient.invalidateQueries({
       //   queryKey: userKeys.posts(currentUser.id.toString()),
       // })
+    },
+  })
+}
+
+// Хук для увеличения счетчика просмотров поста
+export const useIncrementViewCount = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (postId: string) => {
+      try {
+        return await apiClient.post(`/posts/${postId}/view`)
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    onSuccess: (_, postId) => {
+      // Актуализируем кэш поста
+      // queryClient.invalidateQueries({ queryKey: postKeys.postId(postId) })
+    },
+    onError: error => {
+      // Можно добавить toast или логирование
+      // toast.error('Ошибка при увеличении просмотров')
+      console.error('Ошибка при увеличении просмотров', error)
+    },
+  })
+}
+
+// Хук для увеличения счетчика "поделиться"
+export const useIncrementShareCount = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (postId: string) => {
+      try {
+        return await apiClient.post(`/posts/${postId}/share`)
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    onSuccess: (_, postId) => {
+      // Актуализируем кэш поста
+      // queryClient.invalidateQueries({ queryKey: postKeys.postId(postId) })
+    },
+    onError: error => {
+      // Можно добавить toast или логирование
+      // toast.error('Ошибка при увеличении "поделиться"')
+      console.error('Ошибка при увеличении "поделиться"', error)
+    },
+  })
+}
+
+// Хук для batch-отправки просмотров
+export const useIncrementViewsBatch = () => {
+  return useMutation({
+    mutationFn: async (ids: string[]) => {
+      try {
+        return await apiClient.post(`/posts/views/batch`, { ids })
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    onError: error => {
+      // Можно добавить toast или логирование
+      // toast.error('Ошибка при batch просмотрах')
+      console.error('Ошибка при batch просмотрах', error)
     },
   })
 }

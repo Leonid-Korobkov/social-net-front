@@ -9,7 +9,7 @@ import { useWindowSize } from '@/hooks/useWindowSize'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetPostsByUserId, useGetUserById } from '@/services/api/user.api'
 import { useModalsStore } from '@/store/modals.store'
-import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import {
   Button,
@@ -31,6 +31,7 @@ import {
   MdOutlinePersonAddDisabled,
 } from 'react-icons/md'
 import { RiUserFollowFill } from 'react-icons/ri'
+import { useStore } from 'zustand'
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -44,7 +45,7 @@ function UserProfileClient({ params }: PageProps) {
   const [isImageOpen, setImageOpen] = useState(false)
   const { openEditProfile, openSettings } = useModalsStore()
 
-  const currentUser = useUserStore.use.current()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
 
   const { data: user, isPending: isLoading } = useGetUserById(id)
   const {
@@ -138,7 +139,7 @@ function UserProfileClient({ params }: PageProps) {
                   color={user?.isFollowing ? 'default' : 'secondary'}
                   variant="flat"
                   className="gap-2"
-                  onPress={handleFollow}
+                  onClick={handleFollow}
                   isLoading={isFollowPending || isUnfollowPending}
                   endContent={
                     user?.isFollowing ? (
@@ -154,7 +155,7 @@ function UserProfileClient({ params }: PageProps) {
                 <div className="flex gap-2 flex-col w-full">
                   <Button
                     endContent={<AiFillEdit />}
-                    onPress={() => openEditProfile(id)}
+                    onClick={() => openEditProfile(id)}
                     variant="ghost"
                     color="warning"
                     fullWidth
@@ -163,7 +164,7 @@ function UserProfileClient({ params }: PageProps) {
                   </Button>
                   <Button
                     endContent={<IoIosSettings />}
-                    onPress={() => openSettings(id)}
+                    onClick={() => openSettings(id)}
                     variant="ghost"
                     color="secondary"
                     fullWidth

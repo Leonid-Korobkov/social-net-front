@@ -1,19 +1,20 @@
 'use client'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import { FaUsers } from 'react-icons/fa'
-import { IoSearch } from 'react-icons/io5'
-import NavButton from '../../shared/NavButton'
-import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
 import { FaRegSquarePlus, FaUser } from 'react-icons/fa6'
 import { GoHomeFill } from 'react-icons/go'
+import { IoSearch } from 'react-icons/io5'
 import { RiUserFollowFill } from 'react-icons/ri'
-import { useUserStore } from '@/store/user.store'
+import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
+import NavButton from '../../shared/NavButton'
+import { useStore } from 'zustand'
 
 interface NavBarProps {
   onCreatePost: () => void
 }
 
 function NavBar({ onCreatePost }: NavBarProps) {
-  const currentUser = useUserStore.use.current()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
 
   const isActive = useActiveNavLink
 
