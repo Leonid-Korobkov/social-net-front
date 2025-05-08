@@ -95,9 +95,14 @@ body {
 .preview-text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 15; /* например, 10 строк */
+  -webkit-line-clamp: 15;
   overflow: hidden;
 }
+.preview-text.expanded {
+  display: block;
+  max-height: none;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

@@ -229,7 +229,7 @@ const Card = memo(
               // Если пользователь выделял текст или кликнул по кнопке "Читать далее", не переходим по ссылке
               if (
                 window.getSelection()?.toString() ||
-                (e.target as HTMLElement).closest('button')
+                (e.target as HTMLElement).closest('.non-click')
               ) {
                 e.preventDefault()
                 return
@@ -248,7 +248,7 @@ const Card = memo(
                 cardFor === 'search' && 'text-sm',
                 'leading-snug'
               )}
-              maxLines={15}
+              maxLines={20}
               href={`/users/${username}`}
               title={`Переход на страницу автора ${username}`}
             />
