@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { IoIosArrowDroprightCircle } from 'react-icons/io'
 import RawHTML from '@/components/ui/EscapeHtml'
 import Link from 'next/link'
@@ -20,31 +20,30 @@ export default function CollapsibleText({
   href = '',
   title,
 }: CollapsibleTextProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const [shouldCollapse, setShouldCollapse] = useState(false)
-
-  // Константа для максимальной длины текста (примерно 1000 символов)
-  const MAX_TEXT_LENGTH = 1000
+  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Преобразуем HTML в обычный текст
-    const plainText = stripHtml(content)
+    const checkHeight = () => {
+      if (contentRef.current) {
+        const lineHeight = parseInt(
+          window.getComputedStyle(contentRef.current).lineHeight
+        )
+        const height = contentRef.current.scrollHeight
+        const lines = Math.ceil(height / lineHeight)
+        setShouldCollapse(lines > maxLines)
+      }
+    }
 
-    // Проверяем длину текста
-    setShouldCollapse(plainText.length > MAX_TEXT_LENGTH)
-  }, [content])
+    checkHeight()
+    window.addEventListener('resize', checkHeight)
+    return () => window.removeEventListener('resize', checkHeight)
+  }, [content, maxLines])
 
   return (
     <div className="relative">
-      <div
-        style={
-          shouldCollapse
-            ? {
-                maxHeight: '30rem',
-                overflow: 'hidden',
-              }
-            : {}
-        }
-      >
+      <div ref={contentRef} className='preview-text'>
         <RawHTML className={className}>{content}</RawHTML>
       </div>
 
