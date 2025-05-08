@@ -187,11 +187,13 @@
   .code-block pre {
     margin: 0;
     max-height: 350px;
-    overflow-y: auto;
+    overflow: auto;
     padding: 1rem;
     position: relative;
     z-index: 1;
     @apply text-sm;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
   }
 
   .code-block pre code {
@@ -202,8 +204,8 @@
     font-size: 0.85rem;
     counter-reset: line;
     white-space: pre;
-    overflow-x: auto;
-    display: block;
+    display: inline-block;
+    min-width: 100%;
   }
 
   /* Отображение имени языка программирования */
@@ -236,6 +238,24 @@
 .character-count--warning,
 .character-count--warning svg {
   color: hsl(var(--heroui-danger));
+}
+
+/* Специальные стили для мобильных устройств */
+@media (max-width: 768px) {
+  .code-block pre {
+    cursor: grab;
+    user-select: none; /* Предотвращает выделение текста при скролле */
+  }
+
+  .code-block pre:active {
+    cursor: grabbing;
+  }
+
+  /* При нажатии и выделении текста отключаем grab-курсор */
+  .code-block pre:has(*::selection) {
+    cursor: text;
+    user-select: text;
+  }
 }
 
 /* Темная тема для кода */
