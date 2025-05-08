@@ -1,11 +1,12 @@
 'use client'
-import { Card, CardBody, Avatar } from '@heroui/react'
+import { Card, CardBody, Avatar, Chip } from '@heroui/react'
 import { User } from '@/store/types'
 import Link from 'next/link'
 import { pluralizeRu } from '@/utils/pluralizeRu'
+import { RiUserFollowFill } from 'react-icons/ri'
 
 interface UserCardProps {
-  user: User & { _count: { followers: number } }
+  user: User
   className?: string
 }
 
@@ -18,8 +19,15 @@ function UserCard({ user, className }: UserCardProps) {
             <div>
               <Avatar src={user.avatarUrl} name={user.userName} size="md" />
             </div>
-            <div className="flex flex-col">
-              <p className="text-sm font-semibold">@{user.userName}</p>
+            <div className="flex flex-col w-full">
+              <div className="text-sm font-semibold flex justify-between items-center">
+                <span>@{user.userName}</span>
+                {user.isFollowing && (
+                  <Chip size='sm' color="success" variant="flat" className="opacity-65">
+                    <RiUserFollowFill />
+                  </Chip>
+                )}
+              </div>
               <p className="text-default-500 text-xs">
                 {user.name} - {user._count.followers}{' '}
                 {pluralizeRu(user._count.followers, [

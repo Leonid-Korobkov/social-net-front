@@ -5,12 +5,16 @@ import { User } from './types'
 interface initialUserSettingsStore {
   reduceAnimation: boolean
   setReduceAnimation: (bool: boolean) => void
+
   searchText: string
   setSearchText: (str: string) => void
   searchActiveTab: string
   setSearchActiveTab: (tab: string) => void
+
   postText: string
   setPostText: (str: string) => void
+  reset: () => void
+
   logout: () => void
   viewedPosts: string[]
   pendingViewPosts: string[]
@@ -27,12 +31,16 @@ interface initialUserSettingsStore {
 const initialState: initialUserSettingsStore = {
   reduceAnimation: false,
   setReduceAnimation: (bool: boolean) => {},
+
   searchText: '',
   setSearchText: (str: string) => {},
   searchActiveTab: 'posts',
   setSearchActiveTab: (tab: string) => {},
+
   postText: '',
   setPostText: (str: string) => {},
+  reset: () => {},
+
   logout: () => {},
   viewedPosts: [],
   pendingViewPosts: [],
@@ -56,18 +64,23 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
       setReduceAnimation: (bool: boolean) => {
         set(state => ({ reduceAnimation: bool }))
       },
+
       setSearchText: (str: string) => {
         set(state => ({ searchText: str }))
       },
       setSearchActiveTab: (tab: string) => {
         set(state => ({ searchActiveTab: tab }))
       },
+
       setPostText: (str: string) => {
         set(state => ({ postText: str }))
       },
+      reset: () => set({ postText: '' }),
+
       logout: () => {
         set(initialState)
       },
+
       addViewedPost: (id: string) => {
         set(state => {
           if (state.viewedPosts.includes(id)) return state

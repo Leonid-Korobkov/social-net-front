@@ -6,7 +6,7 @@ import { StoreProvider } from '@/Providers/StoreProvider'
 import { ThemeProvider } from '@/Providers/ThemeProvider'
 import type { Metadata, Viewport } from 'next'
 import { Suspense } from 'react'
-import './globals.css'
+import '../css/globals.css'
 import ModalsProvider from '@/Providers/ModalsProvider'
 import ProtectedRoute from '@/components/layout/ProtectedRoute'
 

@@ -246,7 +246,7 @@ const Card = memo(
               content={content}
               className={clsx(
                 cardFor === 'search' && 'text-sm',
-                'leading-none'
+                'leading-snug'
               )}
               maxLines={15}
               href={`/users/${username}`}

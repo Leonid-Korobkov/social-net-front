@@ -19,7 +19,7 @@ function AuthClient() {
             <Alert
               color="success"
               description={
-                'Вы успешно зарегистрировались. Пройдите процесс входа'
+                'Вы успешно зарегистрировались. Пройдите процесс авторизации'
               }
               isVisible={isRegisterSuccess}
               title={'Успешная регистрация'}

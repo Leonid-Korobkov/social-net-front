@@ -1,91 +1,42 @@
 'use client'
-import { useCreatePost } from '@/services/api/post.api'
-import { Button, Textarea } from '@heroui/react'
-import { Controller, useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
-import { IoMdCreate } from 'react-icons/io'
-import { hasErrorField } from '../../../utils/hasErrorField'
+import { Editor, EditorContent } from '@tiptap/react'
+import { EditorMenus } from './EditorMenus'
+
+import '@/css/editor.css'
+import '@/css/syntax-highlight.css'
+import '@/css/tippy.css'
 
 interface CreatePostProps {
   onSuccess?: () => void
+  editor: Editor | null
+  content: string
+  clearContent: () => void
+  characterCount: number
+  wordCount: number
+  isEmpty: boolean
+  getHTML: () => string
 }
 
-function CreatePost({ onSuccess }: CreatePostProps) {
-  const { mutateAsync: createPost, isPending: isLoading } = useCreatePost()
-
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-  } = useForm()
-
-  const error = errors?.text?.message as string
-
-  const onSubmit = handleSubmit(async data => {
-    try {
-      const toastId = toast.loading('Создание поста...')
-      const promise = createPost({ content: data.text })
-
-      promise
-        .then(() => {
-          toast.success('Пост успешно создан!')
-          setValue('text', '')
-          if (onSuccess) {
-            onSuccess()
-          }
-        })
-        .catch(err => {
-          if (hasErrorField(err)) {
-            toast.error('Не удалось сохранить: ' + err.data.error)
-          } else {
-            toast.error('Произошла ошибка при создании поста')
-          }
-        })
-        .finally(() => {
-          toast.dismiss(toastId)
-        })
-    } catch (err) {
-      console.error(err, errors)
-      toast.error('Ошибка при создании поста')
-    }
-  })
+function CreatePost({ editor }: CreatePostProps) {
+  // Если редактор не был инициализирован, показываем заглушку
+  if (!editor) {
+    return (
+      <div className="p-4 border rounded-md text-center">
+        Загрузка редактора...
+      </div>
+    )
+  }
 
   return (
-    <form className="flex-grow" onSubmit={onSubmit}>
-      <Controller
-        name="text"
-        control={control}
-        defaultValue=""
-        rules={{
-          required: 'Обязательное поле',
-          validate: value =>
-            value.trim().length > 0 || 'Пост не может быть пустым',
-        }}
-        render={({ field }) => (
-          <Textarea
-            {...field}
-            placeholder="О чем думаете?"
-            labelPlacement="inside"
-            errorMessage={error}
-            isInvalid={error ? true : false}
-            className="mb-5"
-            label="Новый пост"
-            variant="bordered"
-            maxRows={10}
-          />
-        )}
-      />
-      <Button
-        color="secondary"
-        className="flex-end"
-        endContent={<IoMdCreate />}
-        type="submit"
-        isLoading={isLoading}
-      >
-        Добавить пост
-      </Button>
-    </form>
+    <div className="flex-grow">
+      {/* Подключение меню форматирования */}
+      <EditorMenus editor={editor} />
+
+      {/* Сам редактор */}
+      <div className="mb-3">
+        <EditorContent editor={editor} className="w-full" />
+      </div>
+    </div>
   )
 }
 

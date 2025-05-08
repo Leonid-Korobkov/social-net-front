@@ -8,6 +8,7 @@ import { formatToClientDate } from '@/utils/formatToClientDate'
 import { hasErrorField } from '@/utils/hasErrorField'
 import {
   Button,
+  Chip,
   Divider,
   Dropdown,
   DropdownItem,
@@ -26,10 +27,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { AiOutlineLike } from 'react-icons/ai'
 import { FaEllipsisVertical, FaRegCopy, FaRegHeart } from 'react-icons/fa6'
 import { LuSend } from 'react-icons/lu'
-import { RiDeleteBinLine } from 'react-icons/ri'
+import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useStore } from 'zustand'
 import { ICard } from '../Card'
 
@@ -279,19 +279,31 @@ function CardActionWidget({
                       >
                         <Link key={like.id} href={`/users/${like.userId}`}>
                           <Divider className="mb-2" />
-                          <User
-                            username={like.user?.name || 'Аноним'}
-                            avatarUrl={like.user?.avatarUrl || ''}
-                            description={
-                              <div className="flex items-center gap-1">
-                                <AiOutlineLike />
-                                {formatToClientDate(
-                                  new Date(like.createdAt?.toString() || '')
-                                )}
-                              </div>
-                            }
-                            className="cursor-pointer"
-                          />{' '}
+                          <div className="flex items-start justify-between gap-1">
+                            <User
+                              username={like.user?.name || 'Аноним'}
+                              avatarUrl={like.user?.avatarUrl || ''}
+                              description={
+                                <div className="flex items-center gap-1">
+                                  <FaRegHeart />
+                                  {formatToClientDate(
+                                    new Date(like.createdAt?.toString() || '')
+                                  )}
+                                </div>
+                              }
+                              className="cursor-pointer"
+                            />{' '}
+                            {like.user?.isFollowing && (
+                              <Chip
+                                size="sm"
+                                color="success"
+                                variant="flat"
+                                className="opacity-65"
+                              >
+                                <RiUserFollowFill />
+                              </Chip>
+                            )}
+                          </div>
                         </Link>
                       </motion.div>
                     ))}
