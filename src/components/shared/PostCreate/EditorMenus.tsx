@@ -23,7 +23,7 @@ import {
 // Конфигурация для меню форматирования
 const getMenuConfig = (animationType = 'shift-away') => ({
   arrow: false,
-  maxWidth: '100vw',
+  maxWidth: '90vw',
   placement: 'top' as const,
   offset: [0, 10] as [number, number],
   animation: animationType,

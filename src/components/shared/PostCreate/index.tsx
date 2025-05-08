@@ -5,6 +5,7 @@ import { EditorMenus } from './EditorMenus'
 import '@/css/editor.css'
 import '@/css/syntax-highlight.css'
 import '@/css/tippy.css'
+import { Spinner } from '@heroui/react'
 
 interface CreatePostProps {
   onSuccess?: () => void
@@ -21,8 +22,8 @@ function CreatePost({ editor }: CreatePostProps) {
   // Если редактор не был инициализирован, показываем заглушку
   if (!editor) {
     return (
-      <div className="p-4 border rounded-md text-center">
-        Загрузка редактора...
+      <div className="flex justify-center">
+        <Spinner size="lg" color="secondary" variant="gradient" />
       </div>
     )
   }

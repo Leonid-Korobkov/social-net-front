@@ -21,7 +21,7 @@
 
 /* Базовые стили */
 [data-tippy-root] {
-  max-width: calc(100vw - 10px);
+  max-width: calc(90vw - 10px);
 }
 .tippy-box {
   position: relative;

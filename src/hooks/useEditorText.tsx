@@ -15,7 +15,7 @@ import 'tippy.js/animations/scale.css'
 import CodeBlockComponent from '@/components/shared/PostCreate/CodeBlockComponent'
 // import { createMentionSuggestion } from '@/components/shared/PostCreate/MentionList'
 import { UserSettingsStore } from '@/store/userSettings.store'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { useStore } from 'zustand'
 
 export type EditorHookProps = {
@@ -25,6 +25,7 @@ export type EditorHookProps = {
   autoFocus?: boolean
   onChange?: (html: string) => void
   storageKey?: string
+  debounceTime?: number
 }
 
 export function useEditorText({
@@ -34,6 +35,7 @@ export function useEditorText({
   autoFocus = true,
   onChange,
   storageKey = 'postText',
+  debounceTime = 500,
 }: EditorHookProps = {}) {
   // Используем zustand для хранения контента, если указан storageKey
   const content = useStore(UserSettingsStore, state =>
@@ -48,28 +50,47 @@ export function useEditorText({
 
   const [localContent, setLocalContent] = useState(initialContent)
 
+  // Создаем ref для хранения таймера debounce
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Функция debounce для отложенного сохранения
+  const debouncedSave = useCallback(
+    (newContent: string) => {
+      // Очистить предыдущий таймер, если есть
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+
+      // Установить новый таймер
+      debounceTimerRef.current = setTimeout(() => {
+        // Сохраняем контент после задержки
+        if (setContent && storageKey === 'postText') {
+          setContent(newContent)
+        } else {
+          setLocalContent(newContent)
+        }
+
+        // Вызываем внешний обработчик, если он предоставлен
+        if (onChange) {
+          onChange(newContent)
+        }
+      }, debounceTime)
+    },
+    [onChange, setContent, storageKey, debounceTime]
+  )
+
   // Создаем инстанс lowlight с поддержкой дополнительных языков
   const lowlight = createLowlight(common)
 
-  // Обработчик изменения контента
+  // Обработчик изменения контента с debounce
   const handleUpdate = useCallback(
     ({ editor }: { editor: Editor }) => {
       const newContent = editor.getHTML()
 
-      // Обновляем контент в zustand если используем его
-      if (setContent && storageKey === 'postText') {
-        setContent(newContent)
-      } else {
-        // Иначе используем локальное состояние
-        setLocalContent(newContent)
-      }
-
-      // Также вызываем внешний обработчик, если он предоставлен
-      if (onChange) {
-        onChange(newContent)
-      }
+      // Используем debounce для сохранения контента
+      debouncedSave(newContent)
     },
-    [onChange, setContent, storageKey]
+    [debouncedSave]
   )
 
   // Инициализируем редактор tiptap
@@ -172,6 +193,15 @@ export function useEditorText({
     }
   }, [editor, content])
 
+  // Очищаем таймер при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [])
+
   // Очистка редактора
   const clearContent = useCallback(() => {
     if (!editor) return
@@ -181,6 +211,11 @@ export function useEditorText({
       resetContent()
     } else {
       setLocalContent('')
+    }
+
+    // Очищаем также таймер debounce
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
     }
   }, [editor, resetContent, storageKey])
 

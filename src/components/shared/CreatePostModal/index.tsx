@@ -1,4 +1,8 @@
 'use client'
+import useEditorText from '@/hooks/useEditorText'
+import { useCreatePost } from '@/services/api/post.api'
+import { hasErrorField } from '@/utils/hasErrorField'
+import { pluralizeRu } from '@/utils/pluralizeRu'
 import {
   Button,
   Divider,
@@ -8,15 +12,10 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@heroui/react'
-import CreatePost from '../PostCreate'
-import { IoMdCreate } from 'react-icons/io'
-import useEditorText from '@/hooks/useEditorText'
-import { useCreatePost } from '@/services/api/post.api'
 import { toast } from 'react-hot-toast'
-import { hasErrorField } from '@/utils/hasErrorField'
-import { useWindowSize } from '@/hooks/useWindowSize'
-import { pluralizeRu } from '@/utils/pluralizeRu'
 import { FaRegSave } from 'react-icons/fa'
+import { IoMdCreate } from 'react-icons/io'
+import CreatePost from '../PostCreate'
 
 interface CreatePostModalProps {
   isOpen: boolean
@@ -25,7 +24,6 @@ interface CreatePostModalProps {
 
 function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
   const { mutateAsync: createPost, isPending: isLoading } = useCreatePost()
-  const size = useWindowSize()
 
   // Используем наш хук для редактора
   const {
@@ -80,7 +78,7 @@ function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
     <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      size={size.width < 768 ? 'full' : '2xl'}
+      size="2xl"
       scrollBehavior="inside"
       backdrop="blur"
     >
@@ -88,7 +86,7 @@ function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
         {onClose => (
           <>
             <ModalHeader className="max-w-md:flex-col max-w-md:items-start flex flex-row gap-1 overflow-visible justify-between">
-              Создание поста
+              Новый пост
               {/* Кнопка для закрытия и сохранения черновика */}
               <Button
                 color="success"

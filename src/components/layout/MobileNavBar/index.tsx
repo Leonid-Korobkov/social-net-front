@@ -47,10 +47,9 @@ function MobileNavBar({ onCreatePost }: MobileNavBarProps) {
       label: 'Поиск',
     },
     {
-      path: '#',
+      path: '/create-post',
       icon: FaRegSquarePlus,
       label: 'Создать',
-      onClick: onCreatePost,
     },
     {
       path: `/users/${currentUser?.id}`,
@@ -65,11 +64,11 @@ function MobileNavBar({ onCreatePost }: MobileNavBarProps) {
       backdrop-blur-lg backdrop-saturate-150 bg-background/70"
     >
       <div className="flex justify-around items-center h-16">
-        {navItems.map(({ path, icon: Icon, label, onClick }) => (
+        {navItems.map(({ path, icon: Icon, label }) => (
           <Link
             key={path}
             href={path}
-            onClick={e => handleClick(e, path, onClick)}
+            onClick={e => handleClick(e, path)}
             className={`flex flex-col items-center gap-1 p-2 ${
               isActive(path) ? 'text-secondary' : 'text-foreground'
             }`}
