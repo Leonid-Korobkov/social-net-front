@@ -240,24 +240,6 @@
   color: hsl(var(--heroui-danger));
 }
 
-/* Специальные стили для мобильных устройств */
-@media (max-width: 768px) {
-  .code-block pre {
-    cursor: grab;
-    user-select: none; /* Предотвращает выделение текста при скролле */
-  }
-
-  .code-block pre:active {
-    cursor: grabbing;
-  }
-
-  /* При нажатии и выделении текста отключаем grab-курсор */
-  .code-block pre:has(*::selection) {
-    cursor: text;
-    user-select: text;
-  }
-}
-
 /* Темная тема для кода */
 html.dark {
   .code-block {
