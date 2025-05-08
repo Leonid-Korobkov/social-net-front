@@ -8,7 +8,6 @@ import parse, {
   Text
 } from 'html-react-parser'
 import React, { useMemo } from 'react'
-
 import { common, createLowlight } from 'lowlight'
 // Импортируем только базовые языки для подсветки
 import { getLanguageIcon, getLanguageName } from '@/utils/languages'
