@@ -239,7 +239,7 @@ const Card = memo(
             }
           }}
         >
-          {cardFor === 'current-post' ? (
+          {cardFor === 'current-post' || cardFor === 'comment' ? (
             <RawHTML>{content}</RawHTML>
           ) : (
             <CollapsibleText

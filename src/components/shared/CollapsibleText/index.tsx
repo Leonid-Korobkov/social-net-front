@@ -11,6 +11,7 @@ interface CollapsibleTextProps {
   title: string
   className?: any
   maxLines?: number
+  maxHeight?: number
 }
 
 export default function CollapsibleText({
@@ -19,6 +20,7 @@ export default function CollapsibleText({
   maxLines = 15,
   href = '',
   title,
+  maxHeight = 600,
 }: CollapsibleTextProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [shouldCollapse, setShouldCollapse] = useState(false)
@@ -32,13 +34,20 @@ export default function CollapsibleText({
         )
         const height = contentRef.current.scrollHeight
         const lines = Math.ceil(height / lineHeight)
-        setShouldCollapse(lines > maxLines)
+
+        // Устанавливаем флаг сворачивания текста, если он длиннее
+        setShouldCollapse(lines > maxLines || height > maxHeight)
       }
     }
 
-    checkHeight()
+    // Запускаем проверку после полной загрузки содержимого
+    const timer = setTimeout(checkHeight, 100)
     window.addEventListener('resize', checkHeight)
-    return () => window.removeEventListener('resize', checkHeight)
+
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('resize', checkHeight)
+    }
   }, [content, maxLines])
 
   return (
@@ -46,7 +55,9 @@ export default function CollapsibleText({
       <div
         ref={contentRef}
         className={`${
-          !isExpanded ? `line-clamp-[15] overflow-hidden` : ''
+          !isExpanded
+            ? `line-clamp-[15] overflow-hidden max-h-[${maxHeight}px]`
+            : ''
         }`}
       >
         <RawHTML className={className}>{content}</RawHTML>
@@ -54,6 +65,7 @@ export default function CollapsibleText({
 
       {shouldCollapse && (
         <div className="mt-2 text-foreground-400 text-sm">
+          <div className="absolute bottom-[28px] left-0 right-0 h-10 bg-gradient-to-t from-content1 to-transparent z-[100]"></div>
           <Link href={href} className="flex gap-1 items-center" title={title}>
             <span>Читать далее</span>
             <IoIosArrowDroprightCircle />

@@ -8,6 +8,7 @@ import { BsPostcardFill } from 'react-icons/bs'
 import { FaUsers } from 'react-icons/fa6'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { pluralizeRu } from '@/utils/pluralizeRu'
+import { stripHtml } from '@/app/utils/stripHtml'
 
 export const alt = 'Профиль пользователя Zling'
 export const size = {
@@ -43,6 +44,9 @@ export default async function Image({ params }: { params: { id: string } }) {
     if (!user) {
       return fallbackImage(fontData)
     }
+
+    // Очищаем bio от HTML если это необходимо
+    const cleanBio = user.bio ? stripHtml(user.bio) : ''
 
     return new ImageResponse(
       (
@@ -276,12 +280,11 @@ export default async function Image({ params }: { params: { id: string } }) {
               }}
             >
               {user.bio && user.showBio
-                ? user.bio.length > 100
-                  ? `${user.bio.substring(0, 100)}...`
-                  : user.bio
+                ? cleanBio.length > 100
+                  ? `${cleanBio.substring(0, 100)}...`
+                  : cleanBio
                 : ' '}
             </div>
-
             <div
               style={{
                 display: 'flex',

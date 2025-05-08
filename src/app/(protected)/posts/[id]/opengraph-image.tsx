@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { apiClient } from '@/services/ApiConfig'
 import { Post } from '@/store/types'
 import { FaComment, FaHeart } from 'react-icons/fa6'
+import { stripHtml } from '@/app/utils/stripHtml'
 
 export const alt = 'Пост в Zling'
 export const size = {
@@ -43,11 +44,14 @@ export default async function Image({ params }: { params: { id: string } }) {
       return fallbackImage(fontData)
     }
 
+    // Парсим HTML-контент и преобразуем его в текст без тегов
+    const cleanContent = stripHtml(post.content)
+
     // Обрезаем контент поста до 250 символов
     const truncatedContent =
-      post.content.length > 200
-        ? `${post.content.substring(0, 200)}...`
-        : post.content
+      cleanContent.length > 200
+        ? `${cleanContent.substring(0, 200)}...`
+        : cleanContent
 
     return new ImageResponse(
       (
@@ -193,15 +197,6 @@ export default async function Image({ params }: { params: { id: string } }) {
             >
               <div style={{ display: 'flex', gap: 30 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  {/* <div
-                    style={{
-                      display: 'flex',
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      backgroundColor: '#ff4081',
-                    }}
-                  /> */}
                   <FaHeart color="#F31260" />
                   <span
                     style={{
@@ -213,15 +208,6 @@ export default async function Image({ params }: { params: { id: string } }) {
                   </span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  {/* <div
-                    style={{
-                      display: 'flex',
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      backgroundColor: '#2196f3',
-                    }}
-                  /> */}
                   <FaComment color="#2196f3" />
                   <span
                     style={{
