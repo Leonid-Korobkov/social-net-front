@@ -31,12 +31,12 @@ function PostList({
 }: PostListProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
-  const virtualizer = useWindowVirtualizer({
-    count: data.length,
-    estimateSize: () => 300,
-    overscan: 5,
-    measureElement: element => element?.getBoundingClientRect().height || 300,
-  })
+  // const virtualizer = useWindowVirtualizer({
+  //   count: data.length,
+  //   estimateSize: () => 300,
+  //   overscan: 5,
+  //   measureElement: element => element?.getBoundingClientRect().height || 300,
+  // })
 
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
@@ -49,18 +49,18 @@ function PostList({
   }, [inView, isLoading, isFetchingMore, hasMore, onLoadMore])
 
   // Обновляем scrollMargin при монтировании и изменении позиции родительского элемента
-  useEffect(() => {
-    if (parentRef.current) {
-      const updateScrollMargin = () => {
-        const offset = parentRef.current?.offsetTop || 0
-        virtualizer.options.scrollMargin = offset
-      }
+  // useEffect(() => {
+  //   if (parentRef.current) {
+  //     const updateScrollMargin = () => {
+  //       const offset = parentRef.current?.offsetTop || 0
+  //       virtualizer.options.scrollMargin = offset
+  //     }
 
-      updateScrollMargin()
-      window.addEventListener('resize', updateScrollMargin)
-      return () => window.removeEventListener('resize', updateScrollMargin)
-    }
-  }, [virtualizer])
+  //     updateScrollMargin()
+  //     window.addEventListener('resize', updateScrollMargin)
+  //     return () => window.removeEventListener('resize', updateScrollMargin)
+  //   }
+  // }, [virtualizer])
 
   if (isLoading && !data.length) {
     return (
@@ -76,11 +76,10 @@ function PostList({
     <div className={className}>
       <div ref={parentRef} className="relative w-full">
         <div
-          style={{ height: `${virtualizer.getTotalSize()}px` }}
+          // style={{ height: `${virtualizer.getTotalSize()}px` }}
           className="w-full"
         >
-          {virtualizer.getVirtualItems().map(virtualItem => {
-            const post = data[virtualItem.index]
+          {data.map(post => {
             if (!post || !post.authorId) return null
 
             const {
@@ -98,43 +97,31 @@ function PostList({
             } = post
 
             return (
-              <div
-                key={id}
-                ref={node => virtualizer.measureElement(node)}
-                data-index={virtualItem.index}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  transform: `translateY(${virtualItem.start}px)`,
-                }}
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, bounce: 0 }}
+                layout="position"
               >
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2, bounce: 0 }}
-                  layout="position"
-                >
-                  <Card
-                    id={id}
-                    authorId={authorId}
-                    avatarUrl={author?.avatarUrl || ''}
-                    cardFor={'post'}
-                    content={content}
-                    username={author?.userName || ''}
-                    likedByUser={likedByUser}
-                    commentsCount={commentCount}
-                    createdAt={createdAt}
-                    likesCount={likeCount}
-                    isFollowing={isFollowing}
-                    onClick={handleCardClick}
-                    viewCount={viewCount}
-                    shareCount={shareCount}
-                  />
-                </motion.div>
-              </div>
+                <Card
+                  id={id}
+                  authorId={authorId}
+                  avatarUrl={author?.avatarUrl || ''}
+                  cardFor={'post'}
+                  content={content}
+                  username={author?.userName || ''}
+                  likedByUser={likedByUser}
+                  commentsCount={commentCount}
+                  createdAt={createdAt}
+                  likesCount={likeCount}
+                  isFollowing={isFollowing}
+                  onClick={handleCardClick}
+                  viewCount={viewCount}
+                  shareCount={shareCount}
+                />
+              </motion.div>
             )
           })}
         </div>
