@@ -4,6 +4,7 @@ import { Button } from '@heroui/react'
 import { IoIosArrowDroprightCircle } from 'react-icons/io'
 import RawHTML from '@/components/ui/EscapeHtml'
 import Link from 'next/link'
+import clsx from 'clsx'
 
 interface CollapsibleTextProps {
   content: string
@@ -11,7 +12,6 @@ interface CollapsibleTextProps {
   title: string
   className?: any
   maxLines?: number
-  maxHeight?: number
 }
 
 export default function CollapsibleText({
@@ -20,7 +20,6 @@ export default function CollapsibleText({
   maxLines = 15,
   href = '',
   title,
-  maxHeight = 600,
 }: CollapsibleTextProps) {
   const [shouldCollapse, setShouldCollapse] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -29,17 +28,15 @@ export default function CollapsibleText({
     const checkHeight = () => {
       if (contentRef.current) {
         const lineHeight = parseInt(
-          window.getComputedStyle(contentRef.current).lineHeight
+          window.getComputedStyle(contentRef.current).lineHeight || '20'
         )
-        const height = contentRef.current.offsetHeight
+        const height = contentRef.current.scrollHeight
         const lines = Math.ceil(height / lineHeight)
-
-        // Устанавливаем флаг сворачивания текста, если он длиннее
-        setShouldCollapse(height > maxHeight)
+        setShouldCollapse(lines > maxLines)
       }
     }
 
-    // Запускаем проверку после полной загрузки содержимого
+    // Используем setTimeout для гарантии, что контент полностью отрендерился
     const timer = setTimeout(checkHeight, 100)
     window.addEventListener('resize', checkHeight)
 
@@ -53,19 +50,25 @@ export default function CollapsibleText({
     <div className="relative">
       <div
         ref={contentRef}
-        className={shouldCollapse ? 'overflow-hidden' : ''}
-        style={shouldCollapse ? { maxHeight: `${maxHeight}px` } : {}}
+        className={clsx(shouldCollapse && 'line-clamp')}
+        style={
+          shouldCollapse
+            ? { WebkitLineClamp: maxLines, lineClamp: maxLines }
+            : {}
+        }
       >
         <RawHTML className={className}>{content}</RawHTML>
       </div>
 
       {shouldCollapse && (
-        <div className="mt-2 text-foreground-400 text-sm">
-          <div className="absolute bottom-[28px] left-0 right-0 h-10 bg-gradient-to-t from-content1 to-transparent z-[100]"></div>
-          <Link href={href} className="flex gap-1 items-center" title={title}>
-            <span>Читать далее</span>
-            <IoIosArrowDroprightCircle />
-          </Link>
+        <div className="mt-0 text-foreground-400 text-sm">
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-content1 to-transparent z-[100]"></div>
+          <div className="relative z-[101] mt-2">
+            <Link href={href} className="flex gap-1 items-center" title={title}>
+              <span>Читать далее</span>
+              <IoIosArrowDroprightCircle />
+            </Link>
+          </div>
         </div>
       )}
     </div>

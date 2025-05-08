@@ -240,6 +240,22 @@
   color: hsl(var(--heroui-danger));
 }
 
+/* Стили для обрезки текста */
+@layer utilities {
+  .line-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Специальные стили для мобильных устройств */
+@media (max-width: 768px) {
+  .code-block pre {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* Темная тема для кода */
 html.dark {
   .code-block {

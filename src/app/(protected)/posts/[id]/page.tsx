@@ -10,6 +10,7 @@ import { Metadata } from 'next'
 import { APP_URL } from '@/app/constants'
 import { apiClient } from '@/services/ApiConfig'
 import { Post } from '@/store/types'
+import { stripHtml } from '@/utils/stripHtml'
 
 export async function generateMetadata({
   params,
@@ -32,17 +33,17 @@ export async function generateMetadata({
       return defaultMetadata()
     }
 
-    // Обрезаем контент до 200 символов для description
+    // Парсим HTML-контент и преобразуем его в текст без тегов
+    const cleanContent = stripHtml(post.content)
+
+    // Обрезаем контент поста до 250 символов
     const truncatedContent =
-      post.content.length > 200
-        ? `${post.content.substring(0, 200)}...`
-        : post.content
+      cleanContent.length > 200
+        ? `${cleanContent.substring(0, 200)}...`
+        : cleanContent
 
     const title = `Пост от ${post.author?.name || 'пользователя'} | Zling`
     const description = truncatedContent
-
-    // Формируем URL для OG изображения
-    const ogImageUrl = `${APP_URL}/api/og?type=post&id=${post.id}`
 
     return {
       title,

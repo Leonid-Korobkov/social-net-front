@@ -8,7 +8,7 @@ import { BsPostcardFill } from 'react-icons/bs'
 import { FaUsers } from 'react-icons/fa6'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { pluralizeRu } from '@/utils/pluralizeRu'
-import { stripHtml } from '@/app/utils/stripHtml'
+import { stripHtml } from '@/utils/stripHtml'
 
 export const alt = 'Профиль пользователя Zling'
 export const size = {

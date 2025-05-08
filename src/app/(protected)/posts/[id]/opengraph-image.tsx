@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { apiClient } from '@/services/ApiConfig'
 import { Post } from '@/store/types'
 import { FaComment, FaHeart } from 'react-icons/fa6'
-import { stripHtml } from '@/app/utils/stripHtml'
+import { stripHtml } from '@/utils/stripHtml'
 
 export const alt = 'Пост в Zling'
 export const size = {
