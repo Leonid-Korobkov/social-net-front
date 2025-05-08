@@ -1,10 +1,9 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
-import { Button } from '@heroui/react'
+import { useState, useEffect } from 'react'
 import { IoIosArrowDroprightCircle } from 'react-icons/io'
 import RawHTML from '@/components/ui/EscapeHtml'
 import Link from 'next/link'
-import clsx from 'clsx'
+import { stripHtml } from '@/utils/stripHtml'
 
 interface CollapsibleTextProps {
   content: string
@@ -22,38 +21,27 @@ export default function CollapsibleText({
   title,
 }: CollapsibleTextProps) {
   const [shouldCollapse, setShouldCollapse] = useState(false)
-  const contentRef = useRef<HTMLDivElement>(null)
+
+  // Константа для максимальной длины текста (примерно 1000 символов)
+  const MAX_TEXT_LENGTH = 1000
 
   useEffect(() => {
-    const checkHeight = () => {
-      if (contentRef.current) {
-        const lineHeight = parseInt(
-          window.getComputedStyle(contentRef.current).lineHeight || '20'
-        )
-        const height = contentRef.current.scrollHeight
-        const lines = Math.ceil(height / lineHeight)
-        setShouldCollapse(lines > maxLines)
-      }
-    }
+    // Преобразуем HTML в обычный текст
+    const plainText = stripHtml(content)
 
-    // Используем setTimeout для гарантии, что контент полностью отрендерился
-    const timer = setTimeout(checkHeight, 100)
-    window.addEventListener('resize', checkHeight)
-
-    return () => {
-      clearTimeout(timer)
-      window.removeEventListener('resize', checkHeight)
-    }
-  }, [content, maxLines])
+    // Проверяем длину текста
+    setShouldCollapse(plainText.length > MAX_TEXT_LENGTH)
+  }, [content])
 
   return (
     <div className="relative">
       <div
-        ref={contentRef}
-        className={clsx(shouldCollapse && 'line-clamp')}
         style={
           shouldCollapse
-            ? { WebkitLineClamp: maxLines, lineClamp: maxLines }
+            ? {
+                maxHeight: '30rem',
+                overflow: 'hidden',
+              }
             : {}
         }
       >
