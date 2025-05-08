@@ -36,7 +36,7 @@ export default function CollapsibleText({
         const lines = Math.ceil(height / lineHeight)
 
         // Устанавливаем флаг сворачивания текста, если он длиннее
-        setShouldCollapse(lines > maxLines || height > maxHeight)
+        setShouldCollapse(height > maxHeight)
       }
     }
 
@@ -54,11 +54,7 @@ export default function CollapsibleText({
     <div className="relative">
       <div
         ref={contentRef}
-        className={`${
-          !isExpanded
-            ? `line-clamp-[15] overflow-hidden max-h-[${maxHeight}px]`
-            : ''
-        }`}
+        className={`${!isExpanded ? `max-h-[${maxHeight}px]` : ''}`}
       >
         <RawHTML className={className}>{content}</RawHTML>
       </div>
