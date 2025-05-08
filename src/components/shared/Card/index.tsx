@@ -239,9 +239,10 @@ const Card = memo(
             }
           }}
         >
-          {cardFor === 'current-post' || cardFor === 'comment' ? (
-            <RawHTML>{content}</RawHTML>
-          ) : (
+          <RawHTML>{content}</RawHTML>
+
+          {/* {cardFor === 'current-post' || cardFor === 'comment' ? (
+          ) asdf : (
             <CollapsibleText
               content={content}
               className={clsx(
@@ -252,7 +253,7 @@ const Card = memo(
               href={`/users/${username}`}
               title={`Переход на страницу автора ${username}`}
             />
-          )}
+          )} */}
         </CardBody>
         {cardFor !== 'search' && (
           <CardFooter className="gap-3 -ml-2">
