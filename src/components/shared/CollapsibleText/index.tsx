@@ -53,7 +53,8 @@ export default function CollapsibleText({
     <div className="relative">
       <div
         ref={contentRef}
-        className={`${shouldCollapse ? `max-h-[${maxHeight}px] overflow-hidden` : ''}`}
+        className={shouldCollapse ? 'overflow-hidden' : ''}
+        style={shouldCollapse ? { maxHeight: `${maxHeight}px` } : {}}
       >
         <RawHTML className={className}>{content}</RawHTML>
       </div>
