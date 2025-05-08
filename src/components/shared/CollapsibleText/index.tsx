@@ -32,7 +32,7 @@ export default function CollapsibleText({
         const lineHeight = parseInt(
           window.getComputedStyle(contentRef.current).lineHeight
         )
-        const height = contentRef.current.scrollHeight
+        const height = contentRef.current.clientHeight
         const lines = Math.ceil(height / lineHeight)
 
         // Устанавливаем флаг сворачивания текста, если он длиннее
