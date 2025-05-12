@@ -24,6 +24,12 @@ export default function MediaCarousel({
   const [isDragging, setIsDragging] = useState(false)
   const [position, setPosition] = useState(0)
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
+
+  // Определение сенсорного устройства
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
+  }, [])
 
   // Определение типа медиа по URL
   useEffect(() => {
@@ -57,19 +63,24 @@ export default function MediaCarousel({
     [onMediaClick, isDragging]
   )
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!carouselRef.current) return
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (!carouselRef.current || isTouchDevice) return
 
-    setIsMouseDown(true)
-    setIsDragging(false)
-    setPosition(e.clientX)
-    setStartX(e.clientX - carouselRef.current.offsetLeft)
-    setScrollLeft(carouselRef.current.scrollLeft)
-    document.body.style.cursor = 'grabbing'
-    e.preventDefault()
-  }, [])
+      setIsMouseDown(true)
+      setIsDragging(false)
+      setPosition(e.clientX)
+      setStartX(e.clientX - carouselRef.current.offsetLeft)
+      setScrollLeft(carouselRef.current.scrollLeft)
+      document.body.style.cursor = 'grabbing'
+      e.preventDefault()
+    },
+    [isTouchDevice]
+  )
 
   const handleMouseUp = useCallback(() => {
+    if (isTouchDevice) return
+
     setIsMouseDown(false)
     document.body.style.cursor = 'default'
 
@@ -77,11 +88,11 @@ export default function MediaCarousel({
     setTimeout(() => {
       setIsDragging(false)
     }, 100)
-  }, [])
+  }, [isTouchDevice])
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (!isMouseDown || !carouselRef.current) return
+      if (!isMouseDown || !carouselRef.current || isTouchDevice) return
 
       e.preventDefault()
       const x = e.clientX
@@ -93,48 +104,14 @@ export default function MediaCarousel({
 
       carouselRef.current.scrollLeft = scrollLeft - walk
     },
-    [isMouseDown, startX, scrollLeft, position]
+    [isMouseDown, startX, scrollLeft, position, isTouchDevice]
   )
-
-  // Добавляем обработчики для touch событий
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (!carouselRef.current) return
-
-    setIsMouseDown(true)
-    setIsDragging(false)
-    setPosition(e.touches[0].clientX)
-    setStartX(e.touches[0].clientX - carouselRef.current.offsetLeft)
-    setScrollLeft(carouselRef.current.scrollLeft)
-  }, [])
-
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
-      if (!isMouseDown || !carouselRef.current) return
-
-      const x = e.touches[0].clientX
-      const walk = x - startX
-
-      if (Math.abs(position - e.touches[0].clientX) > 5) {
-        setIsDragging(true)
-      }
-
-      carouselRef.current.scrollLeft = scrollLeft - walk
-    },
-    [isMouseDown, startX, scrollLeft, position]
-  )
-
-  const handleTouchEnd = useCallback(() => {
-    setIsMouseDown(false)
-
-    // Отключаем режим перетаскивания через небольшую задержку
-    setTimeout(() => {
-      setIsDragging(false)
-    }, 100)
-  }, [])
 
   // Добавляем глобальные слушатели событий для обработки перетаскивания
   // чтобы перетаскивание продолжалось, даже если курсор покидает элемент
   useEffect(() => {
+    if (isTouchDevice) return
+
     // Используем глобальные обработчики для отслеживания мыши за пределами карусели
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (isMouseDown) {
@@ -150,14 +127,12 @@ export default function MediaCarousel({
 
     document.addEventListener('mousemove', handleGlobalMouseMove)
     document.addEventListener('mouseup', handleGlobalMouseUp)
-    document.addEventListener('touchend', handleTouchEnd)
 
     return () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove)
       document.removeEventListener('mouseup', handleGlobalMouseUp)
-      document.removeEventListener('touchend', handleTouchEnd)
     }
-  }, [isMouseDown, handleMouseMove, handleMouseUp, handleTouchEnd])
+  }, [isMouseDown, handleMouseMove, handleMouseUp, isTouchDevice])
 
   // Если нет медиафайлов, не рендерим компонент
   if (!mediaItems || mediaItems.length === 0) return null
@@ -202,7 +177,12 @@ export default function MediaCarousel({
   // Два изображения - сетка 2 колонки
   if (mediaItems.length === 2) {
     return (
-      <div className={cn('grid grid-cols-2 gap-1 w-full  cursor-pointer', className)}>
+      <div
+        className={cn(
+          'grid grid-cols-2 gap-1 w-full  cursor-pointer',
+          className
+        )}
+      >
         {mediaItems.map((item, index) => {
           const optimizedUrl = item.url
 
@@ -242,13 +222,16 @@ export default function MediaCarousel({
         ref={carouselRef}
         className={cn(
           'overflow-x-auto flex w-full gap-1 pt-1 pb-1',
-          'scrollbar-hide cursor-grab select-none',
-          isDragging ? 'cursor-grabbing' : ''
+          'scrollbar-hide select-none',
+          isTouchDevice ? 'snap-x snap-mandatory' : 'cursor-grab',
+          isDragging && !isTouchDevice ? 'cursor-grabbing' : ''
         )}
-        style={{ WebkitOverflowScrolling: 'touch', paddingLeft: '1rem' }}
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          paddingLeft: '1rem',
+          scrollBehavior: isTouchDevice ? 'smooth' : 'auto',
+        }}
         onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
       >
         {mediaItems.map((item, index) => {
           const optimizedUrl = item.url
@@ -256,7 +239,10 @@ export default function MediaCarousel({
           return (
             <div
               key={index}
-              className="shrink-0 first:pl-0 last:pr-4 snap-start"
+              className={cn(
+                'shrink-0 first:pl-0 last:pr-4',
+                isTouchDevice ? 'snap-center' : 'snap-start'
+              )}
               onClick={e => handleItemClick(index, e as React.MouseEvent)}
             >
               <div className="rounded-lg overflow-hidden h-full w-full border border-default-200 ">

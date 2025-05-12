@@ -305,7 +305,7 @@ export default function MediaModal({
                 slideRefs.current[index] = el
               }}
               className={cn(
-                'min-w-full h-full flex-shrink-0 flex items-center justify-center px-4',
+                'min-w-full h-full flex-shrink-0 flex items-center justify-center',
                 'snap-center'
               )}
             >
