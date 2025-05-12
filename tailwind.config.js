@@ -20,8 +20,8 @@ export default {
         'border-flow': 'border-flow 3s linear infinite'
       },
       screens: {
-        touch: { raw: '(hover: none)' },
-        hover: { raw: '(hover: hover)' }
+        touchDevice: { raw: '(hover: none)' },
+        hoverDevice: { raw: '(hover: hover)' }
       }
     }
   },

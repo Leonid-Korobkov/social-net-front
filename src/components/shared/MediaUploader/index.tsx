@@ -207,7 +207,7 @@ export default function MediaUploader({
                 {/* Actions */}
 
                 {/* Кнопка удаления для десктопных устройств (видна только при наведении) */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:block touch:hidden">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hoverDevice:block touchDevice:hidden">
                   <Button
                     isIconOnly
                     color="danger"
@@ -223,7 +223,7 @@ export default function MediaUploader({
                 </div>
 
                 {/* Кнопка удаления для мобильных устройств (всегда видимая) */}
-                <div className="absolute top-2 left-2 touch:block hover:hidden">
+                <div className="absolute top-2 left-2 touchDevice:block hoverDevice:hidden">
                   <Button
                     isIconOnly
                     color="danger"
