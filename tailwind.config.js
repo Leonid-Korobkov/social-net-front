@@ -18,6 +18,10 @@ export default {
       },
       animation: {
         'border-flow': 'border-flow 3s linear infinite'
+      },
+      screens: {
+        touch: { raw: '(hover: none)' },
+        hover: { raw: '(hover: hover)' }
       }
     }
   },

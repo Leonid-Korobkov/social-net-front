@@ -53,7 +53,9 @@ export default function MediaUploader({
   } = useUploadMedia({
     maxFiles,
     onSuccess: urls => {
-      onMediaChange(urls)
+      if (urls && urls.length > 0) {
+        onMediaChange(urls)
+      }
     },
   })
 
@@ -67,6 +69,7 @@ export default function MediaUploader({
       // Важно здесь использовать getUploadedUrls() а не фильтровать currentUrls,
       // чтобы получить актуальное состояние после удаления
       const remainingUrls = getUploadedUrls()
+      console.log('После удаления остались URLs:', remainingUrls)
 
       // Обновляем родительский компонент с новым списком URL
       // Это уменьшит счетчик прикрепленных файлов в родительском компоненте
@@ -203,18 +206,36 @@ export default function MediaUploader({
                 )}
                 {/* Actions */}
 
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                {/* Кнопка удаления для десктопных устройств (видна только при наведении) */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:block touch:hidden">
                   <Button
                     isIconOnly
                     color="danger"
                     variant="flat"
                     size="sm"
                     onClick={e => {
-                      e.stopPropagation()
+                      // e.stopPropagation()
                       handleRemove(upload.id)
                     }}
                   >
                     <IoTrash />
+                  </Button>
+                </div>
+
+                {/* Кнопка удаления для мобильных устройств (всегда видимая) */}
+                <div className="absolute top-2 left-2 touch:block hover:hidden">
+                  <Button
+                    isIconOnly
+                    color="danger"
+                    variant="solid"
+                    size="sm"
+                    className="bg-danger/90 backdrop-blur-sm shadow-md"
+                    onClick={e => {
+                      // e.stopPropagation()
+                      handleRemove(upload.id)
+                    }}
+                  >
+                    <IoTrash size={16} />
                   </Button>
                 </div>
 
@@ -227,7 +248,7 @@ export default function MediaUploader({
                       variant="flat"
                       size="sm"
                       onClick={e => {
-                        e.stopPropagation()
+                        // e.stopPropagation()
                         handleRemove(upload.id)
                       }}
                     >
@@ -264,7 +285,7 @@ export default function MediaUploader({
             color="danger"
             variant="flat"
             onClick={async e => {
-              e.stopPropagation()
+              // e.stopPropagation()
 
               // Очищаем все файлы (включая удаление с сервера)
               await clearAll()

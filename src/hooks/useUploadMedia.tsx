@@ -49,7 +49,6 @@ interface UseUploadMediaOptions {
   maxFiles?: number
   onSuccess?: (urls: string[]) => void
   onError?: (error: string) => void
-  autoUpload?: boolean // Автоматически загружать файлы при добавлении
 }
 
 // Функция для определения браузера Safari
@@ -176,12 +175,7 @@ const prepareFileForUpload = async (file: File): Promise<File> => {
 }
 
 export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
-  const {
-    maxFiles = MAX_FILES,
-    onSuccess,
-    onError,
-    autoUpload = true,
-  } = options
+  const { maxFiles = MAX_FILES, onSuccess, onError } = options
 
   // Получаем данные из Zustand и их преобразуем в рабочий формат
   const mediaUploadsStore = useStore(
@@ -198,6 +192,13 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const initialLoadRef = useRef(false) // Флаг для отслеживания начальной загрузки
+
+  // Получить все успешно загруженные URL
+  const getUploadedUrls = useCallback(() => {
+    return uploads
+      .filter(upload => upload.status === 'success' && upload.url)
+      .map(upload => upload.url as string)
+  }, [uploads])
 
   // Инициализация данных после загрузки из localStorage
   useEffect(() => {
@@ -228,7 +229,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
         initialLoadRef.current = true // Отмечаем, что начальная загрузка выполнена
       }
     }
-  }, [mediaUploadsStore])
+  }, [])
 
   // Синхронизация с Zustand: сохраняем только успешные медиа-загрузки
   useEffect(() => {
@@ -324,7 +325,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
             if (onSuccess && successUrls.length > 0) {
               onSuccess(successUrls)
             }
-          }, 10)
+          }, 0)
 
           return updatedUploads
         })
@@ -349,7 +350,14 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
         toast.error(errorMessage)
       }
     },
-    [uploads, onSuccess, onError, uploadToCloudinary, uploadToCloudinaryChunked]
+    [
+      uploads,
+      onSuccess,
+      onError,
+      uploadToCloudinary,
+      uploadToCloudinaryChunked,
+      getUploadedUrls,
+    ]
   )
 
   // Обработчик добавления файлов
@@ -462,24 +470,17 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
       setUploads(prev => {
         const updatedUploads = [...prev, ...newUploads]
 
-        // Если autoUpload включен, загружаем файлы после обновления состояния
-        if (autoUpload) {
-          // Используем setTimeout для асинхронной загрузки после обновления состояния
-          setTimeout(() => {
-            newUploads.forEach(upload => {
-              // Проверяем, что файл с этим ID еще не загружается
-              if (!uploadedFiles.has(upload.id)) {
-                uploadedFiles.add(upload.id)
-                uploadFileDirectly(upload)
-              }
-            })
-          }, 0)
-        }
+        // Используем setTimeout для асинхронной загрузки после обновления состояния
+        setTimeout(() => {
+          newUploads.forEach(upload => {
+            uploadFileDirectly(upload)
+          })
+        }, 0)
 
         return updatedUploads
       })
     },
-    [uploads, maxFiles, autoUpload, uploadFileDirectly]
+    [uploads, maxFiles, uploadFileDirectly]
   )
 
   // Функция для загрузки файла по ID (используется для повторной загрузки)
@@ -568,13 +569,6 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
     // Очищаем Zustand хранилище
     setMediaUploadsStore([])
   }, [uploads, setMediaUploadsStore])
-
-  // Получить все успешно загруженные URL
-  const getUploadedUrls = useCallback(() => {
-    return uploads
-      .filter(upload => upload.status === 'success' && upload.url)
-      .map(upload => upload.url as string)
-  }, [uploads])
 
   // Обработчики событий перетаскивания
   const handleDragEnter = useCallback((e: React.DragEvent<HTMLDivElement>) => {
