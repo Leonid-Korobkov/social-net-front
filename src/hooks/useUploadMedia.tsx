@@ -55,8 +55,8 @@ interface UseUploadMediaOptions {
 // Функция для определения браузера Safari
 const isSafari = () => {
   if (typeof window === 'undefined') return false
-  const userAgent = navigator.userAgent.toLowerCase()
-  return userAgent.includes('safari') && !userAgent.includes('chrome')
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  return isSafari
 }
 
 // Вспомогательная функция для создания превью URL

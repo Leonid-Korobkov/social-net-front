@@ -223,7 +223,7 @@ export default function MediaCarousel({
         className={cn(
           'overflow-x-auto flex w-full gap-1 pt-1 pb-1',
           'scrollbar-hide select-none',
-          isTouchDevice ? 'snap-x snap-mandatory' : 'cursor-grab',
+          isTouchDevice ? '' : 'cursor-grab',
           isDragging && !isTouchDevice ? 'cursor-grabbing' : ''
         )}
         style={{
@@ -239,10 +239,7 @@ export default function MediaCarousel({
           return (
             <div
               key={index}
-              className={cn(
-                'shrink-0 first:pl-0 last:pr-4',
-                isTouchDevice ? 'snap-center' : 'snap-start'
-              )}
+              className={cn('shrink-0 first:pl-0 last:pr-4', 'snap-start')}
               onClick={e => handleItemClick(index, e as React.MouseEvent)}
             >
               <div className="rounded-lg overflow-hidden h-full w-full border border-default-200 ">
