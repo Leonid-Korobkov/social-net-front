@@ -1,7 +1,7 @@
 import { BASE_URL } from '@/app/constants'
 import { useUserStore } from '@/store/user.store'
 import { UserSettingsStore } from '@/store/userSettings.store'
-import axios, { AxiosError, AxiosHeaders } from 'axios'
+import axios, { AxiosError, AxiosHeaders, AxiosResponse } from 'axios'
 import Cookies from 'js-cookie'
 import toast from 'react-hot-toast'
 import { useStore } from 'zustand'
@@ -32,23 +32,40 @@ apiClient.interceptors.request.use(config => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
-  config.timeout = 5000
+
+  // Устанавливаем таймаут только для запросов, не связанных с загрузкой медиа
+  if (
+    !config.url?.includes('/media/upload') &&
+    !(
+      config.headers['Content-Type'] &&
+      String(config.headers['Content-Type']).includes('multipart/form-data')
+    )
+  ) {
+    config.timeout = 5000 // Таймаут 5 секунд для обычных запросов
+  }
+
   return config
 })
 
-// apiClient.interceptors.response.use(
-//   response => response.data,
-//   error => {
-//     if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
-//       toast.error('Сервер не отвечает. Пожалуйста, попробуйте позже.')
-//     }
-//   }
-// )
-
-// Интерцептор для обработки ошибок
+// Интерцептор для обработки ответов
 apiClient.interceptors.response.use(
-  response => response.data,
+  (response: AxiosResponse) => {
+    // Для мультипарт запросов возвращаем полный ответ, для остальных только data
+    const contentType = response.headers['content-type'] || ''
+    const reqContentType = String(response.config.headers['Content-Type'] || '')
+
+    if (
+      contentType.includes('multipart/form-data') ||
+      response.config.url?.includes('/media/upload') ||
+      reqContentType.includes('multipart/form-data')
+    ) {
+      return response
+    }
+
+    return response.data
+  },
   error => {
+    console.error('API response error:', error)
     if (error.response?.status === 401) {
       useUserStore.getState().logout()
       useStore(UserSettingsStore, state => state.logout)

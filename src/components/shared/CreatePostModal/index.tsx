@@ -16,6 +16,9 @@ import { toast } from 'react-hot-toast'
 import { FaRegSave } from 'react-icons/fa'
 import { IoMdCreate } from 'react-icons/io'
 import CreatePost from '../PostCreate'
+import { useState } from 'react'
+import MediaUploader from '../MediaUploader'
+import { UserSettingsStore } from '@/store/userSettings.store'
 
 interface CreatePostModalProps {
   isOpen: boolean
@@ -24,6 +27,8 @@ interface CreatePostModalProps {
 
 function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
   const { mutateAsync: createPost, isPending: isLoading } = useCreatePost()
+
+  const [mediaUrls, setMediaUrls] = useState<string[]>([])
 
   // Используем наш хук для редактора
   const {
@@ -38,6 +43,8 @@ function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
 
   // Обработчик успешного создания поста
   const handleSuccess = () => {
+    // Очищаем медиа-загрузки из localStorage после успешной публикации
+    UserSettingsStore.getState().resetMediaUploads()
     onOpenChange()
   }
 
@@ -50,12 +57,16 @@ function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
       }
 
       const toastId = toast.loading('Создание поста...')
-      const promise = createPost({ content: getHTML() })
+      const promise = createPost({
+        content: getHTML(),
+        media: mediaUrls,
+      })
 
       promise
         .then(() => {
           toast.success('Пост успешно создан!')
           clearContent()
+          setMediaUrls([])
           handleSuccess()
         })
         .catch(err => {
@@ -112,6 +123,13 @@ function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
                 characterCount={characterCount}
                 wordCount={wordCount}
               />
+              {/* Компонент для загрузки медиа */}
+              <div className="mt-4">
+                <h3 className="text-medium font-semibold mb-2">
+                  Добавить медиафайлы
+                </h3>
+                <MediaUploader onMediaChange={setMediaUrls} maxFiles={10} />
+              </div>
             </ModalBody>
             <Divider />
             <ModalFooter>

@@ -92,6 +92,23 @@
 }
 .tippy-content {
   position: relative;
-  padding: 6px 6px;
+  padding: 0;
+  overflow-x: auto;
   z-index: 1;
+}
+
+/* Стили для меню редактора */
+.tippy-content {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: hsl(var(--heroui-default-300)) transparent; /* Firefox */
+}
+
+/* Стили для скроллбара Webkit (Chrome, Safari, Edge) */
+.tippy-content::-webkit-scrollbar {
+  @apply w-1;
+  height: 1px;
+}
+
+.tippy-content::-webkit-scrollbar-track {
+  @apply bg-transparent;
 }

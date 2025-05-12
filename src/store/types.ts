@@ -53,6 +53,8 @@ export type Post = {
   createdAt: Date
   likedByUser?: boolean
   isFollowing?: boolean
+  media?: string[] // Массив URL медиафайлов
+  idEdited?: boolean
 }
 
 export type Like = {
@@ -84,4 +86,17 @@ export type CommentLike = {
   user?: User
   userId?: string
   createdAt: Date
+}
+
+// Перечисление типов медиафайлов
+export enum MediaType {
+  IMAGE = 'image',
+  VIDEO = 'video',
+}
+
+// Тип для медиа-элемента
+export interface MediaItem {
+  url: string
+  type: MediaType
+  thumbnail?: string // Для видео может быть превью
 }

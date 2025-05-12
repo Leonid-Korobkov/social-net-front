@@ -1,6 +1,30 @@
 import { createStore } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { User } from './types'
+import { User, MediaType } from './types'
+
+// Определяем интерфейс для загружаемых файлов
+export interface UploadStatus {
+  id: string
+  file: File
+  progress: number
+  status: 'pending' | 'uploading' | 'success' | 'error' | 'removing'
+  url?: string
+  error?: string
+  type: MediaType
+}
+
+// Версия UploadStatus для хранения в localStorage (без File объекта)
+export interface StorableUpload {
+  id: string
+  progress: number
+  status: 'pending' | 'uploading' | 'success' | 'error' | 'removing'
+  url?: string
+  error?: string
+  type: MediaType
+  fileName?: string
+  fileSize?: number
+  fileType?: string
+}
 
 interface initialUserSettingsStore {
   reduceAnimation: boolean
@@ -14,6 +38,9 @@ interface initialUserSettingsStore {
   postText: string
   setPostText: (str: string) => void
   reset: () => void
+  mediaUploads: StorableUpload[] // Изменил на сериализуемый тип
+  setMediaUploads: (uploads: StorableUpload[]) => void
+  resetMediaUploads: () => void
 
   logout: () => void
   viewedPosts: string[]
@@ -40,6 +67,9 @@ const initialState: initialUserSettingsStore = {
   postText: '',
   setPostText: (str: string) => {},
   reset: () => {},
+  mediaUploads: [], // Изменил на новый ключ
+  setMediaUploads: (uploads: StorableUpload[]) => {},
+  resetMediaUploads: () => {},
 
   logout: () => {},
   viewedPosts: [],
@@ -76,6 +106,10 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
         set(state => ({ postText: str }))
       },
       reset: () => set({ postText: '' }),
+      setMediaUploads: (uploads: StorableUpload[]) => {
+        set(state => ({ mediaUploads: uploads }))
+      },
+      resetMediaUploads: () => set({ mediaUploads: [] }),
 
       logout: () => {
         set(initialState)
@@ -111,8 +145,37 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
     }),
     {
       name: 'user-settings',
+      partialize: state => ({
+        ...state,
+        mediaUploads: state.mediaUploads.filter(
+          upload => upload.status === 'success' && upload.url
+        ),
+      }),
     }
   )
 )
+
+// Вспомогательные функции для конвертации между UploadStatus и StorableUpload
+export const uploadToStorable = (upload: UploadStatus): StorableUpload => ({
+  id: upload.id,
+  progress: upload.progress,
+  status: upload.status,
+  url: upload.url,
+  error: upload.error,
+  type: upload.type,
+  fileName: upload.file.name,
+  fileSize: upload.file.size,
+  fileType: upload.file.type,
+})
+
+export const storableToUpload = (storable: StorableUpload): UploadStatus => ({
+  id: storable.id,
+  file: new File([], storable.fileName || 'file', { type: storable.fileType }),
+  progress: storable.progress,
+  status: storable.status,
+  url: storable.url,
+  error: storable.error,
+  type: storable.type,
+})
 
 // export const useUserSettingsStore = createSelectors(UserSettingsStore)

@@ -40,7 +40,7 @@ export const useCreatePost = () => {
   const currentUser = useStore(UserSettingsStore, state => state.current)!
 
   return useMutation({
-    mutationFn: async (content: { content: string }) => {
+    mutationFn: async (content: { content: string; media?: string[] }) => {
       try {
         return await apiClient.post<any, Post>(`/posts`, content)
       } catch (error) {

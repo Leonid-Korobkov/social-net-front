@@ -4,6 +4,7 @@ import { User } from '@/store/types'
 import Link from 'next/link'
 import { pluralizeRu } from '@/utils/pluralizeRu'
 import { RiUserFollowFill } from 'react-icons/ri'
+import { useCloudinaryImage } from '@/hooks/useCloudinaryImage'
 
 interface UserCardProps {
   user: User
@@ -11,19 +12,32 @@ interface UserCardProps {
 }
 
 function UserCard({ user, className }: UserCardProps) {
+  const { getOptimizedUrl } = useCloudinaryImage({
+    src: user?.avatarUrl,
+    width: 400,
+  })
   return (
     <>
       <Link href={`/users/${user.userName}`} className={className}>
         <Card>
           <CardBody className="flex flex-row items-center gap-4">
             <div>
-              <Avatar src={user.avatarUrl} name={user.userName} size="md" />
+              <Avatar
+                src={getOptimizedUrl(user.avatarUrl)}
+                name={user.userName}
+                size="md"
+              />
             </div>
             <div className="flex flex-col w-full">
               <div className="text-sm font-semibold flex justify-between items-center">
                 <span>@{user.userName}</span>
                 {user.isFollowing && (
-                  <Chip size='sm' color="success" variant="flat" className="opacity-65">
+                  <Chip
+                    size="sm"
+                    color="success"
+                    variant="flat"
+                    className="opacity-65"
+                  >
                     <RiUserFollowFill />
                   </Chip>
                 )}

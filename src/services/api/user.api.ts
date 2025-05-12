@@ -70,7 +70,6 @@ export const useLogin = () => {
 
         return response
       } catch (error) {
-        console.log(error)
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },

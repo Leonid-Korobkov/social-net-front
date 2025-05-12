@@ -93,8 +93,7 @@ export default function SettingsProfile({
       promise
         .then(() => {
           toast.success('Настройки сохранены!')
-          if (user!.reduceAnimation !== settings.reduceAnimation) {
-            console.log('reduce')
+          if (settings.reduceAnimation) {
             setReduce(settings.reduceAnimation)
             setShowReloadConfirm(true)
           } else {

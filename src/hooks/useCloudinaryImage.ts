@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 export interface UseCloudinaryImageProps {
-  src: string | undefined
+  src?: string | undefined
   width?: number
 }
 
@@ -17,18 +17,21 @@ export interface CloudinaryTransformations {
 }
 
 export const useCloudinaryImage = ({
-  src,
+  src = '',
   width = 800,
 }: UseCloudinaryImageProps) => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  const getCloudinaryUrl = (transformations: CloudinaryTransformations) => {
-    if (!src) return ''
-    if (!src.includes('cloudinary.com')) return src
+  const getCloudinaryUrl = (
+    transformations: CloudinaryTransformations,
+    customSrc = src
+  ) => {
+    if (!customSrc) return ''
+    if (!customSrc.includes('cloudinary.com')) return customSrc
 
-    const baseUrl = src.split('upload/')[0] + 'upload/'
-    const imagePath = src.split('upload/')[1]
+    const baseUrl = customSrc.split('upload/')[0] + 'upload/'
+    const imagePath = customSrc.split('upload/')[1]
 
     const {
       format = 'auto',

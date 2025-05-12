@@ -43,7 +43,6 @@ export const StoreProvider = ({
     <QueryClientProvider client={queryClient}>
       {children}
       <BatchViewSender />
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   )
 }

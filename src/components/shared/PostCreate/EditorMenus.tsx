@@ -60,9 +60,9 @@ export const EditorMenus = ({ editor }: EditorMenusProps) => {
       <FloatingMenu
         editor={editor}
         tippyOptions={getMenuConfig('shift-away')}
-        className="flex gap-1 items-center max-w-[100vw]"
+        className="flex gap-1 p-1 items-center max-w-[90vw]"
       >
-        <div className="editor-menu overflow-x-auto max-w-[100vw]">
+        <div className="editor-menu max-w-[90vw]">
           {/* Группа отмены/повтора */}
           <button
             onClick={() => editor.chain().focus().undo().run()}
@@ -189,9 +189,9 @@ export const EditorMenus = ({ editor }: EditorMenusProps) => {
         updateDelay={0}
         editor={editor}
         tippyOptions={getMenuConfig('shift-away')}
-        className="flex gap-1 items-center max-w-[100vw] overflow-x-auto"
+        className="flex gap-1 items-center max-w-[90vw] p-1"
       >
-        <div className="editor-menu overflow-x-auto max-w-[100vw]">
+        <div className="editor-menu max-w-[90vw]">
           {/* Группа отмены/повтора */}
           <button
             onClick={() => editor.chain().focus().undo().run()}
