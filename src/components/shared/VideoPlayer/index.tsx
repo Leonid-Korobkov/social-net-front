@@ -2,12 +2,7 @@
 
 import { Button, Slider, cn } from '@heroui/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  IoMdPause,
-  IoMdPlay,
-  IoMdVolumeHigh,
-  IoMdVolumeMute,
-} from 'react-icons/io'
+import { IoVolumeHigh, IoVolumeMute } from 'react-icons/io5'
 
 interface VideoPlayerProps {
   src: string
@@ -17,6 +12,7 @@ interface VideoPlayerProps {
   controls?: boolean
   loop?: boolean
   muted?: boolean
+  mode?: 'carousel' | 'modal'
 }
 
 export default function VideoPlayer({
@@ -27,18 +23,21 @@ export default function VideoPlayer({
   controls = true,
   loop = true,
   muted = true,
+  mode = 'carousel',
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(muted)
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isInViewport, setIsInViewport] = useState(false)
-  const [volume, setVolume] = useState(1)
   const [isHovered, setIsHovered] = useState(false)
   const [isDraggingProgress, setIsDraggingProgress] = useState(false)
+  const [videoWidth, setVideoWidth] = useState(0)
+  const [videoHeight, setVideoHeight] = useState(0)
 
   // Функция для форматирования времени (в секундах) в формат MM:SS
   const formatTime = (time: number) => {
@@ -54,7 +53,11 @@ export default function VideoPlayer({
     const currentTime = videoRef.current.currentTime
     const duration = videoRef.current.duration
     setCurrentTime(currentTime)
-    setProgress((currentTime / duration) * 100)
+
+    // Плавное обновление прогресса
+    requestAnimationFrame(() => {
+      setProgress((currentTime / duration) * 100)
+    })
   }, [isDraggingProgress])
 
   // Изменение прогресса воспроизведения через перетаскивание
@@ -86,43 +89,55 @@ export default function VideoPlayer({
     []
   )
 
-  // Обработчик изменения громкости
-  const handleVolumeChange = useCallback((value: number | number[]) => {
-    const newVolume = Array.isArray(value) ? value[0] : value
-    setVolume(newVolume)
-    if (videoRef.current) {
-      videoRef.current.volume = newVolume
-      setIsMuted(newVolume === 0)
-    }
-  }, [])
-
   // Управление воспроизведением
-  const togglePlay = useCallback(() => {
-    if (!videoRef.current) return
+  const togglePlay = useCallback(
+    (e?: React.MouseEvent) => {
+      // Важно: не блокируем всплытие, иначе не работает в модальном окне
+      // e?.stopPropagation();
 
-    if (isPlaying) {
-      videoRef.current.pause()
-    } else {
-      videoRef.current.play()
-    }
+      if (!videoRef.current) return
 
-    setIsPlaying(!isPlaying)
-  }, [isPlaying])
+      try {
+        if (isPlaying) {
+          videoRef.current.pause()
+          setIsPlaying(false)
+        } else {
+          videoRef.current
+            .play()
+            .then(() => setIsPlaying(true))
+            .catch(error => {
+              console.error('Ошибка воспроизведения:', error)
+              setIsPlaying(false)
+            })
+        }
+      } catch (error) {
+        console.error('Ошибка при управлении воспроизведением:', error)
+      }
+    },
+    [isPlaying]
+  )
 
   // Управление звуком
-  const toggleMute = useCallback(() => {
-    if (!videoRef.current) return
+  const toggleMute = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation() // Предотвращаем всплытие события
 
-    const newMutedState = !isMuted
-    videoRef.current.muted = newMutedState
-    setIsMuted(newMutedState)
-  }, [isMuted])
+      if (!videoRef.current) return
 
-  // Обработчик события loadedmetadata для установки длительности видео
+      const newMutedState = !isMuted
+      videoRef.current.muted = newMutedState
+      setIsMuted(newMutedState)
+    },
+    [isMuted]
+  )
+
+  // Обработчик события loadedmetadata для установки длительности видео и размеров
   const handleLoadedMetadata = useCallback(() => {
     if (!videoRef.current) return
 
     setDuration(videoRef.current.duration)
+    setVideoWidth(videoRef.current.videoWidth)
+    setVideoHeight(videoRef.current.videoHeight)
   }, [])
 
   // Обработка окончания воспроизведения
@@ -133,19 +148,23 @@ export default function VideoPlayer({
 
     if (loop && videoRef.current) {
       videoRef.current.currentTime = 0
-      videoRef.current.play()
-      setIsPlaying(true)
+      videoRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(e =>
+          console.error('Ошибка воспроизведения после завершения:', e)
+        )
     }
   }, [loop])
 
-  // Наблюдатель за видимостью видео для автовоспроизведения
+  // Наблюдатель за видимостью видео для автовоспроизведения (только для карусели)
   useEffect(() => {
-    if (!videoRef.current || !autoPlay) return
+    if (!videoRef.current || !autoPlay || mode === 'modal') return
 
     const options = {
       root: null,
       rootMargin: '0px',
-      threshold: 0.7, // 70% видео должно быть видимым
+      threshold: 0.6, // 60% видео должно быть видимым
     }
 
     const observer = new IntersectionObserver(entries => {
@@ -171,7 +190,19 @@ export default function VideoPlayer({
     return () => {
       observer.disconnect()
     }
-  }, [autoPlay, isPlaying])
+  }, [autoPlay, isPlaying, mode])
+
+  // Автовоспроизведение в модальном режиме, если указан autoPlay
+  useEffect(() => {
+    if (mode === 'modal' && autoPlay && videoRef.current && !isPlaying) {
+      videoRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(e =>
+          console.error('Ошибка автовоспроизведения в модальном режиме:', e)
+        )
+    }
+  }, [autoPlay, isPlaying, mode])
 
   // Инициализация видео при монтировании компонента
   useEffect(() => {
@@ -193,9 +224,58 @@ export default function VideoPlayer({
     }
   }, [handleEnded, handleLoadedMetadata, handleTimeUpdate, muted])
 
+  // Для карусели - адаптируем стили для совместимости с изображениями
+  if (mode === 'carousel') {
+    return (
+      <div
+        ref={containerRef}
+        className={cn(
+          'relative h-full flex items-center justify-center',
+          className
+        )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <video
+          ref={videoRef}
+          src={src}
+          poster={thumbnail}
+          className="rounded-lg border border-default-200 object-contain"
+          playsInline
+          onClick={togglePlay}
+          muted={isMuted}
+          loop={loop}
+          style={{
+            height: 'auto',
+            maxHeight: '100%',
+            maxWidth: '100%',
+            width: 'auto',
+          }}
+        />
+
+        <button
+          onClick={toggleMute}
+          className="absolute bottom-2 right-2 text-white backdrop-blur-md bg-black/30 hover:bg-black/40 p-1 rounded-full z-10"
+        >
+          {isMuted ? <IoVolumeMute size={16} /> : <IoVolumeHigh size={16} />}
+        </button>
+      </div>
+    )
+  }
+
+  // Для модального режима
   return (
     <div
-      className={cn('relative group', className)}
+      ref={containerRef}
+      className={cn(
+        'relative group flex items-center justify-center w-full h-full',
+        'px-4 py-4',
+        className
+      )}
+      style={{
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -204,99 +284,68 @@ export default function VideoPlayer({
         ref={videoRef}
         src={src}
         poster={thumbnail}
-        className="w-full h-full object-contain cursor-pointer"
+        className="absolute object-cover w-full h-full"
         playsInline
         onClick={togglePlay}
         muted={isMuted}
         loop={loop}
+        style={{
+          height: 'auto',
+          maxHeight: '100%',
+          maxWidth: '100%',
+          width: 'auto',
+        }}
       />
 
-      {/* Кнопка Play/Pause по центру (показывается при наведении или паузе) */}
-      {controls && (isHovered || !isPlaying) && (
-        <Button
-          isIconOnly
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/50 text-white"
-          variant="flat"
-          radius="full"
-          size="lg"
-          onClick={togglePlay}
-        >
-          {isPlaying ? <IoMdPause size={24} /> : <IoMdPlay size={24} />}
-        </Button>
-      )}
-
-      {/* Контроллеры внизу видео */}
+      {/* Элементы управления для модального окна */}
       {controls && (
-        <div
-          className={cn(
-            'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent px-2 pt-8 pb-2 transition-opacity',
-            isHovered || isDraggingProgress ? 'opacity-100' : 'opacity-0'
-          )}
-        >
+        <>
+          {/* Время видео */}
+          <div
+            className={cn(
+              'absolute bottom-3 left-3 text-xs text-white bg-black/40 px-2 py-1 rounded transition-opacity z-10',
+              isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
+            )}
+          >
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </div>
+
+          {/* Кнопка звука */}
+          <button
+            onClick={toggleMute}
+            className={cn(
+              'absolute bottom-3 right-3 text-white backdrop-blur-md bg-black/40 hover:bg-black/50 p-1 rounded-full transition-opacity z-10',
+              isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
+            )}
+          >
+            {isMuted ? <IoVolumeMute size={16} /> : <IoVolumeHigh size={16} />}
+          </button>
+
           {/* Полоса прогресса */}
           <div
-            ref={progressRef}
-            className="w-full h-2 bg-white/30 rounded-full mb-2 cursor-pointer relative"
-            onClick={handleProgressClick}
+            className={cn(
+              'absolute bottom-0 left-0 right-0 transition-all',
+              isDraggingProgress ? 'h-2' : 'h-1',
+              isHovered || isDraggingProgress ? 'opacity-100' : 'opacity-0'
+            )}
           >
-            <Slider
-              value={progress}
-              onChange={handleProgressChange}
-              step={0.1}
-              minValue={0}
-              maxValue={100}
-              size="sm"
-              color="primary"
-              classNames={{
-                base: 'w-full h-2',
-                track: 'h-2 rounded-full bg-white/30',
-                filler: 'h-2 rounded-full bg-primary',
-                thumb: 'w-3 h-3 bg-primary',
-              }}
-              aria-label="Прогресс видео"
-              onPointerDown={() => setIsDraggingProgress(true)}
-              onPointerUp={() => setIsDraggingProgress(false)}
-            />
-          </div>
-
-          {/* Время воспроизведения и кнопки управления */}
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-white">
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* Регулятор громкости */}
-              <div className="flex items-center">
-                <Button
-                  isIconOnly
-                  className="text-white"
-                  variant="light"
-                  size="sm"
-                  onClick={toggleMute}
-                >
-                  {isMuted ? (
-                    <IoMdVolumeMute size={18} />
-                  ) : (
-                    <IoMdVolumeHigh size={18} />
-                  )}
-                </Button>
-
-                <div className="w-16 hidden md:block">
-                  <Slider
-                    value={isMuted ? 0 : volume}
-                    onChange={handleVolumeChange}
-                    step={0.1}
-                    minValue={0}
-                    maxValue={1}
-                    size="sm"
-                    aria-label="Громкость"
-                  />
-                </div>
-              </div>
+            <div
+              ref={progressRef}
+              className="w-full h-full bg-white/20 cursor-pointer"
+              onClick={handleProgressClick}
+              onMouseDown={() => setIsDraggingProgress(true)}
+              onMouseUp={() => setIsDraggingProgress(false)}
+              onMouseLeave={() => setIsDraggingProgress(false)}
+              onTouchStart={() => setIsDraggingProgress(true)}
+              onTouchEnd={() => setIsDraggingProgress(false)}
+            >
+              <div
+                className="h-full bg-white transition-all duration-300 ease-linear"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )

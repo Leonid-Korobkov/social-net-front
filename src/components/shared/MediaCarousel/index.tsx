@@ -159,14 +159,16 @@ export default function MediaCarousel({
             />
           </div>
         ) : (
-          <div
-            className="rounded-lg overflow-hidden border border-default-200"
-            style={{ maxWidth: '100%', maxHeight: '430px' }}
-          >
+          <div className="flex justify-start" style={{ maxWidth: '100%' }}>
             <VideoPlayer
               src={item.url}
               thumbnail={item.thumbnail}
               className="max-h-[430px]"
+              autoPlay={true}
+              controls={true}
+              loop={true}
+              muted={true}
+              mode="carousel"
             />
           </div>
         )}
@@ -199,11 +201,18 @@ export default function MediaCarousel({
                   className="w-full h-full max-h-[400px] object-cover"
                 />
               ) : (
-                <VideoPlayer
-                  src={item.url}
-                  thumbnail={item.thumbnail}
-                  className="w-full h-full max-h-[400px] object-cover"
-                />
+                <div className="w-full h-full flex items-center justify-start">
+                  <VideoPlayer
+                    src={item.url}
+                    thumbnail={item.thumbnail}
+                    className="w-full h-full max-h-[430px]"
+                    autoPlay={true}
+                    controls={true}
+                    loop={true}
+                    muted={true}
+                    mode="carousel"
+                  />
+                </div>
               )}
             </div>
           )
@@ -242,22 +251,29 @@ export default function MediaCarousel({
               className={cn('shrink-0 first:pl-0 last:pr-4', 'snap-start')}
               onClick={e => handleItemClick(index, e as React.MouseEvent)}
             >
-              <div className="rounded-lg overflow-hidden h-full w-full border border-default-200 ">
-                {item.type === MediaType.IMAGE ? (
+              {item.type === MediaType.IMAGE ? (
+                <div className="rounded-lg overflow-hidden h-full w-full border border-default-200 ">
                   <img
                     loading="lazy"
                     src={optimizedUrl}
                     alt={`Медиа ${index + 1}`}
                     className="max-w-full max-h-[350px] object-contain"
                   />
-                ) : (
+                </div>
+              ) : (
+                <div className="rounded-lg overflow-hidden h-full border border-default-200 flex items-center justify-start">
                   <VideoPlayer
                     src={item.url}
                     thumbnail={item.thumbnail}
-                    className="max-w-full max-h-[350px] object-contain"
+                    className="max-h-[350px]"
+                    autoPlay={true}
+                    controls={true}
+                    loop={true}
+                    muted={true}
+                    mode="carousel"
                   />
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )
         })}

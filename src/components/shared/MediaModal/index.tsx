@@ -320,14 +320,14 @@ export default function MediaModal({
                   />
                 </div>
               ) : (
-                <div className="h-full w-full flex items-center justify-center">
+                <div className="h-full w-full flex items-center justify-center overflow-hidden">
                   <VideoPlayer
                     src={item.url}
-                    className="max-w-full max-h-full"
                     autoPlay={index === currentIndex}
                     controls={true}
                     loop={true}
                     muted={false}
+                    mode="modal"
                   />
                 </div>
               )}
