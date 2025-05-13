@@ -83,6 +83,7 @@ function CurrentPost({
     isFollowing,
     viewCount,
     shareCount,
+    media
   } = data
 
   return (
@@ -102,6 +103,7 @@ function CurrentPost({
         isFollowing={isFollowing}
         shareCount={shareCount}
         viewCount={viewCount}
+        media={media}
       />
       <div className="mt-10">
         <CreateComment params={paramsIn} />
