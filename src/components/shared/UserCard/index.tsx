@@ -16,17 +16,14 @@ function UserCard({ user, className }: UserCardProps) {
     src: user?.avatarUrl,
     width: 400,
   })
+
   return (
     <>
       <Link href={`/users/${user.userName}`} className={className}>
         <Card>
           <CardBody className="flex flex-row items-center gap-4">
             <div>
-              <Avatar
-                src={getOptimizedUrl(user.avatarUrl)}
-                name={user.userName}
-                size="md"
-              />
+              <Avatar src={getOptimizedUrl()} name={user.userName} size="md" />
             </div>
             <div className="flex flex-col w-full">
               <div className="text-sm font-semibold flex justify-between items-center">
