@@ -5,6 +5,7 @@ import { cn } from '@heroui/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import VideoPlayer from '../VideoPlayer'
 import Image from 'next/image'
+import { useCloudinaryImage } from '@/hooks/useCloudinaryImage'
 
 interface MediaCarouselProps {
   media: string[]
@@ -25,6 +26,8 @@ export default function MediaCarousel({
   const [position, setPosition] = useState(0)
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [isTouchDevice, setIsTouchDevice] = useState(false)
+
+  const { getOptimizedUrlByCustomSrc } = useCloudinaryImage({})
 
   // Определение сенсорного устройства
   useEffect(() => {
@@ -140,7 +143,7 @@ export default function MediaCarousel({
   // Одно изображение - отдельный рендер
   if (mediaItems.length === 1) {
     const item = mediaItems[0]
-    const optimizedUrl = item.url
+    const optimizedUrl = getOptimizedUrlByCustomSrc(item.url)
 
     return (
       <div
@@ -161,7 +164,7 @@ export default function MediaCarousel({
         ) : (
           <div className="flex justify-start" style={{ maxWidth: '100%' }}>
             <VideoPlayer
-              src={item.url}
+              src={optimizedUrl}
               thumbnail={item.thumbnail}
               className="max-h-[430px]"
               autoPlay={true}
@@ -186,7 +189,7 @@ export default function MediaCarousel({
         )}
       >
         {mediaItems.map((item, index) => {
-          const optimizedUrl = item.url
+          const optimizedUrl = getOptimizedUrlByCustomSrc(item.url)
 
           return (
             <div
@@ -203,7 +206,7 @@ export default function MediaCarousel({
               ) : (
                 <div className="w-full h-full flex items-center justify-start">
                   <VideoPlayer
-                    src={item.url}
+                    src={optimizedUrl}
                     thumbnail={item.thumbnail}
                     className="w-full h-full max-h-[430px]"
                     autoPlay={true}
@@ -243,7 +246,7 @@ export default function MediaCarousel({
         onMouseDown={handleMouseDown}
       >
         {mediaItems.map((item, index) => {
-          const optimizedUrl = item.url
+          const optimizedUrl = getOptimizedUrlByCustomSrc(item.url)
 
           return (
             <div
@@ -263,7 +266,7 @@ export default function MediaCarousel({
               ) : (
                 <div className="rounded-lg overflow-hidden h-full border border-default-200 flex items-center justify-start">
                   <VideoPlayer
-                    src={item.url}
+                    src={optimizedUrl}
                     thumbnail={item.thumbnail}
                     className="max-h-[350px]"
                     autoPlay={true}

@@ -68,6 +68,22 @@ export const useCloudinaryImage = ({
     })
   }
 
+  const getOptimizedUrlByCustomSrc = (
+    customSrc: string,
+    format: string = 'auto',
+    imageWidth: number = width
+  ) => {
+    return getCloudinaryUrl(
+      {
+        format,
+        width: imageWidth,
+        progressive: true,
+        cache: true,
+      },
+      customSrc
+    )
+  }
+
   const getBlurredUrl = () => {
     return getCloudinaryUrl({
       width: 50,
@@ -89,5 +105,6 @@ export const useCloudinaryImage = ({
     getBlurredUrl,
     handleLoad,
     handleError,
+    getOptimizedUrlByCustomSrc,
   }
 }
