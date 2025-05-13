@@ -143,7 +143,7 @@ export default function MediaCarousel({
   // Одно изображение - отдельный рендер
   if (mediaItems.length === 1) {
     const item = mediaItems[0]
-    const optimizedUrl = getOptimizedUrlByCustomSrc(item.url)
+    const optimizedUrl = getOptimizedUrlByCustomSrc(item.url, 'auto', 1200)
 
     return (
       <div
