@@ -144,6 +144,7 @@ export default function MediaCarousel({
   if (mediaItems.length === 1) {
     const item = mediaItems[0]
     const optimizedUrl = getOptimizedUrlByCustomSrc(item.url, 'auto', 1200)
+    const imageForThumbnail = getOptimizedUrlByCustomSrc(item.url, 'jpg', 1000)
 
     return (
       <div
@@ -162,10 +163,13 @@ export default function MediaCarousel({
             />
           </div>
         ) : (
-          <div className="flex justify-start" style={{ maxWidth: '100%' }}>
+          <div
+            className="flex justify-start w-full"
+            style={{ maxWidth: '100%' }}
+          >
             <VideoPlayer
+              thumbnail={imageForThumbnail}
               src={optimizedUrl}
-              thumbnail={item.thumbnail}
               className="max-h-[430px]"
               autoPlay={true}
               controls={true}

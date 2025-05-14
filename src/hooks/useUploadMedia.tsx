@@ -61,6 +61,31 @@ const isSafari = () => {
 // Вспомогательная функция для создания превью URL
 const createPreviewUrl = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
+    // Для видео файлов используем специальный метод
+    if (ALLOWED_VIDEO_TYPES.includes(file.type)) {
+      createVideoThumbnail(file)
+        .then(thumbnailUrl => {
+          resolve(thumbnailUrl)
+        })
+        .catch(error => {
+          console.error('Ошибка при создании превью видео:', error)
+          // В случае ошибки все равно возвращаем data URL для видео
+          const reader = new FileReader()
+          reader.onload = event => {
+            if (event.target?.result) {
+              resolve(event.target.result as string)
+            } else {
+              reject(new Error('Ошибка чтения видео файла'))
+            }
+          }
+          reader.onerror = error => {
+            reject(error)
+          }
+          reader.readAsDataURL(file)
+        })
+      return
+    }
+
     // Для HEIC файлов проверяем браузер
     if (
       file.type === 'image/heic' ||
@@ -124,6 +149,70 @@ const createPreviewUrl = (file: File): Promise<string> => {
         reject(error)
       }
       reader.readAsDataURL(file)
+    }
+  })
+}
+
+// Функция для создания превью (эскиза) из видео файла
+const createVideoThumbnail = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    // Создаем элемент video для загрузки видеофайла
+    const video = document.createElement('video')
+    video.preload = 'metadata'
+    video.playsInline = true
+    video.muted = true
+
+    // URL для видеофайла
+    const fileUrl = URL.createObjectURL(file)
+    video.src = fileUrl
+
+    // Обработчик ошибки загрузки видео
+    video.onerror = () => {
+      URL.revokeObjectURL(fileUrl)
+      reject(new Error('Ошибка загрузки видео'))
+    }
+
+    // Когда метаданные загружены, можно взять первый кадр
+    video.onloadedmetadata = () => {
+      // Перемещаемся на 1 секунду или на середину видео (что меньше)
+      video.currentTime = Math.min(1, video.duration / 2)
+    }
+
+    // Когда видео перемотано до нужного момента
+    video.onseeked = () => {
+      // Создаем canvas для рендеринга кадра
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+
+      if (!ctx) {
+        URL.revokeObjectURL(fileUrl)
+        reject(new Error('Не удалось создать контекст canvas'))
+        return
+      }
+
+      // Задаем размер canvas по размеру видео (но не больше определенного значения)
+      const maxSize = 400
+      const width = Math.min(video.videoWidth, maxSize)
+      const height = Math.min(video.videoHeight, maxSize)
+
+      // Сохраняем пропорции
+      const ratio = Math.min(
+        width / video.videoWidth,
+        height / video.videoHeight
+      )
+      canvas.width = video.videoWidth * ratio
+      canvas.height = video.videoHeight * ratio
+
+      // Рисуем кадр из видео на canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      // Получаем data URL из canvas
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8)
+
+      // Очищаем ресурсы
+      URL.revokeObjectURL(fileUrl)
+
+      resolve(dataUrl)
     }
   })
 }
