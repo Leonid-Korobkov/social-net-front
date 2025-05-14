@@ -282,7 +282,6 @@ export default function VideoPlayer({
               maxHeight: '100%',
               maxWidth: '100%',
               width: 'auto',
-              transition: 'opacity 0.3s ease-in',
             }}
           />
         )}
@@ -298,7 +297,6 @@ export default function VideoPlayer({
           style={{
             maxHeight: '100%',
             maxWidth: '100%',
-            transition: 'opacity 0.3s ease-in',
             width: isVideoLoaded ? 'auto' : 0,
             height: isVideoLoaded ? 'auto' : 0,
           }}
@@ -342,109 +340,74 @@ export default function VideoPlayer({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Обертка для видео и элементов управления */}
-      <div className="relative w-auto h-auto">
-        {/* Превью видео (отображается до загрузки) */}
-        {thumbnail && !isVideoLoaded && (
+      {/* Видео */}
+      <video
+        ref={videoRef}
+        src={src}
+        poster={thumbnail}
+        className="absolute object-cover w-full h-full"
+        playsInline
+        onClick={togglePlay}
+        muted={isMuted}
+        loop={loop}
+        style={{
+          height: 'auto',
+          maxHeight: '100%',
+          maxWidth: '100%',
+          width: 'auto',
+        }}
+      />
+
+      {/* Элементы управления для модального окна */}
+      {controls && (
+        <>
+          {/* Время видео */}
           <div
             className={cn(
-              'absolute inset-0 bg-no-repeat bg-cover bg-center z-0 rounded-lg',
-              isVideoLoaded ? 'opacity-0' : 'opacity-100'
+              'absolute bottom-3 left-3 text-xs text-white bg-black/40 px-2 py-1 rounded transition-opacity z-10',
+              isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
             )}
-            style={{
-              backgroundImage: `url('${thumbnail}')`,
-              transition: 'opacity 0.3s ease-out',
-              width: '100%',
-              height: '100%',
-            }}
-          />
-        )}
-
-        {/* Видео */}
-        <video
-          ref={videoRef}
-          src={src}
-          poster={thumbnail}
-          className={cn(
-            'object-contain rounded-lg z-10',
-            isVideoLoaded ? 'opacity-100' : 'opacity-0'
-          )}
-          style={{
-            height: 'auto',
-            maxHeight: '100%',
-            maxWidth: '100%',
-            width: 'auto',
-            transition: 'opacity 0.3s ease-in',
-          }}
-          playsInline
-          onClick={togglePlay}
-          muted={isMuted}
-          loop={loop}
-          preload="metadata"
-        />
-
-        {/* Индикатор загрузки */}
-        {isVideoLoading && isPlaying && (
-          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-            <div className="w-10 h-10 border-3 border-white border-t-transparent rounded-full animate-spin" />
+          >
+            {formatTime(currentTime)} / {formatTime(duration)}
           </div>
-        )}
 
-        {/* Элементы управления для модального окна */}
-        {controls && (
-          <>
-            {/* Время видео */}
+          {/* Кнопка звука */}
+          <button
+            onClick={toggleMute}
+            className={cn(
+              'absolute bottom-3 right-3 text-white backdrop-blur-md bg-black/40 hover:bg-black/50 p-1 rounded-full transition-opacity z-10',
+              isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
+            )}
+          >
+            {isMuted ? <IoVolumeMute size={16} /> : <IoVolumeHigh size={16} />}
+          </button>
+
+          {/* Полоса прогресса */}
+          <div
+            className={cn(
+              'absolute bottom-0 left-0 right-0 transition-all',
+              isDraggingProgress ? 'h-2' : 'h-1',
+              isHovered || isDraggingProgress ? 'opacity-100' : 'opacity-0'
+            )}
+          >
             <div
-              className={cn(
-                'absolute bottom-3 left-3 text-xs text-white bg-black/40 px-2 py-1 rounded transition-opacity z-30',
-                isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
-              )}
-            >
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </div>
-
-            {/* Кнопка звука */}
-            <button
-              onClick={toggleMute}
-              className={cn(
-                'absolute bottom-3 right-3 text-white backdrop-blur-md bg-black/40 hover:bg-black/50 p-1 rounded-full transition-opacity z-30',
-                isHovered || !isPlaying ? 'opacity-100' : 'opacity-0'
-              )}
-            >
-              {isMuted ? (
-                <IoVolumeMute size={16} />
-              ) : (
-                <IoVolumeHigh size={16} />
-              )}
-            </button>
-
-            {/* Полоса прогресса */}
-            <div
-              className={cn(
-                'absolute bottom-0 left-0 right-0 transition-all z-30',
-                isDraggingProgress ? 'h-2' : 'h-1',
-                isHovered || isDraggingProgress ? 'opacity-100' : 'opacity-0'
-              )}
+              ref={progressRef}
+              className="w-full h-full bg-white/20 cursor-pointer"
+              onClick={handleProgressClick}
+              onMouseDown={() => setIsDraggingProgress(true)}
+              onMouseUp={() => setIsDraggingProgress(false)}
+              onMouseLeave={() => setIsDraggingProgress(false)}
+              onTouchStart={() => setIsDraggingProgress(true)}
+              onTouchEnd={() => setIsDraggingProgress(false)}
             >
               <div
-                ref={progressRef}
-                className="w-full h-full bg-white/20 cursor-pointer"
-                onClick={handleProgressClick}
-                onMouseDown={() => setIsDraggingProgress(true)}
-                onMouseUp={() => setIsDraggingProgress(false)}
-                onMouseLeave={() => setIsDraggingProgress(false)}
-                onTouchStart={() => setIsDraggingProgress(true)}
-                onTouchEnd={() => setIsDraggingProgress(false)}
-              >
-                <div
-                  className="h-full bg-white transition-all duration-300 ease-linear"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
+                className="h-full bg-white transition-all duration-300 ease-linear"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
