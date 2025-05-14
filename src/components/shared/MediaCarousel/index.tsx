@@ -27,6 +27,11 @@ export default function MediaCarousel({
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [isTouchDevice, setIsTouchDevice] = useState(false)
 
+  // Состояния для умной сетки
+  const [firstAspectRatio, setFirstAspectRatio] = useState<number>(1)
+  const [secondAspectRatio, setSecondAspectRatio] = useState<number>(1)
+  const [itemsLoaded, setItemsLoaded] = useState(0)
+
   const { getOptimizedUrlByCustomSrc } = useCloudinaryImage({})
 
   // Определение сенсорного устройства
@@ -48,7 +53,94 @@ export default function MediaCarousel({
     }))
 
     setMediaItems(items)
+
+    // Сбрасываем состояние загрузки при смене медиа
+    setItemsLoaded(0)
   }, [media])
+
+  // Определяем соотношение сторон для элементов
+  const handleImageLoad = useCallback(
+    (e: React.SyntheticEvent<HTMLImageElement>, index: number) => {
+      const img = e.currentTarget
+      const aspectRatio = img.naturalWidth / img.naturalHeight
+
+      if (index === 0) {
+        setFirstAspectRatio(aspectRatio)
+      } else if (index === 1) {
+        setSecondAspectRatio(aspectRatio)
+      }
+
+      setItemsLoaded(prev => prev + 1)
+    },
+    []
+  )
+
+  // Обработчик для видео
+  const handleVideoLoad = useCallback(
+    (video: HTMLVideoElement, index: number) => {
+      if (video.videoWidth && video.videoHeight) {
+        const aspectRatio = video.videoWidth / video.videoHeight
+
+        if (index === 0) {
+          setFirstAspectRatio(aspectRatio)
+        } else if (index === 1) {
+          setSecondAspectRatio(aspectRatio)
+        }
+
+        setItemsLoaded(prev => prev + 1)
+      }
+    },
+    []
+  )
+
+  // Определяем стили сетки на основе соотношения сторон
+  const getGridStyle = useCallback(() => {
+    // Для страховки проверяем количество медиа
+    if (mediaItems.length !== 2 || itemsLoaded < 2) return 'grid-cols-2'
+
+    // Учитываем разницу в аспектах соотношения
+    const aspectRatioDiff = Math.abs(firstAspectRatio - secondAspectRatio)
+
+    // Если соотношения сторон близки, используем равные колонки
+    if (aspectRatioDiff < 0.5) {
+      return 'grid-cols-2'
+    }
+
+    // Если первый элемент значительно шире
+    if (firstAspectRatio > secondAspectRatio * 1.5) {
+      return 'grid-cols-[2fr_1fr]'
+    }
+
+    // Если второй элемент значительно шире
+    if (secondAspectRatio > firstAspectRatio * 1.5) {
+      return 'grid-cols-[1fr_2fr]'
+    }
+
+    // По умолчанию равные колонки
+    return 'grid-cols-2'
+  }, [firstAspectRatio, secondAspectRatio, itemsLoaded, mediaItems.length])
+
+  // Проверяем, загружены ли заранее значения соотношений сторон для видео
+  useEffect(() => {
+    // Проверяем только для случая с двумя медиа
+    if (mediaItems.length !== 2) return
+
+    // Если оба медиа - видео, можем попробовать получить пропорции сразу
+    const videoElements = document.querySelectorAll('video')
+    if (videoElements.length === 2) {
+      Array.from(videoElements).forEach((video: HTMLVideoElement, index) => {
+        if (video.videoWidth && video.videoHeight) {
+          const aspectRatio = video.videoWidth / video.videoHeight
+          if (index === 0) {
+            setFirstAspectRatio(aspectRatio)
+          } else if (index === 1) {
+            setSecondAspectRatio(aspectRatio)
+          }
+          setItemsLoaded(prev => prev + 1)
+        }
+      })
+    }
+  }, [mediaItems.length])
 
   // Обработка клика на элемент карусели
   const handleItemClick = useCallback(
@@ -188,36 +280,46 @@ export default function MediaCarousel({
     return (
       <div
         className={cn(
-          'grid grid-cols-2 gap-1 w-full  cursor-pointer',
+          'grid gap-1 w-full cursor-pointer',
+          getGridStyle(),
           className
         )}
       >
         {mediaItems.map((item, index) => {
           const optimizedUrl = getOptimizedUrlByCustomSrc(item.url)
+          const imageForThumbnail = getOptimizedUrlByCustomSrc(
+            item.url,
+            'jpg',
+            1000
+          )
 
           return (
-            <div
-              key={index}
-              className="aspect-auto overflow-hidden rounded-lg border border-default-200"
-              onClick={e => handleItemClick(index, e as React.MouseEvent)}
-            >
+            <div key={index}>
               {item.type === MediaType.IMAGE ? (
-                <img
-                  src={optimizedUrl}
-                  alt={`Медиа ${index + 1}`}
-                  className="w-full h-full max-h-[400px] object-cover"
-                />
+                <div
+                  key={index}
+                  className="aspect-auto overflow-hidden rounded-lg border border-default-200"
+                  onClick={e => handleItemClick(index, e as React.MouseEvent)}
+                >
+                  <img
+                    src={optimizedUrl}
+                    alt={`Медиа ${index + 1}`}
+                    className="w-full h-full max-h-full object-cover"
+                    onLoad={e => handleImageLoad(e, index)}
+                  />
+                </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-start">
+                <div className="w-full h-full flex items-center justify-center">
                   <VideoPlayer
                     src={optimizedUrl}
-                    thumbnail={item.thumbnail}
-                    className="w-full h-full max-h-[430px]"
+                    thumbnail={imageForThumbnail}
+                    className="w-full h-full max-h-[430px] justify-center"
                     autoPlay={true}
                     controls={true}
                     loop={true}
                     muted={true}
                     mode="carousel"
+                    onVideoLoad={video => handleVideoLoad(video, index)}
                   />
                 </div>
               )}
@@ -251,6 +353,11 @@ export default function MediaCarousel({
       >
         {mediaItems.map((item, index) => {
           const optimizedUrl = getOptimizedUrlByCustomSrc(item.url)
+          const imageForThumbnail = getOptimizedUrlByCustomSrc(
+            item.url,
+            'jpg',
+            1000
+          )
 
           return (
             <div
@@ -271,8 +378,8 @@ export default function MediaCarousel({
                 <div className="rounded-lg overflow-hidden h-full border border-default-200 flex items-center justify-start">
                   <VideoPlayer
                     src={optimizedUrl}
-                    thumbnail={item.thumbnail}
-                    className="max-h-[350px]"
+                    thumbnail={imageForThumbnail}
+                    className="h-[350px]"
                     autoPlay={true}
                     controls={true}
                     loop={true}

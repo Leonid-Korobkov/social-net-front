@@ -14,6 +14,7 @@ interface VideoPlayerProps {
   loop?: boolean
   muted?: boolean
   mode?: 'carousel' | 'modal'
+  onVideoLoad?: (video: HTMLVideoElement) => void
 }
 
 export default function VideoPlayer({
@@ -25,6 +26,7 @@ export default function VideoPlayer({
   loop = true,
   muted = true,
   mode = 'carousel',
+  onVideoLoad,
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
@@ -147,7 +149,11 @@ export default function VideoPlayer({
   const handleLoadedData = useCallback(() => {
     setIsVideoLoaded(true)
     setIsVideoLoading(false)
-  }, [])
+
+    if (onVideoLoad && videoRef.current) {
+      onVideoLoad(videoRef.current)
+    }
+  }, [onVideoLoad])
 
   // Обработчик ожидания загрузки данных
   const handleWaiting = useCallback(() => {
