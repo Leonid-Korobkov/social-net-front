@@ -6,6 +6,8 @@ import { apiClient } from '@/services/ApiConfig'
 import { Post } from '@/store/types'
 import { FaComment, FaHeart } from 'react-icons/fa6'
 import { stripHtml } from '@/utils/stripHtml'
+import { LuSend } from 'react-icons/lu'
+import { FaCalendarAlt } from 'react-icons/fa'
 
 export const alt = 'Пост в Zling'
 export const size = {
@@ -36,6 +38,16 @@ function optimizeCloudinaryImage(
   ].join(',')
 
   return `${baseUrl}${transforms}/${imagePath}`
+}
+
+// Функция для форматирования даты
+function formatDate(dateString: string | Date): string {
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date)
 }
 
 export default async function Image({ params }: { params: { id: string } }) {
@@ -78,11 +90,108 @@ export default async function Image({ params }: { params: { id: string } }) {
         : cleanContent
 
     // Проверяем, есть ли изображения в посте
-    const hasImage = post.media && post.media.length > 0
-    let imageForThumbnail = null
-    if (hasImage && post.media) {
-      // Преобразуем URL изображения в JPG формат
-      imageForThumbnail = optimizeCloudinaryImage(post.media[0], 1000)
+    const hasImages = post.media && post.media.length > 0
+    const formattedDate = formatDate(post.createdAt)
+
+    // Подготовка контента в зависимости от наличия изображений
+    let contentElement = null
+
+    if (hasImages && post.media) {
+      if (post.media.length > 1) {
+        // Для нескольких изображений - показываем текст и галерею миниатюр
+        contentElement = (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ display: 'flex' }}>{truncatedContent}</div>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 10,
+                justifyContent: 'flex-start',
+                maxHeight: 300,
+                overflow: 'hidden',
+              }}
+            >
+              {post.media.slice(0, 4).map((url, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: 200,
+                    height: 200,
+                    borderRadius: 10,
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    display: 'flex',
+                  }}
+                >
+                  <img
+                    src={optimizeCloudinaryImage(url, 300)}
+                    alt={`Изображение ${index + 1}`}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      } else {
+        // Для одного изображения - показываем текст и изображение рядом
+        const imageUrl = optimizeCloudinaryImage(post.media[0], 1000)
+        contentElement = (
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
+            <div
+              style={{
+                width: 1000,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontSize: 32,
+                lineHeight: 1.4,
+              }}
+            >
+              {truncatedContent}
+            </div>
+            <div
+              style={{
+                width: 250,
+                height: 250,
+                borderRadius: 10,
+                overflow: 'hidden',
+                alignSelf: 'flex-end',
+                display: 'flex',
+              }}
+            >
+              <img
+                src={imageUrl}
+                alt="Изображение из поста"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: 10,
+                }}
+              />
+            </div>
+          </div>
+        )
+      }
+    } else {
+      // Без изображений - показываем только текст
+      contentElement = (
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {truncatedContent}
+        </div>
+      )
     }
 
     return new ImageResponse(
@@ -134,72 +243,88 @@ export default async function Image({ params }: { params: { id: string } }) {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 16,
-                marginBottom: 30,
+                justifyContent: 'space-between',
+                marginBottom: 20,
+                width: '100%',
               }}
             >
-              <div
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  overflow: 'hidden',
-                  border: '3px solid white',
-                  backgroundColor: '#f5f5f5',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                {post.author?.avatarUrl ? (
-                  <img
-                    src={post.author.avatarUrl.replace('.webp', '.png')}
-                    alt={post.author.name}
-                    width={80}
-                    height={80}
-                    style={{ objectFit: 'cover' }}
-                  />
-                ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div
+                  style={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: 40,
+                    overflow: 'hidden',
+                    border: '3px solid white',
+                    backgroundColor: '#f5f5f5',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {post.author?.avatarUrl ? (
+                    <img
+                      src={post.author.avatarUrl.replace('.webp', '.png')}
+                      alt={post.author.name}
+                      width={80}
+                      height={80}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 36,
+                        fontWeight: 'bold',
+                        color: '#663399',
+                      }}
+                    >
+                      {post.author?.name?.charAt(0) || '?'}
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
                   <div
                     style={{
-                      width: '100%',
-                      height: '100%',
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 36,
+                      fontSize: 30,
                       fontWeight: 'bold',
-                      color: '#663399',
                     }}
                   >
-                    {post.author?.name?.charAt(0) || '?'}
+                    {post.author?.name || 'Пользователь'}
                   </div>
-                )}
+                  <div
+                    style={{
+                      display: 'flex',
+                      fontSize: 24,
+                      color: '#555',
+                    }}
+                  >
+                    @{post.author?.userName || 'username'}
+                  </div>
+                </div>
               </div>
+
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 8,
+                  fontSize: 22,
+                  color: '#555',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    fontSize: 30,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {post.author?.name || 'Пользователь'}
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    fontSize: 24,
-                    color: '#555',
-                  }}
-                >
-                  @{post.author?.userName || 'username'}
-                </div>
+                <FaCalendarAlt style={{ height: 16, width: 16 }} />
+                <span>{formattedDate}</span>
               </div>
             </div>
 
@@ -211,46 +336,9 @@ export default async function Image({ params }: { params: { id: string } }) {
                 lineHeight: 1.4,
                 flex: 1,
                 overflow: 'hidden',
-                padding: '15px 10px',
-                backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                borderRadius: 15,
-                border: '1px solid rgba(102, 51, 153, 0.2)',
-                gap: 20,
               }}
             >
-              {imageForThumbnail ? (
-                <>
-                  <div>
-                    {truncatedContent}
-                  </div>
-                  <div
-                    style={{
-                      width: '250px',
-                      height: '100%',
-                      overflow: 'hidden',
-
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      flexShrink: 0,
-                      alignSelf: 'center',
-                    }}
-                  >
-                    <img
-                      src={imageForThumbnail}
-                      alt="Изображение из поста"
-                      style={{
-                        borderRadius: 10,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                      }}
-                    />
-                  </div>
-                </>
-              ) : (
-                <div style={{ flex: 1 }}>{truncatedContent}</div>
-              )}
+              {contentElement}
             </div>
 
             <div
@@ -282,6 +370,17 @@ export default async function Image({ params }: { params: { id: string } }) {
                     }}
                   >
                     {post.commentCount || 0}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <LuSend color="#663399" />
+                  <span
+                    style={{
+                      display: 'flex',
+                      fontSize: 24,
+                    }}
+                  >
+                    {post.shareCount || 0}
                   </span>
                 </div>
               </div>
