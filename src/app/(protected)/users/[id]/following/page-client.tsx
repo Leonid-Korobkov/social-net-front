@@ -141,7 +141,7 @@ function FollowingClient({ params }: PageProps) {
                           {currentUser &&
                             currentUser.id !== followingItem.following.id && (
                               <Button
-                                color={isFollowing ? 'default' : 'secondary'}
+                                color={isFollowing ? 'default' : 'primary'}
                                 variant="flat"
                                 className="gap-2"
                                 isLoading={isPending || isFetchingUser}

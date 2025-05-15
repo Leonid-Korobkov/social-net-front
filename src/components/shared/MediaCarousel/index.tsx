@@ -27,11 +27,6 @@ export default function MediaCarousel({
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [isTouchDevice, setIsTouchDevice] = useState(false)
 
-  // Состояния для умной сетки
-  const [firstAspectRatio, setFirstAspectRatio] = useState<number>(1)
-  const [secondAspectRatio, setSecondAspectRatio] = useState<number>(1)
-  const [itemsLoaded, setItemsLoaded] = useState(0)
-
   const { getOptimizedUrlByCustomSrc } = useCloudinaryImage({})
 
   // Определение сенсорного устройства
@@ -53,94 +48,7 @@ export default function MediaCarousel({
     }))
 
     setMediaItems(items)
-
-    // Сбрасываем состояние загрузки при смене медиа
-    setItemsLoaded(0)
   }, [media])
-
-  // Определяем соотношение сторон для элементов
-  const handleImageLoad = useCallback(
-    (e: React.SyntheticEvent<HTMLImageElement>, index: number) => {
-      const img = e.currentTarget
-      const aspectRatio = img.naturalWidth / img.naturalHeight
-
-      if (index === 0) {
-        setFirstAspectRatio(aspectRatio)
-      } else if (index === 1) {
-        setSecondAspectRatio(aspectRatio)
-      }
-
-      setItemsLoaded(prev => prev + 1)
-    },
-    []
-  )
-
-  // Обработчик для видео
-  const handleVideoLoad = useCallback(
-    (video: HTMLVideoElement, index: number) => {
-      if (video.videoWidth && video.videoHeight) {
-        const aspectRatio = video.videoWidth / video.videoHeight
-
-        if (index === 0) {
-          setFirstAspectRatio(aspectRatio)
-        } else if (index === 1) {
-          setSecondAspectRatio(aspectRatio)
-        }
-
-        setItemsLoaded(prev => prev + 1)
-      }
-    },
-    []
-  )
-
-  // Определяем стили сетки на основе соотношения сторон
-  const getGridStyle = useCallback(() => {
-    // Для страховки проверяем количество медиа
-    if (mediaItems.length !== 2 || itemsLoaded < 2) return 'grid-cols-2'
-
-    // Учитываем разницу в аспектах соотношения
-    const aspectRatioDiff = Math.abs(firstAspectRatio - secondAspectRatio)
-
-    // Если соотношения сторон близки, используем равные колонки
-    if (aspectRatioDiff < 0.5) {
-      return 'grid-cols-2'
-    }
-
-    // Если первый элемент значительно шире
-    if (firstAspectRatio > secondAspectRatio * 1.5) {
-      return 'grid-cols-[2fr_1fr]'
-    }
-
-    // Если второй элемент значительно шире
-    if (secondAspectRatio > firstAspectRatio * 1.5) {
-      return 'grid-cols-[1fr_2fr]'
-    }
-
-    // По умолчанию равные колонки
-    return 'grid-cols-2'
-  }, [firstAspectRatio, secondAspectRatio, itemsLoaded, mediaItems.length])
-
-  // Проверяем, загружены ли заранее значения соотношений сторон для видео
-  useEffect(() => {
-    // Проверяем только для случая с двумя медиа
-    if (mediaItems.length !== 2) return
-
-    // Если оба медиа - видео, можем попробовать получить пропорции сразу
-    const videoElements = document.querySelectorAll('video')
-    if (videoElements.length === 2) {
-      Array.from(videoElements).forEach((video: HTMLVideoElement, index) => {
-        if (video.videoWidth && video.videoHeight) {
-          const aspectRatio = video.videoWidth / video.videoHeight
-          if (index === 0) {
-            setFirstAspectRatio(aspectRatio)
-          } else if (index === 1) {
-            setSecondAspectRatio(aspectRatio)
-          }
-          setItemsLoaded(prev => prev + 1)
-        }
-      })
-    }
-  }, [mediaItems.length])
 
   // Обработка клика на элемент карусели
   const handleItemClick = useCallback(
@@ -281,7 +189,7 @@ export default function MediaCarousel({
       <div
         className={cn(
           'grid gap-1 w-full cursor-pointer',
-          getGridStyle(),
+          'grid-cols-2',
           className
         )}
       >
@@ -305,7 +213,6 @@ export default function MediaCarousel({
                     src={optimizedUrl}
                     alt={`Медиа ${index + 1}`}
                     className="w-full h-full max-h-full object-cover"
-                    onLoad={e => handleImageLoad(e, index)}
                   />
                 </div>
               ) : (
@@ -319,7 +226,6 @@ export default function MediaCarousel({
                     loop={true}
                     muted={true}
                     mode="carousel"
-                    onVideoLoad={video => handleVideoLoad(video, index)}
                   />
                 </div>
               )}

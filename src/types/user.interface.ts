@@ -4,4 +4,5 @@ export interface IUserSettings {
   showLocation?: boolean
   showDateOfBirth?: boolean
   reduceAnimation: boolean
+  theme?: 'purple' | 'monochrome' | 'brown' | 'green'
 }

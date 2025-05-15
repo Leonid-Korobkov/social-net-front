@@ -23,7 +23,7 @@ function CreatePost({ editor }: CreatePostProps) {
   if (!editor) {
     return (
       <div className="flex justify-center">
-        <Spinner size="lg" color="secondary" variant="gradient" />
+        <Spinner size="lg" color="primary" variant="gradient" />
       </div>
     )
   }

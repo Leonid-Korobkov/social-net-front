@@ -137,7 +137,7 @@ function Header({ className }: { className?: string }) {
                           onChange={e =>
                             setTheme(e.target.checked ? 'light' : 'dark')
                           }
-                          color="secondary"
+                          color="primary"
                           size="sm"
                           thumbIcon={({ isSelected, className }) =>
                             isSelected ? (
@@ -166,7 +166,7 @@ function Header({ className }: { className?: string }) {
               <Switch
                 defaultSelected={resolvedTheme === 'light'}
                 onChange={e => setTheme(e.target.checked ? 'light' : 'dark')}
-                color="secondary"
+                color="primary"
                 size="md"
                 thumbIcon={({ isSelected, className }) =>
                   isSelected ? (
@@ -198,7 +198,7 @@ function Header({ className }: { className?: string }) {
                 <Button color="danger" variant="light" onClick={onClose}>
                   Отмена
                 </Button>
-                <Button color="secondary" onClick={handleLogout}>
+                <Button color="primary" onClick={handleLogout}>
                   Да, выйти
                 </Button>
               </ModalFooter>

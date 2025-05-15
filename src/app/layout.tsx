@@ -64,7 +64,7 @@ export default function RootLayout({
       <head>
         <meta name="apple-mobile-web-app-title" content="Zling" />
       </head>
-      <body className={`antialiased`}>
+      <body className={`antialiased green-dark`}>
         <ThemeProvider>
           <StoreProvider>
             <ProtectedRoute>

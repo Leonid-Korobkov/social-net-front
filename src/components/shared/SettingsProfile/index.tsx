@@ -14,6 +14,10 @@ import {
   ModalFooter,
   ModalHeader,
   Switch,
+  Tabs,
+  Tab,
+  RadioGroup,
+  Radio,
 } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -22,9 +26,11 @@ import { IoMdMail } from 'react-icons/io'
 import { BiSolidBookContent } from 'react-icons/bi'
 import { FaMapMarkerAlt, FaBirthdayCake } from 'react-icons/fa'
 import { MdAnimation } from 'react-icons/md'
+import { MdColorLens } from 'react-icons/md'
 import toast from 'react-hot-toast'
 import { ApiErrorResponse } from '@/services/ApiConfig'
 import { UserSettingsStore } from '@/store/userSettings.store'
+import { UserThemeStore } from '@/store/userTheme.store'
 
 interface SettingsProfileProps {
   isOpen: boolean
@@ -45,7 +51,11 @@ export default function SettingsProfile({
     useUpdateUserSettings()
   const { id } = params
   const setReduce = UserSettingsStore.getState().setReduceAnimation
+  const setTheme = UserThemeStore.getState().setTheme
   const [showReloadConfirm, setShowReloadConfirm] = useState(false)
+  const [selectedTheme, setSelectedTheme] = useState<string>(
+    UserThemeStore.getState().theme
+  )
 
   const {
     reset,
@@ -93,6 +103,12 @@ export default function SettingsProfile({
       promise
         .then(() => {
           toast.success('Настройки сохранены!')
+
+          // Применяем тему
+          if (UserThemeStore.getState().theme !== selectedTheme) {
+            setTheme(selectedTheme as any)
+          }
+
           if (settings.reduceAnimation) {
             setReduce(settings.reduceAnimation)
             setShowReloadConfirm(true)
@@ -116,6 +132,10 @@ export default function SettingsProfile({
     onClose()
   }
 
+  const handleThemeChange = (theme: string) => {
+    setSelectedTheme(theme)
+  }
+
   return (
     <>
       <Modal
@@ -129,7 +149,7 @@ export default function SettingsProfile({
           <ModalBody>
             <div className="space-y-4">
               <Card>
-                <CardHeader className="flex gap-2 items-center text-[#9353D3]">
+                <CardHeader className="flex gap-2 items-center text-primary">
                   <IoIosSettings className="text-2xl" />
                   <h3 className="text-lg font-semibold">Приватность</h3>
                 </CardHeader>
@@ -140,7 +160,7 @@ export default function SettingsProfile({
                       <span>Показывать email</span>
                     </div>
                     <Switch
-                      color="secondary"
+                      color="primary"
                       isSelected={settings.showEmail}
                       onValueChange={() => handleToggle('showEmail')}
                     />
@@ -151,7 +171,7 @@ export default function SettingsProfile({
                       <span>Показывать биографию</span>
                     </div>
                     <Switch
-                      color="secondary"
+                      color="primary"
                       isSelected={settings.showBio}
                       onValueChange={() => handleToggle('showBio')}
                     />
@@ -162,7 +182,7 @@ export default function SettingsProfile({
                       <span>Показывать местоположение</span>
                     </div>
                     <Switch
-                      color="secondary"
+                      color="primary"
                       isSelected={settings.showLocation}
                       onValueChange={() => handleToggle('showLocation')}
                     />
@@ -173,7 +193,7 @@ export default function SettingsProfile({
                       <span>Показывать дату рождения</span>
                     </div>
                     <Switch
-                      color="secondary"
+                      color="primary"
                       isSelected={settings.showDateOfBirth}
                       onValueChange={() => handleToggle('showDateOfBirth')}
                     />
@@ -182,7 +202,7 @@ export default function SettingsProfile({
               </Card>
 
               <Card>
-                <CardHeader className="flex gap-2 items-center text-[#9353D3]">
+                <CardHeader className="flex gap-2 items-center text-primary">
                   <MdAnimation className="text-2xl" />
                   <h3 className="text-lg font-semibold">Анимация</h3>
                 </CardHeader>
@@ -198,11 +218,101 @@ export default function SettingsProfile({
                       </div>
                     </div>
                     <Switch
-                      color="secondary"
+                      color="primary"
                       isSelected={settings.reduceAnimation}
                       onValueChange={() => handleToggle('reduceAnimation')}
                     />
                   </div>
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-primary">
+                  <MdColorLens className="text-2xl" />
+                  <h3 className="text-lg font-semibold">Тема оформления</h3>
+                </CardHeader>
+                <CardBody>
+                  <RadioGroup
+                    value={selectedTheme}
+                    onValueChange={handleThemeChange}
+                    orientation="horizontal"
+                    className="grid gap-2"
+                  >
+                    <Radio
+                      value="default"
+                      classNames={{
+                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                      }}
+                    >
+                      <div className="w-full flex flex-col gap-1">
+                        <p className="text-medium">По умолчанию</p>
+                        <div className="flex gap-1">
+                          <span className="w-4 h-4 rounded-full bg-[#9353D3]" />
+                          <span className="w-4 h-4 rounded-full bg-[#18181B]" />
+                        </div>
+                      </div>
+                    </Radio>
+
+                    <Radio
+                      value="purple"
+                      classNames={{
+                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                      }}
+                    >
+                      <div className="w-full flex flex-col gap-1">
+                        <p className="text-medium">Фиолетовая</p>
+                        <div className="flex gap-1">
+                          <span className="w-4 h-4 rounded-full bg-[#9353d3]" />
+                          <span className="w-4 h-4 rounded-full bg-[#637aff]" />
+                        </div>
+                      </div>
+                    </Radio>
+
+                    <Radio
+                      value="monochrome"
+                      classNames={{
+                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                      }}
+                    >
+                      <div className="w-full flex flex-col gap-1">
+                        <p className="text-medium">Монохромная</p>
+                        <div className="flex gap-1">
+                          <span className="w-4 h-4 rounded-full bg-black dark:bg-white" />
+                          <span className="w-4 h-4 rounded-full bg-gray-400" />
+                        </div>
+                      </div>
+                    </Radio>
+
+                    <Radio
+                      value="brown"
+                      classNames={{
+                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                      }}
+                    >
+                      <div className="w-full flex flex-col gap-1">
+                        <p className="text-medium">Коричневая</p>
+                        <div className="flex gap-1">
+                          <span className="w-4 h-4 rounded-full bg-[#db924b]" />
+                          <span className="w-4 h-4 rounded-full bg-[#5a8486]" />
+                        </div>
+                      </div>
+                    </Radio>
+
+                    <Radio
+                      value="green"
+                      classNames={{
+                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-green-50 dark:bg-green-950 hover:bg-green-100 dark:hover:bg-green-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                      }}
+                    >
+                      <div className="w-full flex flex-col gap-1">
+                        <p className="text-medium">Зеленая</p>
+                        <div className="flex gap-1">
+                          <span className="w-4 h-4 rounded-full bg-[#66cc8a]" />
+                          <span className="w-4 h-4 rounded-full bg-[#377cfb]" />
+                        </div>
+                      </div>
+                    </Radio>
+                  </RadioGroup>
                 </CardBody>
               </Card>
             </div>
@@ -213,7 +323,7 @@ export default function SettingsProfile({
               Отмена
             </Button>
             <Button
-              color="secondary"
+              color="primary"
               onClick={handleSave}
               isLoading={isUpdatingSettings}
             >
@@ -229,7 +339,7 @@ export default function SettingsProfile({
         size="sm"
       >
         <ModalContent>
-          <ModalHeader className="flex gap-2 items-center text-[#9353D3]">
+          <ModalHeader className="flex gap-2 items-center text-primary">
             <MdAnimation className="text-2xl" />
             <h3 className="text-lg font-semibold">Обновление анимации</h3>
           </ModalHeader>
@@ -250,7 +360,7 @@ export default function SettingsProfile({
             >
               Позже
             </Button>
-            <Button color="secondary" onClick={handleReload}>
+            <Button color="primary" onClick={handleReload}>
               Обновить сейчас
             </Button>
           </ModalFooter>

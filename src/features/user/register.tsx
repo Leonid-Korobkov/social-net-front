@@ -140,7 +140,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         <Button
           isLoading={isLoading || isSuccess}
           fullWidth
-          color="secondary"
+          color="primary"
           type="submit"
         >
           {isSuccess ? 'Перенаправление...' : 'Зарегистрироваться'}

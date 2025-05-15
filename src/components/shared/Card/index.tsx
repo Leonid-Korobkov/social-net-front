@@ -173,7 +173,7 @@ const Card = memo(
                       <Tooltip
                         delay={500}
                         showArrow
-                        color="secondary"
+                        color="primary"
                         content={`Дата создания - ${formatToClientDate(
                           new Date(createdAt?.toString() || '')
                         )}`}

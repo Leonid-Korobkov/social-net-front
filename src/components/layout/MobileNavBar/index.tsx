@@ -70,7 +70,7 @@ function MobileNavBar({ onCreatePost }: MobileNavBarProps) {
             href={path}
             onClick={e => handleClick(e, path)}
             className={`flex flex-col items-center gap-1 p-2 ${
-              isActive(path) ? 'text-secondary' : 'text-foreground'
+              isActive(path) ? 'text-primary' : 'text-foreground'
             }`}
             title={label}
           >

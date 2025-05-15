@@ -1,11 +1,11 @@
 'use client'
-import { Button as NextButton } from "@heroui/react"
-import { JSX } from "react"
+import { Button as NextButton } from '@heroui/react'
+import { JSX } from 'react'
 
 export type TButtonColors =
   | 'default'
   | 'primary'
-  | 'secondary'
+  | 'primary'
   | 'success'
   | 'warning'
   | 'danger'
@@ -20,7 +20,7 @@ type Props = {
   color?: TButtonColors
 }
 
-export const  Button: React.FC<Props> = ({
+export const Button: React.FC<Props> = ({
   children,
   icon,
   className,

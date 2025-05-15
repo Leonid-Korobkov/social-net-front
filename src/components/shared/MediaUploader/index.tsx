@@ -184,7 +184,7 @@ export default function MediaUploader({
                       value={upload.progress}
                       className="absolute bottom-0 left-0 right-0 h-1"
                       size="sm"
-                      color="secondary"
+                      color="primary"
                       aria-label={`Прогресс загрузки файла ${upload.file.name}`}
                       showValueLabel={false}
                     />

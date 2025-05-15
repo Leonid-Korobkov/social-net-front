@@ -43,7 +43,7 @@ function NavButton({
         type="button"
         fullWidth
         icon={icon}
-        color={isActive ? 'secondary' : color}
+        color={isActive ? 'primary' : color}
       >
         {children}
       </Button>

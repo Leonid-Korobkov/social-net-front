@@ -147,7 +147,7 @@ function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
 
                 {/* Кнопка отправки */}
                 <Button
-                  color="secondary"
+                  color="primary"
                   className="flex-end"
                   endContent={<IoMdCreate />}
                   onClick={onSubmit}

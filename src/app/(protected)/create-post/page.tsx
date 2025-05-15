@@ -138,7 +138,7 @@ export default function CreatePostPage() {
 
             <div className="flex gap-2 flex-col">
               <Button
-                color="secondary"
+                color="primary"
                 variant="shadow"
                 endContent={<IoMdCreate />}
                 onClick={onSubmit}

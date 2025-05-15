@@ -309,7 +309,7 @@ function EditProfile({
                 <div className="flex gap-2 justify-end">
                   <Button
                     fullWidth
-                    color="secondary"
+                    color="primary"
                     type="submit"
                     isLoading={isLoading}
                   >

@@ -140,7 +140,7 @@ function SearchClient() {
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
             />
             <Button
-              color="secondary"
+              color="primary"
               onClick={handleSearch}
               isLoading={isLoadingResults}
             >
@@ -154,13 +154,13 @@ function SearchClient() {
         selectedKey={activeTab}
         onSelectionChange={key => setActiveTab(key.toString())}
         fullWidth
-        color="secondary"
+        color="primary"
       >
         <Tab key="all" title="Все">
           <div className="mt-4 space-y-6">
             {isLoadingResults ? (
               <div className="flex justify-center">
-                <Spinner size="lg" color="secondary" variant="gradient" />
+                <Spinner size="lg" color="primary" variant="gradient" />
               </div>
             ) : (
               <>
@@ -179,7 +179,7 @@ function SearchClient() {
                         type="button"
                         fullWidth
                         variant="ghost"
-                        color={'secondary'}
+                        color={'primary'}
                       >
                         Показать больше пользователей
                       </Button>
@@ -214,7 +214,7 @@ function SearchClient() {
                         type="button"
                         fullWidth
                         variant="ghost"
-                        color={'secondary'}
+                        color={'primary'}
                         onClick={() => setActiveTab('posts')}
                       >
                         Показать больше постов
@@ -259,7 +259,7 @@ function SearchClient() {
                         type="button"
                         fullWidth
                         variant="ghost"
-                        color={'secondary'}
+                        color={'primary'}
                         onClick={() => setActiveTab('comments')}
                       >
                         Показать больше комментариев
@@ -287,7 +287,7 @@ function SearchClient() {
           <div className="mt-4">
             {isLoadingResults ? (
               <div className="flex justify-center">
-                <Spinner size="lg" color="secondary" variant="gradient" />
+                <Spinner size="lg" color="primary" variant="gradient" />
               </div>
             ) : posts.length > 0 ? (
               <div className="space-y-4">
@@ -310,7 +310,7 @@ function SearchClient() {
                 {hasNextPage && (
                   <div className="flex justify-center mt-4">
                     <Button
-                      color="secondary"
+                      color="primary"
                       type="button"
                       fullWidth
                       variant="ghost"
@@ -336,7 +336,7 @@ function SearchClient() {
           <div className="mt-4">
             {isLoadingResults ? (
               <div className="flex justify-center">
-                <Spinner size="lg" color="secondary" variant="gradient" />
+                <Spinner size="lg" color="primary" variant="gradient" />
               </div>
             ) : users.length > 0 ? (
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 auto-rows-auto">
@@ -349,7 +349,7 @@ function SearchClient() {
                       type="button"
                       fullWidth
                       variant="ghost"
-                      color={'secondary'}
+                      color={'primary'}
                       onClick={() => fetchNextPage()}
                       isLoading={isFetchingNextPage}
                     >
@@ -372,7 +372,7 @@ function SearchClient() {
           <div className="mt-4">
             {isLoadingResults ? (
               <div className="flex justify-center">
-                <Spinner size="lg" color="secondary" variant="gradient" />
+                <Spinner size="lg" color="primary" variant="gradient" />
               </div>
             ) : comments.length > 0 ? (
               <div className="space-y-4">
@@ -405,7 +405,7 @@ function SearchClient() {
                       type="button"
                       fullWidth
                       variant="ghost"
-                      color={'secondary'}
+                      color={'primary'}
                       onClick={() => fetchNextPage()}
                       isLoading={isFetchingNextPage}
                     >

@@ -14,6 +14,30 @@ export const size = {
 }
 export const contentType = 'image/png'
 
+// Функция для преобразования Cloudinary URL в JPG формат
+function optimizeCloudinaryImage(
+  imageUrl: string,
+  width: number = 1000
+): string {
+  if (!imageUrl) return ''
+  if (!imageUrl.includes('cloudinary.com')) return imageUrl
+
+  // Разбиваем URL на базовый URL и путь к изображению
+  const baseUrl = imageUrl.split('upload/')[0] + 'upload/'
+  const imagePath = imageUrl.split('upload/')[1]
+
+  // Формируем параметры трансформации
+  const transforms = [
+    'q_auto:best',
+    'fl_progressive',
+    `w_${width}`,
+    'f_jpg',
+    'fl_immutable_cache',
+  ].join(',')
+
+  return `${baseUrl}${transforms}/${imagePath}`
+}
+
 export default async function Image({ params }: { params: { id: string } }) {
   // Загрузка шрифта
   let fontData
@@ -53,6 +77,14 @@ export default async function Image({ params }: { params: { id: string } }) {
         ? `${cleanContent.substring(0, 200)}...`
         : cleanContent
 
+    // Проверяем, есть ли изображения в посте
+    const hasImage = post.media && post.media.length > 0
+    let imageForThumbnail = null
+    if (hasImage && post.media) {
+      // Преобразуем URL изображения в JPG формат
+      imageForThumbnail = optimizeCloudinaryImage(post.media[0], 1000)
+    }
+
     return new ImageResponse(
       (
         <div
@@ -85,14 +117,14 @@ export default async function Image({ params }: { params: { id: string } }) {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              padding: 40,
+              padding: 30,
               width: '100%',
               height: '100%',
               justifyContent: 'space-between',
               backgroundColor: 'rgba(255, 255, 255, 0.8)',
               borderRadius: 20,
               border: '4px solid #663399',
-              maxWidth: 1000,
+              maxWidth: 1050,
               maxHeight: 550,
               margin: 'auto',
               position: 'relative',
@@ -174,17 +206,51 @@ export default async function Image({ params }: { params: { id: string } }) {
             <div
               style={{
                 display: 'flex',
+                flexDirection: 'column',
                 fontSize: 32,
                 lineHeight: 1.4,
                 flex: 1,
                 overflow: 'hidden',
-                padding: '20px 10px',
+                padding: '15px 10px',
                 backgroundColor: 'rgba(255, 255, 255, 0.5)',
                 borderRadius: 15,
                 border: '1px solid rgba(102, 51, 153, 0.2)',
+                gap: 20,
               }}
             >
-              {truncatedContent}
+              {imageForThumbnail ? (
+                <>
+                  <div>
+                    {truncatedContent}
+                  </div>
+                  <div
+                    style={{
+                      width: '250px',
+                      height: '100%',
+                      overflow: 'hidden',
+
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexShrink: 0,
+                      alignSelf: 'center',
+                    }}
+                  >
+                    <img
+                      src={imageForThumbnail}
+                      alt="Изображение из поста"
+                      style={{
+                        borderRadius: 10,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                      }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div style={{ flex: 1 }}>{truncatedContent}</div>
+              )}
             </div>
 
             <div

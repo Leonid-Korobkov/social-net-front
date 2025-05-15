@@ -18,7 +18,7 @@ function ErrorPage() {
             Упс! Что-то пошло не так
           </h1>
           <p className="text-default-500">Произошла неизвестная ошибка</p>
-          <Button color="secondary" onClick={reloadPage}>
+          <Button color="primary" onClick={reloadPage}>
             Вернуться на главную
           </Button>
         </Card>

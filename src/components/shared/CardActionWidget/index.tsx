@@ -165,7 +165,7 @@ function CardActionWidget({
         <DropdownMenu aria-label="Post actions">
           <DropdownItem
             key="likes"
-            color="secondary"
+            color="primary"
             startContent={<FaRegHeart />}
             onClick={handleOpenModalLikes}
           >
@@ -173,7 +173,7 @@ function CardActionWidget({
           </DropdownItem>
           <DropdownItem
             key="share"
-            color="secondary"
+            color="primary"
             startContent={<LuSend />}
             onClick={handleShareClick}
             isDisabled={isSharing}
@@ -188,7 +188,7 @@ function CardActionWidget({
           </DropdownItem>
           <DropdownItem
             key="copy"
-            color="secondary"
+            color="primary"
             startContent={<FaRegCopy />}
             onClick={handleCopyLink}
           >
@@ -229,7 +229,7 @@ function CardActionWidget({
                   Отмена
                 </Button>
                 <Button
-                  color="secondary"
+                  color="primary"
                   onClick={() => {
                     onClose()
                     handleDelete()
@@ -264,7 +264,7 @@ function CardActionWidget({
               >
                 <ModalBody className="flex flex-col gap-2">
                   {isLoadingLikes && (
-                    <Spinner size="sm" color="secondary" variant="gradient" />
+                    <Spinner size="sm" color="primary" variant="gradient" />
                   )}
                   {!isLoadingLikes &&
                     likes?.length !== 0 &&
@@ -315,7 +315,7 @@ function CardActionWidget({
                 </ModalBody>
               </motion.div>
               <ModalFooter>
-                <Button color="secondary" onClick={onClose}>
+                <Button color="primary" onClick={onClose}>
                   Закрыть
                 </Button>
               </ModalFooter>

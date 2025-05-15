@@ -94,7 +94,7 @@ function PostList({
               isFollowing = false,
               viewCount = 0,
               shareCount = 0,
-              media = []
+              media = [],
             } = post
 
             return (
@@ -131,7 +131,7 @@ function PostList({
       {(hasMore || isFetchingMore) && (
         <div ref={loadMoreRef} className="py-4 flex justify-center">
           {isFetchingMore ? (
-            <Spinner size="lg" color="secondary" variant="gradient" />
+            <Spinner size="lg" color="primary" variant="gradient" />
           ) : (
             hasMore && <div className="h-20" />
           )}

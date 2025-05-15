@@ -136,7 +136,7 @@ function UserProfileClient({ params }: PageProps) {
               {user.name}
               {currentUser?.id !== user.id ? (
                 <Button
-                  color={user?.isFollowing ? 'default' : 'secondary'}
+                  color={user?.isFollowing ? 'default' : 'primary'}
                   variant="flat"
                   className="gap-2"
                   onClick={handleFollow}
@@ -166,7 +166,7 @@ function UserProfileClient({ params }: PageProps) {
                     endContent={<IoIosSettings />}
                     onClick={() => openSettings(id)}
                     variant="ghost"
-                    color="secondary"
+                    color="primary"
                     fullWidth
                   >
                     Настройки

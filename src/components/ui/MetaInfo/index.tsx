@@ -81,7 +81,7 @@ function MetaInfo({
         }
       >
         {isLoading || isSharing ? (
-          <Spinner size="sm" color='secondary' variant='gradient'/>
+          <Spinner size="sm" color="primary" variant="gradient" />
         ) : Icon ? (
           <Icon />
         ) : isLiked ? (

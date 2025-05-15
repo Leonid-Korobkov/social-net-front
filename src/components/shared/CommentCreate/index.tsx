@@ -86,7 +86,7 @@ function CreateComment({ params }: PageProps) {
         )}
       />
       <Button
-        color="secondary"
+        color="primary"
         className="flex-end"
         endContent={<IoMdCreate />}
         type="submit"

@@ -29,7 +29,7 @@ function AuthClient() {
             <CardBody className="overflow-hidden">
               <Tabs
                 aria-label="Options"
-                color="secondary"
+                color="primary"
                 variant="bordered"
                 size="md"
                 fullWidth

@@ -5,18 +5,18 @@
 
 @layer components {
   .btn-editor {
-    @apply p-2 text-small bg-default/50 text-secondary-600 rounded-lg transition-all;
+    @apply p-2 text-small bg-default/50 text-primary-600 rounded-lg transition-all;
   }
 
   .btn-editor[data-active='true'] {
-    @apply bg-secondary-100 text-secondary-700;
+    @apply bg-primary-100 text-primary-700;
   }
   .btn-editor:disabled {
     @apply bg-default/50 text-default/50;
   }
 
   .editor-divider {
-    @apply h-6 w-[2px] bg-secondary-200 mx-1;
+    @apply h-6 w-[2px] bg-primary-200 mx-1;
   }
 
   /* Стили для меню редактора */
@@ -210,7 +210,7 @@
 
   /* Отображение имени языка программирования */
   .code-block::after {
-    @apply absolute bottom-2 right-2 text-secondary-500 opacity-10 text-4xl;
+    @apply absolute bottom-2 right-2 text-primary-500 opacity-10 text-4xl;
     z-index: 0;
     font-family: monospace;
     font-weight: bold;
@@ -227,7 +227,7 @@
   gap: 0.5rem;
 
   svg {
-    color: hsl(var(--heroui-secondary));
+    color: hsl(var(--heroui-primary));
   }
 
   &--warning,

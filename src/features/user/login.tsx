@@ -109,7 +109,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
         <Button
           isLoading={isLoading || isSuccess}
           fullWidth
-          color="secondary"
+          color="primary"
           type="submit"
         >
           {isSuccess ? 'Перенаправление...' : 'Войти'}
