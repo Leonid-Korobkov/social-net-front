@@ -21,12 +21,19 @@ import { useStore } from 'zustand'
 export const postKeys = {
   all: ['posts'] as const,
   postId: (postId: string) => [...postKeys.all, postId] as const,
+  feed: (feedType: FeedType) => [...postKeys.all, 'feed', feedType] as const,
 }
 
 export interface PostsRequest {
   limit: number
   page?: number
 }
+
+export interface FeedRequest extends PostsRequest {
+  feedType: FeedType
+}
+
+export type FeedType = 'for-you' | 'new' | 'following' | 'viewed'
 
 export interface PostsDTO {
   data: Post[]
@@ -231,5 +238,36 @@ export const useIncrementViewsBatch = () => {
       // toast.error('Ошибка при batch просмотрах')
       console.error('Ошибка при batch просмотрах', error)
     },
+  })
+}
+
+// Хук для получения ленты с разными типами
+export const useGetFeed = ({ limit, feedType }: FeedRequest) => {
+  const queryClient = useQueryClient()
+
+  return useInfiniteQuery({
+    queryKey: postKeys.feed(feedType),
+    queryFn: async ({ pageParam: page = 1 }) => {
+      try {
+        return await apiClient.get<PostsRequest, PostsDTO>(`/posts`, {
+          params: {
+            page,
+            limit,
+            feed: feedType,
+          },
+        })
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (limit * allPages.length >= lastPage.total) {
+        return undefined
+      }
+      return lastPageParam + 1
+    },
+    retry: 0,
+    select: result => result.pages.map(page => page.data).flat(),
   })
 }

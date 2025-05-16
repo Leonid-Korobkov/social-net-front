@@ -9,7 +9,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <Header />
       <Container className="flex-grow">
         <LayoutNavigation />
-        <div className="flex-2 p-4 overflow-auto pb-20 lg:pb-4 h-full w-full">
+        <div className="flex-2 p-4 overflow-x-visible pb-20 lg:pb-4 h-full w-full">
           {children}
         </div>
         <ProfileSidebar />

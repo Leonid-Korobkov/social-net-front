@@ -111,14 +111,21 @@
     border-radius: 0 0 0.5rem 0.5rem;
     color: hsl(var(--heroui-foreground));
     font-family: 'JetBrainsMono', monospace;
-    margin: 0.75rem 0;
-    padding: 0.75rem 1rem;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0.75rem 1rem !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    white-space: pre-wrap !important;
 
     code {
       background: none;
       color: inherit;
       font-size: 0.8rem;
       padding: 0;
+      white-space: pre-wrap !important;
+      word-break: break-all !important;
+      max-width: 100% !important;
     }
   }
 
@@ -174,6 +181,8 @@
   /* Стили для блока кода */
   .code-block {
     @apply relative overflow-hidden rounded-md mt-4 mb-6 shadow-md bg-default-50;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .code-block-header {
@@ -194,6 +203,8 @@
     @apply text-sm;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x pan-y;
+    max-width: 100% !important;
+    white-space: pre-wrap !important;
   }
 
   .code-block pre code {
@@ -203,9 +214,11 @@
     font-family: 'JetBrainsMono', monospace;
     font-size: 0.85rem;
     counter-reset: line;
-    white-space: pre;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
     display: inline-block;
-    min-width: 100%;
+    min-width: auto !important;
+    max-width: 100% !important;
   }
 
   /* Отображение имени языка программирования */

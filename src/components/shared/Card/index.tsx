@@ -141,13 +141,6 @@ const Card = memo(
       }
     }
 
-    useEffect(() => {
-      if (cardFor !== 'post' || !id) return
-      if (UserSettingsStore.getState().wasPostViewed(id)) return
-      UserSettingsStore.getState().addViewedPost(id)
-      UserSettingsStore.getState().addPendingViewPost(id)
-    }, [cardFor, id])
-
     return (
       <>
         <HeroCard className={`mb-5 transform`}>

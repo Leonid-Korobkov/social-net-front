@@ -141,6 +141,7 @@ export default function SettingsProfile({
       <Modal
         isOpen={isOpen}
         onClose={onClose}
+        backdrop="blur"
         scrollBehavior="inside"
         size="2xl"
       >

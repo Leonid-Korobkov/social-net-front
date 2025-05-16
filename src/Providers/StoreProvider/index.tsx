@@ -12,7 +12,7 @@ function BatchViewSender() {
       const ids = UserSettingsStore.getState().getAndClearPendingViewPosts()
       if (ids.length) mutate(ids)
     }
-    const interval = setInterval(sendBatch, 10000)
+    const interval = setInterval(sendBatch, 5000)
     window.addEventListener('beforeunload', sendBatch)
     window.addEventListener('visibilitychange', sendBatch)
     return () => {

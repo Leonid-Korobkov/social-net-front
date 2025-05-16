@@ -35,6 +35,9 @@ interface initialUserSettingsStore {
   searchActiveTab: string
   setSearchActiveTab: (tab: string) => void
 
+  feedType: string
+  setFeedType: (type: string) => void
+
   postText: string
   setPostText: (str: string) => void
   reset: () => void
@@ -63,6 +66,9 @@ const initialState: initialUserSettingsStore = {
   setSearchText: (str: string) => {},
   searchActiveTab: 'posts',
   setSearchActiveTab: (tab: string) => {},
+
+  feedType: 'new',
+  setFeedType: (type: string) => {},
 
   postText: '',
   setPostText: (str: string) => {},
@@ -100,6 +106,10 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
       },
       setSearchActiveTab: (tab: string) => {
         set(state => ({ searchActiveTab: tab }))
+      },
+
+      setFeedType: (type: string) => {
+        set(state => ({ feedType: type }))
       },
 
       setPostText: (str: string) => {
