@@ -2,8 +2,10 @@ import { TbUsers, TbAward, TbConfetti, TbCheck } from 'react-icons/tb'
 import { motion } from 'framer-motion'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import { Button } from '@heroui/react'
+import { useRouter } from 'next/navigation'
 
 function ViewedAllPosts() {
+  const router = useRouter()
   return (
     <>
       <motion.div
@@ -127,7 +129,7 @@ function ViewedAllPosts() {
               size="lg"
               className="font-medium"
               startContent={<TbUsers className="text-xl" />}
-              onClick={() => (window.location.href = '/search')}
+              onClick={() => router.push('/search')}
             >
               Исследовать
             </Button>
