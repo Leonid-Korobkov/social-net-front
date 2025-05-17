@@ -12,7 +12,7 @@ function ViewedAllPosts() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className="text-center py-12 px-4"
       >
-        <div className="relative inline-flex flex-col items-center justify-center">
+        <div className="relative flex flex-col items-center justify-center">
           <div className="absolute -top-6 -right-6">
             <motion.div
               initial={{ rotate: -20, scale: 0.8 }}
@@ -123,12 +123,13 @@ function ViewedAllPosts() {
             <Button
               color="primary"
               variant="shadow"
+              fullWidth
               size="lg"
               className="font-medium"
               startContent={<TbUsers className="text-xl" />}
               onClick={() => (window.location.href = '/search')}
             >
-              Найти новых пользователей
+              Исследовать
             </Button>
           </motion.div>
 

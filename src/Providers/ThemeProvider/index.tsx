@@ -70,10 +70,10 @@ const ThemeContent = ({ children }: { children: React.ReactNode }) => {
   return (
     <HeroUIProvider disableAnimation={reduce}>
       {theme === 'default' ? (
-        <main className="min-h-dvh flex flex-col overflow-hidden">{children}</main>
+        <main className="min-h-dvh flex flex-col">{children}</main>
       ) : (
         <div className={getThemeClass()}>
-          <main className="min-h-dvh flex flex-col overflow-hidden">{children}</main>
+          <main className="min-h-dvh flex flex-col">{children}</main>
         </div>
       )}
       <Toaster />
