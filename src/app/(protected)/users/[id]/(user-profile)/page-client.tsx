@@ -21,7 +21,6 @@ import {
 import { motion } from 'framer-motion'
 import { notFound } from 'next/navigation'
 import { use, useState } from 'react'
-import Confetti from 'react-confetti'
 import { AiFillEdit } from 'react-icons/ai'
 import { BsPostcardFill } from 'react-icons/bs'
 import { FaUsers } from 'react-icons/fa'
@@ -112,18 +111,6 @@ function UserProfileClient({ params }: PageProps) {
         exit={{ opacity: 0 }}
       >
         <GoBack />
-        <Confetti
-          width={size.width}
-          height={size.height}
-          recycle={false}
-          run={party}
-          onConfettiComplete={Confetti => {
-            setParty(false)
-            if (Confetti) {
-              Confetti.reset()
-            }
-          }}
-        />
         <div className="flex lg:flex-row flex-col items-stretch gap-4">
           <Card className="flex flex-col items-center text-center space-y-4 p-5 flex-grow-[1] min-w-[300px]">
             <Image

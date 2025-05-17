@@ -116,12 +116,71 @@ const feedTypeInfo = {
 }
 
 function PostListDropdown({
-  feedType,
-  handleFeedTypeChange,
+  currentFeedType,
+  onFeedTypeChange,
 }: {
-  feedType: FeedType
-  handleFeedTypeChange: (key: string | number | null) => void
+  currentFeedType: FeedType | null
+  onFeedTypeChange?: (feedType: FeedType) => void
 }) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Получение типа ленты из URL или Zustand
+  const urlFeedType = searchParams.get('feed') as FeedType | null
+
+  const feedTypeFromStore = useStore(
+    UserSettingsStore,
+    state => state.feedType as FeedType
+  )
+  const setFeedTypeToStore = useStore(
+    UserSettingsStore,
+    state => state.setFeedType
+  )
+
+  // Приоритет: URL >  хранилище > переданный параметр > значение по умолчанию
+  const initialFeedType =
+    urlFeedType || feedTypeFromStore || currentFeedType || 'new'
+  const [feedType, setFeedType] = useState<FeedType>(initialFeedType)
+
+  // Обновление URL и Zustand при первой загрузке
+  useEffect(() => {
+    // Обновляем URL
+    const params = new URLSearchParams(searchParams.toString())
+
+    params.set('feed', feedType)
+
+    // Обновляем Zustand
+    setFeedTypeToStore(feedType)
+
+    // Вызываем колбэк если он передан
+    if (onFeedTypeChange) {
+      onFeedTypeChange(feedType)
+    }
+  }, [])
+
+  // Обработчик изменения типа ленты
+  const handleFeedTypeChange = (feedKey: string | number | null) => {
+    if (feedKey) {
+      const newFeedType = feedKey.toString() as FeedType
+
+      // Обновляем URL
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('feed', newFeedType)
+      const newUrl = params.toString() ? `?${params.toString()}` : ''
+      router.replace(`${newUrl}`, { scroll: false })
+
+      // Обновляем Zustand
+      setFeedTypeToStore(newFeedType)
+
+      // Вызываем колбэк если он передан
+      if (onFeedTypeChange) {
+        onFeedTypeChange(newFeedType)
+      }
+
+      setFeedType(newFeedType)
+    }
+  }
+
   return (
     <div className="md:sticky md:top-0 md:z-50 md:py-3 mb-4 flex justify-center">
       <Dropdown>
@@ -187,7 +246,7 @@ interface PostListProps {
   isFetchingMore?: boolean
   skeletonClassName?: string
   onFeedTypeChange?: (feedType: FeedType) => void
-  currentFeedType?: FeedType
+  currentFeedType?: FeedType | null
 }
 
 function PostList({
@@ -200,53 +259,13 @@ function PostList({
   isFetchingMore,
   skeletonClassName,
   onFeedTypeChange,
-  currentFeedType = 'new',
+  currentFeedType,
 }: PostListProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-
-  // Получение типа ленты из URL или Zustand
-  const urlFeedType = searchParams.get('feed') as FeedType | null
-
-  const feedTypeFromStore = useStore(
-    UserSettingsStore,
-    state => state.feedType as FeedType
-  )
-  const setFeedTypeToStore = useStore(
-    UserSettingsStore,
-    state => state.setFeedType
-  )
-
-  // Приоритет: URL > переданный параметр > хранилище > значение по умолчанию
-  const initialFeedType =
-    urlFeedType || currentFeedType || feedTypeFromStore || 'new'
-
-  const [feedType, setFeedType] = useState<FeedType>(initialFeedType)
   const parentRef = useRef<HTMLDivElement>(null)
-  const { mutate: batchViews } = useIncrementViewsBatch()
 
   const { ref: loadMoreRef, inView } = useInView({
     threshold: 0,
   })
-
-  // Обновление URL и Zustand при изменении типа ленты
-  useEffect(() => {
-    // Обновляем URL
-    const params = new URLSearchParams(searchParams.toString())
-
-    params.set('feed', feedType)
-
-    const newUrl = params.toString() ? `?${params.toString()}` : ''
-    router.replace(`${window.location.pathname}${newUrl}`, { scroll: false })
-
-    // Обновляем Zustand
-    setFeedTypeToStore(feedType)
-
-    // Вызываем колбэк если он передан
-    if (onFeedTypeChange) {
-      onFeedTypeChange(feedType)
-    }
-  }, [feedType, router, searchParams, setFeedTypeToStore, onFeedTypeChange])
 
   // Для загрузки следующей страницы
   useEffect(() => {
@@ -254,27 +273,6 @@ function PostList({
       onLoadMore()
     }
   }, [inView, isLoading, isFetchingMore, hasMore, onLoadMore])
-
-  // Для отправки пакета просмотров
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const pendingPosts =
-        UserSettingsStore.getState().getAndClearPendingViewPosts()
-      if (pendingPosts.length > 0) {
-        batchViews(pendingPosts)
-      }
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [batchViews])
-
-  // Обработчик изменения типа ленты
-  const handleFeedTypeChange = (feedKey: string | number | null) => {
-    if (feedKey) {
-      const newFeedType = feedKey.toString() as FeedType
-      setFeedType(newFeedType)
-    }
-  }
 
   // Обработчик просмотра поста
   const handlePostInView = (postId: string) => {
@@ -287,10 +285,12 @@ function PostList({
   if (isLoading && !data.length) {
     return (
       <div className="md:mt-[-80px]">
-        <PostListDropdown
-          feedType={feedType}
-          handleFeedTypeChange={handleFeedTypeChange}
-        />
+        {currentFeedType != null && (
+          <PostListDropdown
+            onFeedTypeChange={onFeedTypeChange}
+            currentFeedType={currentFeedType}
+          />
+        )}
         <div className={skeletonClassName}>
           {Array.from({ length: 5 }).map((_, index) => (
             <CardSkeleton key={index} />
@@ -302,10 +302,12 @@ function PostList({
 
   return (
     <div className={`md:mt-[-80px] ${className}`}>
-      <PostListDropdown
-        feedType={feedType}
-        handleFeedTypeChange={handleFeedTypeChange}
-      />
+      {currentFeedType != null && (
+        <PostListDropdown
+          onFeedTypeChange={onFeedTypeChange}
+          currentFeedType={currentFeedType}
+        />
+      )}
       {data.length === 0 && <ViewedAllPosts />}
       {data.length > 0 && (
         <div ref={parentRef} className="relative md:w-full md:overflow-visible">

@@ -1,37 +1,16 @@
 import { TbUsers, TbAward, TbConfetti, TbCheck } from 'react-icons/tb'
-import Confetti from 'react-confetti'
 import { motion } from 'framer-motion'
-import { useWindowSize } from '@/hooks/useWindowSize'
-import { useState } from 'react'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import { Button } from '@heroui/react'
 
 function ViewedAllPosts() {
-  const [showConfetti, setShowConfetti] = useState(false)
-  const size = useWindowSize()
-
   return (
     <>
-      <Confetti
-        width={size.width}
-        height={size.height}
-        recycle={false}
-        run={showConfetti}
-        onConfettiComplete={confetti => {
-          if (confetti) {
-            confetti.reset()
-          }
-        }}
-      />
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className="text-center py-12 px-4"
-        onAnimationComplete={() => {
-          // Запускаем конфетти после завершения анимации появления контента
-          setTimeout(() => setShowConfetti(true), 800)
-        }}
       >
         <div className="relative inline-flex flex-col items-center justify-center">
           <div className="absolute -top-6 -right-6">
@@ -105,7 +84,7 @@ function ViewedAllPosts() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.9, duration: 0.3 }}
                 >
-                  {UserSettingsStore.getState().viewedPosts.length}
+                  100%
                 </motion.div>
                 <div className="text-sm text-default-400">постов</div>
               </div>
