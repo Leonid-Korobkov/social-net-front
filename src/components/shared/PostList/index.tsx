@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
+  cn,
 } from '@heroui/react'
 import { useInView } from 'react-intersection-observer'
 import { useEffect, useRef, useState } from 'react'
@@ -284,7 +285,7 @@ function PostList({
 
   if (isLoading && !data.length) {
     return (
-      <div className="md:mt-[-80px]">
+      <div className={cn(currentFeedType != null && 'md:mt-[-80px]')}>
         {currentFeedType != null && (
           <PostListDropdown
             onFeedTypeChange={onFeedTypeChange}
@@ -301,7 +302,7 @@ function PostList({
   }
 
   return (
-    <div className={`md:mt-[-80px] ${className}`}>
+    <div className={cn(currentFeedType != null && 'md:mt-[-80px]', className)}>
       {currentFeedType != null && (
         <PostListDropdown
           onFeedTypeChange={onFeedTypeChange}
