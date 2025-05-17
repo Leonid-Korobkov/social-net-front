@@ -9,6 +9,7 @@ import {
 } from '../ApiConfig'
 import { postKeys } from './post.api'
 import { userKeys } from './user.api'
+import { UserSettingsStore } from '@/store/userSettings.store'
 
 // Ключи для кэширования
 export const likeKeys = {
@@ -113,6 +114,30 @@ export const useCreateLike = () => {
           }
         }
       )
+
+      // --- Обновляем кэш ленты feed (для PostList с типами) ---
+      const feedType = UserSettingsStore.getState().feedType
+      if (feedType) {
+        queryClient.setQueryData(
+          postKeys.feed(feedType as import('./post.api').FeedType),
+          (oldData?: { pages: any[]; pageParams: any[] }) => {
+            if (!oldData) return oldData
+            const newPages = oldData.pages.map(page => {
+              const newData = page.data.map((post: any) =>
+                post.id === postId
+                  ? {
+                      ...post,
+                      likedByUser: true,
+                      likeCount: post.likeCount + 1,
+                    }
+                  : post
+              )
+              return { ...page, data: newData }
+            })
+            return { ...oldData, pages: newPages }
+          }
+        )
+      }
 
       return { previousUserData, previousPostIdData, previousPostsData }
     },
@@ -236,6 +261,30 @@ export const useDeleteLike = () => {
           }
         }
       )
+
+      // --- Обновляем кэш ленты feed (для PostList с типами) ---
+      const feedType = UserSettingsStore.getState().feedType
+      if (feedType) {
+        queryClient.setQueryData(
+          postKeys.feed(feedType as import('./post.api').FeedType),
+          (oldData?: { pages: any[]; pageParams: any[] }) => {
+            if (!oldData) return oldData
+            const newPages = oldData.pages.map(page => {
+              const newData = page.data.map((post: any) =>
+                post.id === postId
+                  ? {
+                      ...post,
+                      likedByUser: false,
+                      likeCount: post.likeCount - 1,
+                    }
+                  : post
+              )
+              return { ...page, data: newData }
+            })
+            return { ...oldData, pages: newPages }
+          }
+        )
+      }
 
       return { previousUserData, previousPostIdData, previousPostsData }
     },
