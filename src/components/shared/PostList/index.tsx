@@ -248,6 +248,7 @@ interface PostListProps {
   skeletonClassName?: string
   onFeedTypeChange?: (feedType: FeedType) => void
   currentFeedType?: FeedType | null
+  allViewed?: boolean
 }
 
 function PostList({
@@ -261,6 +262,7 @@ function PostList({
   skeletonClassName,
   onFeedTypeChange,
   currentFeedType,
+  allViewed,
 }: PostListProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
@@ -309,7 +311,7 @@ function PostList({
           currentFeedType={currentFeedType}
         />
       )}
-      {data.length === 0 && <ViewedAllPosts />}
+      {data.length === 0 && allViewed && <ViewedAllPosts />}
       {data.length > 0 && (
         <div ref={parentRef} className="relative md:w-full md:overflow-visible">
           <div className="w-full">

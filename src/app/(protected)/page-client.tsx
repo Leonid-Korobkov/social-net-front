@@ -27,13 +27,14 @@ function PostsClient() {
 
   return (
     <PostList
-      data={data ?? []}
+      data={data?.data ?? []}
       isLoading={isLoading}
       hasMore={hasNextPage}
       onLoadMore={handleLoadMore}
       isFetchingMore={isFetchingNextPage && !isLoading}
       currentFeedType={feedType}
       onFeedTypeChange={handleFeedTypeChange}
+      allViewed={data?.allViewed}
     />
   )
 }

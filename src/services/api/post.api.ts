@@ -38,6 +38,7 @@ export type FeedType = 'for-you' | 'new' | 'following' | 'viewed'
 export interface PostsDTO {
   data: Post[]
   total: number
+  allViewed?: boolean
 }
 
 // --- React Хуки ---
@@ -268,6 +269,15 @@ export const useGetFeed = ({ limit, feedType }: FeedRequest) => {
       return lastPageParam + 1
     },
     retry: 0,
-    select: result => result.pages.map(page => page.data).flat(),
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    select: result => {
+      // Собираем все посты в один массив
+      const allData = result.pages.map(page => page.data).flat()
+      // Берём allViewed с первой страницы (актуально только если постов нет)
+      const allViewed = result.pages[0]?.allViewed
+      return { data: allData, allViewed }
+    },
   })
 }
