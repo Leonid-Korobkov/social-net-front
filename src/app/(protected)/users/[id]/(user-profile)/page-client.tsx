@@ -116,7 +116,7 @@ function UserProfileClient({ params }: PageProps) {
             <Image
               alt={`Изображение профиля ${user.name}`}
               src={`${user.avatarUrl}`}
-              className="max-h-[200px] max-w-[200px] lg:max-h-[300px] w-full lg:max-w-[300px] border-4 border-white rounded-xl cursor-pointer"
+              className="max-h-[200px] max-w-[200px] lg:max-h-[300px] w-full lg:max-w-[300px] cursor-pointer"
               onClick={handleImageClick}
             />
             <div className="flex flex-col text-2xl font-bold gap-4 items-center w-full">

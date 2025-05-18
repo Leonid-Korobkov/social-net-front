@@ -322,7 +322,7 @@ export default function VideoPlayer({
 
         <button
           onClick={toggleMute}
-          className="absolute bottom-2 right-2 text-white backdrop-blur-md bg-black/30 hover:bg-black/40 p-1 rounded-full z-30"
+          className="absolute bottom-2 right-2 text-white backdrop-blur-md bg-content1/30 hover:bg-content1/50 p-2 rounded-full z-30"
         >
           {isMuted ? <IoVolumeMute size={16} /> : <IoVolumeHigh size={16} />}
         </button>
