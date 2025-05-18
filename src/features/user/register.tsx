@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
 import { IoEye, IoEyeOff } from 'react-icons/io5'
+import { useRouter } from 'next/navigation'
 
 interface IForm {
   email: string
@@ -26,6 +27,7 @@ interface RegisterProps {
 
 function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
   const [isVisiblePass, setIsVisiblePass] = useState(false)
+  const router = useRouter()
 
   const {
     register,
@@ -44,21 +46,27 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
   } = useRegister()
 
   const onSubmit: SubmitHandler<IForm> = async data => {
+    setIsVisiblePass(false)
     await registerUser(data)
-    setSelected('login')
     setRegisterSuccess(true)
+    setTimeout(() => {
+      router.push('/auth?tab=login')
+      setSelected('login')
+    }, 1500)
   }
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-4 h-full"
+      autoComplete="on"
     >
       <Input
         label="Имя"
         type="text"
         errorMessage={errors.name ? errors.name.message : ''}
         isInvalid={errors.name ? true : false}
+        autoComplete="username"
         placeholder="Иван Петрович"
         {...register('name', {
           required: 'Обязательное поле',
@@ -74,6 +82,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       <Input
         label="Имя пользователя"
         type="text"
+        autoComplete="nickname"
         errorMessage={errors.userName?.message || ''}
         isInvalid={errors.userName ? true : false}
         placeholder="username_100500"
@@ -88,6 +97,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       <Input
         label="Email"
         type="email"
+        autoComplete="email"
         errorMessage={errors.email?.message || ''}
         isInvalid={errors.email ? true : false}
         endContent={<IoMdMail className="form-icon" />}
@@ -105,6 +115,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         type={isVisiblePass ? 'text' : 'password'}
         errorMessage={errors.password ? errors.password.message : ''}
         isInvalid={errors.password ? true : false}
+        autoComplete="new-password"
         endContent={
           <button
             aria-label="toggle password visibility"
@@ -137,17 +148,15 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       </p>
 
       <div className="flex gap-2 justify-end">
-        <Button
-          isLoading={isLoading || isSuccess}
-          fullWidth
-          color="primary"
-          type="submit"
-        >
-          {isSuccess ? 'Перенаправление...' : 'Зарегистрироваться'}
+        <Button isLoading={isLoading} fullWidth color="primary" type="submit">
+          Зарегистрироваться
         </Button>
       </div>
 
       <div>
+        <div className="text-sm text-default-400 mb-2">
+          *После регистрации пройдите процесс авторизации.
+        </div>
         {error && hasErrorField(error) && (
           <Alert color="danger" title={error.data.error} />
         )}

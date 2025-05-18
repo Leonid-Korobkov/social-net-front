@@ -54,6 +54,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-4 h-full"
+      autoComplete="on"
     >
       <Input
         label="Email"
@@ -61,6 +62,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
         errorMessage={errors.email ? errors.email.message : ''}
         isInvalid={errors.email ? true : false}
         endContent={<IoMdMail className="form-icon" />}
+        autoComplete="email"
         {...register('email', {
           required: 'Обязательное поле',
           pattern: {
@@ -74,6 +76,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
         type={isVisiblePass ? 'text' : 'password'}
         errorMessage={errors.password ? errors.password.message : ''}
         isInvalid={errors.password ? true : false}
+        autoComplete="current-password"
         endContent={
           <button
             aria-label="toggle password visibility"

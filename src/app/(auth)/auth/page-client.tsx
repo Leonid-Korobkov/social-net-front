@@ -1,13 +1,17 @@
 'use client'
 import { Alert, Card, CardBody, Tab, Tabs } from '@heroui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IoLogIn, IoPeople } from 'react-icons/io5'
 import Login from '@/features/user/login'
 import Register from '@/features/user/register'
 import { useUserStore } from '@/store/user.store'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 function AuthClient() {
-  const [selected, setSelected] = useState('login')
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const initialTab = searchParams.get('tab') || 'login'
+  const [selected, setSelected] = useState(initialTab)
   const [isRegisterSuccess, setRegisterSuccess] = useState(false)
   const error = useUserStore(state => state.error)
 
@@ -34,7 +38,11 @@ function AuthClient() {
                 size="md"
                 fullWidth
                 selectedKey={selected}
-                onSelectionChange={key => setSelected(key as string)}
+                onSelectionChange={key => {
+                  const tabKey = key as string
+                  setSelected(tabKey)
+                  router.replace(`/auth?tab=${tabKey}`)
+                }}
               >
                 <Tab
                   key="login"
