@@ -59,6 +59,7 @@ function EditProfile({
     control,
     reset,
     formState: { errors },
+    setValue,
   } = useForm<User>({
     mode: 'onChange',
     reValidateMode: 'onBlur',
@@ -191,6 +192,11 @@ function EditProfile({
                     pattern: {
                       value: validateUserName,
                       message: `Имя пользователя может содержать только латинские маленькие буквы, цифры, символы "_" и "-"`,
+                    },
+                    onChange: e => {
+                      setValue('userName', e.target.value.toLowerCase(), {
+                        shouldValidate: true,
+                      })
                     },
                   })}
                 />

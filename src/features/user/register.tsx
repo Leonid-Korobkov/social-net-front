@@ -33,6 +33,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
     register,
     formState: { errors },
     handleSubmit,
+    setValue,
   } = useForm<IForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -91,6 +92,11 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
           pattern: {
             value: validateUserName,
             message: `Имя пользователя может содержать только латинские маленькие буквы, цифры, символы "_" и "-"`,
+          },
+          onChange: e => {
+            setValue('userName', e.target.value.toLowerCase(), {
+              shouldValidate: true,
+            })
           },
         })}
       />
