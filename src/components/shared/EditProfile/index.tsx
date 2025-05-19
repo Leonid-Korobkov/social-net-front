@@ -74,10 +74,10 @@ function EditProfile({
   })
 
   useEffect(() => {
-    if (user) {
+    if (!isOpen && user) {
       reset(user)
     }
-  }, [user, reset])
+  }, [isOpen, user, reset])
 
   const onSubmit = async (data: User) => {
     if (id) {
@@ -179,26 +179,28 @@ function EditProfile({
                     },
                   })}
                 />
-                <Input
-                  label="Имя пользователя"
-                  labelPlacement="outside"
-                  type="text"
-                  errorMessage={errors.userName?.message || ''}
-                  isInvalid={errors.userName ? true : false}
-                  placeholder="username_100500"
-                  variant="bordered"
-                  {...register('userName', {
+                <Controller
+                  name="userName"
+                  control={control}
+                  rules={{
                     required: 'Обязательное поле',
-                    pattern: {
-                      value: validateUserName,
-                      message: `Имя пользователя может содержать только латинские маленькие буквы, цифры, символы "_" и "-"`,
-                    },
-                    onChange: e => {
-                      setValue('userName', e.target.value.toLowerCase(), {
-                        shouldValidate: true,
-                      })
-                    },
-                  })}
+                    validate: validateUserName,
+                  }}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      label="Имя пользователя"
+                      labelPlacement="outside"
+                      type="text"
+                      errorMessage={errors.userName?.message || ''}
+                      isInvalid={errors.userName ? true : false}
+                      placeholder="username_100500"
+                      variant="bordered"
+                      onChange={e =>
+                        field.onChange(e.target.value.toLowerCase())
+                      }
+                    />
+                  )}
                 />
                 <Input
                   label="Имя"

@@ -12,4 +12,25 @@ export const validatePassword = {
 
 export const validateEmailPattern = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/
 
-export const validateUserName = /^[a-z0-9_-]{3,15}$/
+export const validateUserName = {
+  minLength: (value: string) =>
+    value.length >= 3 || 'Имя пользователя должно содержать минимум 3 символа',
+  maxLength: (value: string) =>
+    value.length <= 15 ||
+    'Имя пользователя должно содержать максимум 15 символов',
+  allowedCharacters: (value: string) =>
+    /^[a-z0-9_.-]+$/.test(value) ||
+    'Имя пользователя может содержать только латинские буквы, цифры и символы _, -, .',
+  notOnlySpecialChars: (value: string) =>
+    !/^[._-]+$/.test(value) ||
+    'Имя пользователя не может состоять только из символов _, ., или -',
+  cannotStartWithDotOrDash: (value: string) =>
+    !/^[.-]/.test(value) ||
+    'Имя пользователя не может начинаться с точки или дефиса',
+  cannotEndWithDotOrDash: (value: string) =>
+    !/[.-]$/.test(value) ||
+    'Имя пользователя не может заканчиваться на точку или дефис',
+  cannotHaveConsecutiveDotsOrDashes: (value: string) =>
+    !/[.-]{2}/.test(value) ||
+    'Имя пользователя не может содержать две точки или дефиса подряд',
+}

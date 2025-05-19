@@ -8,7 +8,7 @@ import {
 } from '@/utils/validateFieldsForm'
 import { Alert, Button, Input, Link } from '@heroui/react'
 import { useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm, Controller } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
 import { IoEye, IoEyeOff } from 'react-icons/io5'
 import { useRouter } from 'next/navigation'
@@ -34,6 +34,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
     formState: { errors },
     handleSubmit,
     setValue,
+    control,
   } = useForm<IForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -80,25 +81,25 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
           },
         })}
       />
-      <Input
-        label="Имя пользователя"
-        type="text"
-        autoComplete="nickname"
-        errorMessage={errors.userName?.message || ''}
-        isInvalid={errors.userName ? true : false}
-        placeholder="username_100500"
-        {...register('userName', {
+      <Controller
+        name="userName"
+        control={control}
+        rules={{
           required: 'Обязательное поле',
-          pattern: {
-            value: validateUserName,
-            message: `Имя пользователя может содержать только латинские маленькие буквы, цифры, символы "_" и "-"`,
-          },
-          onChange: e => {
-            setValue('userName', e.target.value.toLowerCase(), {
-              shouldValidate: true,
-            })
-          },
-        })}
+          validate: validateUserName,
+        }}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Имя пользователя"
+            type="text"
+            autoComplete="nickname"
+            errorMessage={errors.userName?.message || ''}
+            isInvalid={errors.userName ? true : false}
+            placeholder="username_100500"
+            onChange={e => field.onChange(e.target.value.toLowerCase())}
+          />
+        )}
       />
       <Input
         label="Email"
