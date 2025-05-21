@@ -47,6 +47,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
   useEffect(() => {
     if (isSuccess) {
       router.push('/')
+      location.reload()
     }
   }, [isSuccess, router])
 

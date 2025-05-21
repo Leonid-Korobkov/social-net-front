@@ -8,7 +8,6 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
 import CardSkeleton from '../../ui/CardSkeleton'
 import FeedTypeDropdown from '../FeedTypeDropdown'
-import SortDropdown from '../SortDropdown'
 import PostItem from '../PostItem'
 
 interface PostListProps {
