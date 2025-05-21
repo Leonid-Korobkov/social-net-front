@@ -23,6 +23,10 @@ interface PostListProps {
   onFeedTypeChange?: (feedType: FeedType) => void
   currentFeedType?: FeedType | null
   allViewed?: boolean
+  sort: string
+  onSortChange: (sort: string) => void
+  sortOrder: 'asc' | 'desc'
+  onSortOrderToggle: () => void
 }
 
 function PostList({
@@ -37,6 +41,10 @@ function PostList({
   onFeedTypeChange,
   currentFeedType,
   allViewed,
+  sort,
+  onSortChange,
+  sortOrder,
+  onSortOrderToggle,
 }: PostListProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
@@ -64,13 +72,23 @@ function PostList({
       {currentFeedType != null && (
         <div
           className={cn(
-            'flex justify-between gap-2 md:sticky md:top-0 md:z-50 md:py-3 mb-4 justify-center'
+            'flex justify-between gap-2 md:sticky md:top-0 md:z-50 md:py-3 mb-4',
+            currentFeedType !== 'viewed' && 'justify-center'
           )}
         >
           <FeedTypeDropdown
             onFeedTypeChange={onFeedTypeChange}
             currentFeedType={currentFeedType}
           />
+          {currentFeedType === 'viewed' && (
+            <SortDropdown
+              sort={sort}
+              onSortChange={onSortChange}
+              feedType={currentFeedType}
+              sortOrder={sortOrder}
+              onSortOrderToggle={onSortOrderToggle}
+            />
+          )}
         </div>
       )}
       {isLoading && !data.length ? (

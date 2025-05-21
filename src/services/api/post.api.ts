@@ -31,6 +31,8 @@ export interface PostsRequest {
 
 export interface FeedRequest extends PostsRequest {
   feedType: FeedType
+  sort?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
 export type FeedType = 'for-you' | 'new' | 'following' | 'viewed'
@@ -243,11 +245,16 @@ export const useIncrementViewsBatch = () => {
 }
 
 // Хук для получения ленты с разными типами
-export const useGetFeed = ({ limit, feedType }: FeedRequest) => {
+export const useGetFeed = ({
+  limit,
+  feedType,
+  sort,
+  sortOrder,
+}: FeedRequest) => {
   const queryClient = useQueryClient()
 
   return useInfiniteQuery({
-    queryKey: postKeys.feed(feedType),
+    queryKey: [...postKeys.feed(feedType), sort, sortOrder],
     queryFn: async ({ pageParam: page = 1 }) => {
       try {
         return await apiClient.get<PostsRequest, PostsDTO>(`/posts`, {
@@ -255,6 +262,8 @@ export const useGetFeed = ({ limit, feedType }: FeedRequest) => {
             page,
             limit,
             feed: feedType,
+            ...(sort ? { sort } : {}),
+            ...(sortOrder ? { sortOrder } : {}),
           },
         })
       } catch (error) {
