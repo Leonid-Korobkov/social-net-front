@@ -247,31 +247,36 @@ const Card = memo(
               }
             }}
           >
-            {cardFor === 'current-post' || cardFor === 'comment' ? (
-              <RawHTML>{content}</RawHTML>
-            ) : (
-              <CollapsibleText
-                content={content}
-                className={clsx(
-                  cardFor === 'search' && 'text-sm',
-                  'leading-snug'
-                )}
-                maxLines={20}
-                href={`/users/${username}`}
-                title={`Переход на страницу автора ${username}`}
-              />
+            {content.trim() !== '' && (
+              cardFor === 'current-post' || cardFor === 'comment' ? (
+                <RawHTML>{content}</RawHTML>
+              ) : (
+                <CollapsibleText
+                  content={content}
+                  className={clsx(
+                    cardFor === 'search' && 'text-sm',
+                    'leading-snug'
+                  )}
+                  maxLines={20}
+                  href={`/users/${username}`}
+                  title={`Переход на страницу автора ${username}`}
+                />
+              )
             )}
             {/* Отображаем медиафайлы, если они есть */}
             {media && media.length > 0 && (
               <MediaCarousel
                 media={media}
-                className="non-click mt-2 mb-2 rounded-lg"
+                className={clsx(
+                  'non-click mb-2 rounded-lg',
+                  content.trim() !== '' && 'mt-2'
+                )}
                 onMediaClick={openMediaModal}
               />
             )}
           </CardBody>
           {cardFor !== 'search' && (
-            <CardFooter className="gap-3 -ml-2">
+            <CardFooter className="gap-3 -ml-2 p-3 pt-0">
               <div className="flex items-center gap-1 w-full">
                 <AnimatedLike
                   isLiked={likedByUser}

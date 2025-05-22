@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import VideoPlayer from '../VideoPlayer'
 import Image from 'next/image'
 import { useCloudinaryImage } from '@/hooks/useCloudinaryImage'
+import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton'
 
 interface MediaCarouselProps {
   media: string[]
@@ -201,36 +202,6 @@ export default function MediaCarousel({
             1000
           )
 
-          // return (
-          //   <div key={index}>
-          //     {item.type === MediaType.IMAGE ? (
-          //       <div
-          //         key={index}
-          //         className="aspect-auto overflow-hidden rounded-lg border border-default-200"
-          //         onClick={e => handleItemClick(index, e as React.MouseEvent)}
-          //       >
-          //         <img
-          //           src={optimizedUrl}
-          //           alt={`Медиа ${index + 1}`}
-          //           className="w-full h-full max-h-full object-cover"
-          //         />
-          //       </div>
-          //     ) : (
-          //       <div className="w-full h-full flex items-center justify-center">
-          //         <VideoPlayer
-          //           src={optimizedUrl}
-          //           thumbnail={imageForThumbnail}
-          //           className="w-full h-full max-h-[430px] justify-center"
-          //           autoPlay={true}
-          //           controls={true}
-          //           loop={true}
-          //           muted={true}
-          //           mode="carousel"
-          //         />
-          //       </div>
-          //     )}
-          //   </div>
-          // )
 
           return (
             <div

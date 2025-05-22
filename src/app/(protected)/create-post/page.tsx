@@ -46,11 +46,6 @@ export default function CreatePostPage() {
   // Обработчик отправки поста
   const onSubmit = async () => {
     try {
-      if (!editor || editor?.isEmpty) {
-        toast.error('Пост не может быть пустым')
-        return
-      }
-
       const toastId = toast.loading('Создание поста...')
       const promise = createPost({
         content: getHTML(),
