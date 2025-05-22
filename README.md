@@ -1,121 +1,91 @@
-# Социальная сеть (Frontend)
+# SOCIAL-NET-FRONT
 
-Этот репозиторий содержит frontend-часть приложения **Zling** — социальной сети, разработанной для создания и взаимодействия между пользователями. **Zling** предоставляет удобный способ делиться контентом, взаимодействовать с другими пользователями и персонализировать свой профиль.
+_Connect, Share, and Engage Like Never Before_
 
-Проект создан с использованием современных технологий для обеспечения высокой производительности, безопасности и масштабируемости. Вся функциональность приложения реализована с учетом удобства для конечных пользователей.
+![last-commit](https://img.shields.io/github/last-commit/Leonid-Korobkov/social-net-front?style=flat&logo=git&logoColor=white&color=0080ff) ![repo-top-language](https://img.shields.io/github/languages/top/Leonid-Korobkov/social-net-front?style=flat&color=0080ff) ![repo-language-count](https://img.shields.io/github/languages/count/Leonid-Korobkov/social-net-front?style=flat&color=0080ff)
 
-## Описание проекта
+_Built with the tools and technologies:_
 
-**Zling** — это платформа для общения и обмена информацией. Приложение предоставляет возможность:
+![JSON](https://img.shields.io/badge/JSON-000000.svg?style=flat&logo=JSON&logoColor=white) ![npm](https://img.shields.io/badge/npm-CB3837.svg?style=flat&logo=npm&logoColor=white) ![Autoprefixer](https://img.shields.io/badge/Autoprefixer-DD3735.svg?style=flat&logo=Autoprefixer&logoColor=white) ![PostCSS](https://img.shields.io/badge/PostCSS-DD3A0A.svg?style=flat&logo=PostCSS&logoColor=white) ![TOML](https://img.shields.io/badge/TOML-9C4121.svg?style=flat&logo=TOML&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=flat&logo=JavaScript&logoColor=black)  
+![React](https://img.shields.io/badge/React-61DAFB.svg?style=flat&logo=React&logoColor=black) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?style=flat&logo=TypeScript&logoColor=white) ![ESLint](https://img.shields.io/badge/ESLint-4B32C3.svg?style=flat&logo=ESLint&logoColor=white) ![Axios](https://img.shields.io/badge/Axios-5A29E4.svg?style=flat&logo=Axios&logoColor=white) ![datefns](https://img.shields.io/badge/datefns-770C56.svg?style=flat&logo=date-fns&logoColor=white) ![React%20Hook%20Form](https://img.shields.io/badge/React%20Hook%20Form-EC5990.svg?style=flat&logo=React-Hook-Form&logoColor=white)
 
-- Создавать публикации с текстом и изображениями.
-- Оставлять комментарии к постам и ставить отметки "нравится".
-- Настраивать персональные профили с фотографией, биографией и другой информацией.
-- Работать с приложением на любом устройстве благодаря адаптивному дизайну.
-- Безопасно взаимодействовать благодаря аутентификации и обработке ошибок.
+---
 
-## Функциональные возможности
+## Table of Contents
 
-- **Аутентификация пользователей**: Безопасная регистрация и вход в систему.
-- **Создание постов**: Возможность создавать, редактировать и удалять посты с текстом и изображениями.
-- **Обновления в реальном времени**: Лайки и комментарии обновляются мгновенно.
-- **Профили пользователей**: Просмотр и редактирование профилей, включая аватар и личные данные.
-- **Адаптивный дизайн**: Оптимизация для различных устройств и размеров экранов.
+- [SOCIAL-NET-FRONT](#social-net-front)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Usage](#usage)
+    - [Testing](#testing)
 
-## Страницы приложения
+---
 
-1. **Auth**Страница регистрации и авторизации.
+## Overview
 
-   - При регистрации: три поля (имя, email, пароль).
-     - Имя: минимум 3 символа.
-     - Email: корректный формат.
-     - Пароль: от 6 до 16 символов, минимум 1 специальный знак, 1 заглавная и строчная буквы, 1 цифра.
-   - При логине: два поля (email, пароль).
-     Для каждого нового пользователя автоматически генерируется аватар.
+**social-net-front** is a powerful front-end framework designed to streamline the development of modern social networking applications.
 
-2. **Posts**Главная страница с постами.
+**Why social-net-front?**
 
-   - Посты отображаются списком.
-   - У каждого поста: автор, аватар, дата/время публикации, лайки, комментарии.
-   - При клике на комментарии — переход на страницу **CurrentPost**.
-   - Свои посты можно удалить через иконку корзины, которая вызывает модальное окно с подтверждением.
+This project aims to enhance developer productivity while delivering a seamless user experience. The core features include:
 
-3. **CurrentPost**Страница с полным отображением выбранного поста.
+- 🎯 **Optimized Deployment:** Configures a Caddy web server for efficient deployment, enhancing performance and reliability.
+- 🎨 **Responsive Design:** Integrates Tailwind CSS for modern styling, ensuring cross-browser compatibility and responsive layouts.
+- 🔒 **Type Safety:** Utilizes TypeScript for robust type-checking, improving code quality and reducing runtime errors.
+- 📸 **Dynamic Media Handling:** Supports optimized image loading and media uploads via Cloudinary, enhancing user experience.
+- 🔑 **User Authentication:** Implements secure access to protected routes, maintaining session integrity and user security.
+- ⚡ **Real-time Interactions:** Facilitates dynamic comment and post management, improving user engagement through instant feedback.
 
-   - Содержит те же поля, что и на странице **Posts**.
-   - Ниже: список комментариев с возможностью оставить новый комментарий.
+---
 
-4. **Followers**Страница с подписчиками.
+## Getting Started
 
-   - Отображается список подписчиков (имя, email, аватар).
-   - Возможность перейти на профиль пользователя.
+### Prerequisites
 
-5. **Following**Страница подписок с аналогичным функционалом.
-6. **UserProfile**Страница профиля.
+This project requires the following dependencies:
 
-   - Чужой профиль: возможность подписаться на пользователя.
-   - Свой профиль: редактирование данных (email, имя, дата рождения, аватар, биография, местоположение).
-   - Отображение количества подписчиков и подписок.
+- **Programming Language:** TypeScript
+- **Package Manager:** Npm
 
-7. **Error**
-   Страница для обработки глобальных ошибок приложения с использованием `error element`.
+### Installation
 
-## Используемые технологии
+Build social-net-front from the source and intsall dependencies:
 
-- **React**: Библиотека JavaScript для создания пользовательских интерфейсов.
-- **TypeScript**: Надстройка JavaScript с поддержкой статической типизации.
-- **Redux Toolkit**: Управление состоянием приложения.
-- **React Router**: Библиотека маршрутизации для навигации.
-- **Tailwind CSS**: Фреймворк CSS с утилитарным подходом к стилям.
-- **HeroUI**: Библиотека UI-компонентов для React.
-- **React Hook Form**: Библиотека для валидации и работы с формами.
-- **React Icons**: Коллекция популярных иконок.
+1.  **Clone the repository:**
 
-## Как начать
+        ❯ git clone https://github.com/Leonid-Korobkov/social-net-front
 
-Следуйте этим шагам, чтобы настроить проект локально:
+2.  **Navigate to the project directory:**
 
-1. **Клонируйте репозиторий**:
+        ❯ cd social-net-front
 
-   ```bash
-   git clone https://github.com/Leonid-Korobkov/social-net-front.git
-   cd social-net-front
-   ```
+3.  **Install the dependencies:**
 
-2. **Установите зависимости**:
+**Using [npm](https://www.npmjs.com/):**
 
-   ```bash
-   npm install
-   ```
+    ❯ npm install
 
-3. **Настройте переменные окружения**:
+### Usage
 
-   Создайте файл `.env` в корневой директории и добавьте необходимые переменные.
+Run the project with:
 
-4. **Запустите сервер разработки**:
+**Using [npm](https://www.npmjs.com/):**
 
-   ```bash
-   npm run dev
-   ```
+    npm start
 
-   Приложение будет доступно по адресу `http://localhost:4000`.
+### Testing
 
-## Развертывание
+Social-net-front uses the {**test_framework**} test framework. Run the test suite with:
 
-Приложение развернуто с использованием [Railway](https://railway.app/).
+**Using [npm](https://www.npmjs.com/):**
 
-## Вклад в проект
+    npm test
 
-Принимаются предложения и изменения! Сделайте форк репозитория и создайте pull request с вашими правками.
+---
 
-## Благодарности
+[⬆ Return](#top)
 
-- [Документация NextUI](https://nextui.org/docs/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Railway](https://railway.app/)
-- [React Icons](https://react-icons.github.io/react-icons/)
-- [React Hook Form Controller](https://react-hook-form.com/docs/usecontroller/controller)
-
-Для backend-части проекта посетите репозиторий [social-net-back](https://github.com/Leonid-Korobkov/social-net-back).
-
-Исследуйте приложение в открытом доступе по адресу [zling.up.railway.app](https://zling.up.railway.app/). `[на данный момент приложение не доступно!]`
+---
