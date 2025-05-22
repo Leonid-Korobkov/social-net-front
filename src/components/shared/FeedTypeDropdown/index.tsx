@@ -62,7 +62,7 @@ function FeedTypeDropdown({
 
   // Приоритет: URL >  хранилище > переданный параметр > значение по умолчанию
   const initialFeedType =
-    urlFeedType || feedTypeFromStore || currentFeedType || 'new'
+    urlFeedType || feedTypeFromStore || currentFeedType || 'for-you'
   const [feedType, setFeedType] = useState<FeedType>(initialFeedType)
 
   // Обновление URL и Zustand при первой загрузке

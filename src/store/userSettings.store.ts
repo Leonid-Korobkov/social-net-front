@@ -67,7 +67,7 @@ const initialState: initialUserSettingsStore = {
   searchActiveTab: 'posts',
   setSearchActiveTab: (tab: string) => {},
 
-  feedType: 'new',
+  feedType: 'for-you',
   setFeedType: (type: string) => {},
 
   postText: '',
