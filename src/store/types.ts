@@ -77,6 +77,7 @@ export type Comment = {
   likedByUser?: boolean
   likeCount: number
   createdAt: Date
+  media?: string[]
 }
 
 export type CommentLike = {

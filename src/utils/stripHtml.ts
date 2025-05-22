@@ -42,7 +42,7 @@ export function stripHtml(html: string): string {
   // Обрабатываем теги ссылок
   text = text.replace(/<a [^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g, '$2 ($1)')
 
-  // Убираем все остальные HTML-теги
+  // Удаляем все остальные HTML-теги
   text = text.replace(/<[^>]*>/g, '')
 
   // Заменяем HTML-сущности на соответствующие символы
@@ -64,4 +64,27 @@ export function stripHtml(html: string): string {
   text = text.replace(/ {2,}/g, ' ')
 
   return text
+}
+
+/**
+ * Проверяет, что пост не пустой: либо есть текст, либо есть медиа
+ * @param html HTML-строка
+ * @param mediaUrls массив ссылок на медиа
+ */
+export function isPostEmpty(html: string, mediaUrls: string[]): boolean {
+  const text = stripAllHtmlTags(html).trim()
+  return !text && mediaUrls.length === 0
+}
+
+/**
+ * Удаляет все HTML-теги, не заменяя их на текст, возвращает только "сырой" текст
+ * @param html HTML-строка для обработки
+ * @returns Очищенный текст
+ */
+export function stripAllHtmlTags(html: string): string {
+  if (!html || typeof html !== 'string') return ''
+  return html
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }

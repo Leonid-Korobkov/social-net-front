@@ -229,9 +229,7 @@ const Card = memo(
             />
           </CardHeader>
           <CardBody
-            className={`card-body px-3 py-2 overflow-hidden ${
-              cardFor === 'comment' ? 'pb-0' : 'pb-2'
-            }`}
+            className={`card-body px-3 py-2 overflow-hidden`}
             onClick={e => {
               if (cardFor === 'post' || cardFor === 'search') {
                 // Если пользователь выделял текст или кликнул по кнопке "Читать далее", не переходим по ссылке
@@ -247,8 +245,8 @@ const Card = memo(
               }
             }}
           >
-            {content.trim() !== '' && (
-              cardFor === 'current-post' || cardFor === 'comment' ? (
+            {content.trim() !== '' &&
+              (cardFor === 'current-post' ? (
                 <RawHTML>{content}</RawHTML>
               ) : (
                 <CollapsibleText
@@ -261,8 +259,7 @@ const Card = memo(
                   href={`/users/${username}`}
                   title={`Переход на страницу автора ${username}`}
                 />
-              )
-            )}
+              ))}
             {/* Отображаем медиафайлы, если они есть */}
             {media && media.length > 0 && (
               <MediaCarousel
