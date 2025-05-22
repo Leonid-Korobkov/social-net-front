@@ -14,12 +14,12 @@ export default async function Image() {
   let fontData
   try {
     fontData = await readFile(
-      join(process.cwd(), 'assets/font/Rubik-SemiBold.ttf')
+      join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
     )
   } catch (error) {
     try {
       fontData = await readFile(
-        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
+        join(process.cwd(), '/public/assets/font/Rubik-SemiBold.ttf')
       )
     } catch (error) {
       console.error('Не удалось загрузить шрифт:', error)

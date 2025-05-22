@@ -55,12 +55,12 @@ export default async function Image({ params }: { params: { id: string } }) {
   let fontData
   try {
     fontData = await readFile(
-      join(process.cwd(), 'assets/font/Rubik-SemiBold.ttf')
+      join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
     )
   } catch (error) {
     try {
       fontData = await readFile(
-        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
+        join(process.cwd(), '/public/assets/font/Rubik-SemiBold.ttf')
       )
     } catch (error) {
       console.error('Не удалось загрузить шрифт:', error)
@@ -143,25 +143,28 @@ export default async function Image({ params }: { params: { id: string } }) {
         const imageUrl = optimizeCloudinaryImage(post.media[0], 1000)
         contentElement = (
           <div style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
-            <div
-              style={{
-                width: 1000,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                fontSize: 32,
-                lineHeight: 1.4,
-              }}
-            >
-              {truncatedContent}
-            </div>
+            {truncatedContent.trim() !== '' && (
+              <div
+                style={{
+                  width: 1000,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  fontSize: 32,
+                  lineHeight: 1.4,
+                }}
+              >
+                {truncatedContent}
+              </div>
+            )}
             <div
               style={{
                 width: 250,
                 height: 250,
                 borderRadius: 10,
                 overflow: 'hidden',
-                alignSelf: 'flex-end',
+                alignSelf:
+                  truncatedContent.trim() !== '' ? 'flex-end' : 'flex-start',
                 display: 'flex',
               }}
             >
@@ -345,7 +348,7 @@ export default async function Image({ params }: { params: { id: string } }) {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                marginTop: 30,
+                marginTop: 15,
                 width: '100%',
               }}
             >
