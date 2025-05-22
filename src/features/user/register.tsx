@@ -68,7 +68,6 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         type="text"
         errorMessage={errors.name ? errors.name.message : ''}
         isInvalid={errors.name ? true : false}
-        autoComplete="username"
         placeholder="Иван Петрович"
         {...register('name', {
           required: 'Обязательное поле',
@@ -93,7 +92,6 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
             {...field}
             label="Имя пользователя"
             type="text"
-            autoComplete="nickname"
             errorMessage={errors.userName?.message || ''}
             isInvalid={errors.userName ? true : false}
             placeholder="username_100500"
