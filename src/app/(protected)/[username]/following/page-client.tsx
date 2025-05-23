@@ -14,12 +14,12 @@ import { use, useRef } from 'react'
 import { useStore } from 'zustand'
 
 type PageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 function FollowingClient({ params }: PageProps) {
-  const { id } = use(params)
+  const { username: id } = use(params)
 
   const subscriptionsRef = useRef<HTMLButtonElement | null>(null)
   const topLoader = useTopLoader()

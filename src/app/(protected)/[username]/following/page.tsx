@@ -7,15 +7,18 @@ import { User as UserNext } from '@/store/types'
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
 }): Promise<Metadata> {
   const paramsResolved = await params
   try {
-    const response = await apiClient<string, UserNext>(`users/${paramsResolved.id}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
-      },
-    })
+    const response = await apiClient<string, UserNext>(
+      `users/${paramsResolved.username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
+        },
+      }
+    )
     const user = response
 
     if (!user) {
@@ -42,7 +45,7 @@ export async function generateMetadata({
         creator: '@krbln',
       },
       alternates: {
-        canonical: `${APP_URL}/${paramsResolved.id}/following`,
+        canonical: `${APP_URL}/${paramsResolved.username}/following`,
       },
     }
   } catch (error) {
@@ -71,7 +74,7 @@ function defaultMetadata(): Metadata {
 }
 
 type PageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
