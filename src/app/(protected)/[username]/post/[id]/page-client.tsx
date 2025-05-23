@@ -113,11 +113,9 @@ function CurrentPost({
           Оставить комментарий
         </Button>
       </div>
-      <CommentCreateRichModal
-        isOpen={isModalOpen}
-        onOpenChange={() => setIsModalOpen(false)}
-        postId={id}
-      />
+      <div className="mt-10">
+        <CreateComment params={paramsIn} />
+      </div>
       <div className="mt-10">
         <CommentList
           data={comments}
