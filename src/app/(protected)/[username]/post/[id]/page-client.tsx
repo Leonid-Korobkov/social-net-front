@@ -108,11 +108,11 @@ function CurrentPost({
         viewCount={viewCount}
         media={media}
       />
-      <div className="mt-10">
+      {/* <div className="mt-10">
         <Button color="primary" onClick={() => setIsModalOpen(true)}>
           Оставить комментарий
         </Button>
-      </div>
+      </div> */}
       <div className="mt-10">
         <CreateComment params={paramsIn} />
       </div>

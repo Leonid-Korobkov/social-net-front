@@ -173,14 +173,14 @@ function UserProfileClient({ params }: PageProps) {
                 Icon={FaUsers}
                 count={user.followers.length}
                 title="Подписчики"
-                userId={user.id}
+                userId={user.userName}
                 type="followers"
               />
               <CountInfo
                 Icon={RiUserFollowFill}
                 count={user.following.length}
                 title="Подписки"
-                userId={user.id}
+                userId={user.userName}
                 type="following"
               />
             </Card>
