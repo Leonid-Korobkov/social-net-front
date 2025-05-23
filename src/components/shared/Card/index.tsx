@@ -146,7 +146,7 @@ const Card = memo(
         <HeroCard className={`mb-5 transform`}>
           <CardHeader className="relative z-[1] justify-between items-start bg-transparent pb-0">
             <Link
-              href={`/users/${username}`}
+              href={`/${username}`}
               title={`Переход на страницу автора ${username}`}
               className="flex-1"
             >
@@ -221,6 +221,7 @@ const Card = memo(
               </Chip>
             )}
             <CardActionWidget
+              username={username}
               authorId={authorId}
               id={id}
               cardFor={cardFor}
@@ -241,7 +242,7 @@ const Card = memo(
                   return
                 }
                 loader.start()
-                router.push(`/posts/${id}`)
+                router.push(`/${username}/post/${id}`)
               }
             }}
           >
@@ -256,7 +257,7 @@ const Card = memo(
                     'leading-snug'
                   )}
                   maxLines={20}
-                  href={`/users/${username}`}
+                  href={`/${username}`}
                   title={`Переход на страницу автора ${username}`}
                 />
               ))}
@@ -284,7 +285,7 @@ const Card = memo(
                   <MetaInfo count={commentsCount} Icon={FaRegComment} />
                 ) : cardFor !== 'comment' ? (
                   <Link
-                    href={`/posts/${id}`}
+                    href={`/${username}/post/${id}`}
                     onClick={onClick}
                     title={`Переход к посту ${content}`}
                   >
@@ -293,6 +294,7 @@ const Card = memo(
                 ) : null}
                 <div className="flex flex-1">
                   <MetaInfo
+                    username={username}
                     count={shareCount}
                     Icon={LuSend}
                     postId={id}

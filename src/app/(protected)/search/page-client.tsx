@@ -1,5 +1,4 @@
 'use client'
-import PostCard from '@/components/shared/PostCard'
 import UserCard from '@/components/shared/UserCard'
 import { useSearch } from '@/services/api/search.api'
 import {
@@ -231,13 +230,15 @@ function SearchClient() {
                         <HeroCard key={comment.id} className="mb-4">
                           <CardBody>
                             <p className="text-sm mb-2 opacity-70">
-                              <Link href={`/posts/${comment.post.id}`}>
+                              <Link
+                                href={`/${comment.post.author.userName}/post/${comment.post.id}`}
+                              >
                                 В посте: {comment.post.content.substring(0, 50)}
                                 {comment.post.content.length > 50 ? '...' : ''}
                               </Link>
                             </p>
                             <p>{comment.content}</p>
-                            <Link href={`/users/${comment.user.userName}`}>
+                            <Link href={`/${comment.user.userName}`}>
                               <div className="flex items-center mt-2">
                                 <img
                                   src={comment.user.avatarUrl}
@@ -380,13 +381,15 @@ function SearchClient() {
                   <HeroCard key={comment.id} className="mb-4">
                     <CardBody>
                       <p className="text-sm mb-2 opacity-70">
-                        <Link href={`/posts/${comment.post.id}`}>
+                        <Link
+                          href={`/${comment.post.author.userName}/post/${comment.post.id}`}
+                        >
                           В посте: {comment.post.content.substring(0, 50)}
                           {comment.post.content.length > 50 ? '...' : ''}
                         </Link>
                       </p>
                       <p>{comment.content}</p>
-                      <Link href={`/users/${comment.user.userName}`}>
+                      <Link href={`/${comment.user.userName}`}>
                         <div className="flex items-center mt-2">
                           <img
                             src={comment.user.avatarUrl}

@@ -17,7 +17,7 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-export default async function Image({ params }: { params: { id: string } }) {
+export default async function Image({ params }: { params: { username: string } }) {
   let fontData
   try {
     fontData = await readFile(
@@ -34,7 +34,7 @@ export default async function Image({ params }: { params: { id: string } }) {
     }
   }
   try {
-    const response = await apiClient<string, User>(`users/${params.id}`, {
+    const response = await apiClient<string, User>(`users/${params.username}`, {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
       },

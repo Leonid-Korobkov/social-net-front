@@ -34,6 +34,7 @@ import { useStore } from 'zustand'
 import { ICard } from '../Card'
 
 function CardActionWidget({
+  username,
   authorId,
   id = '',
   cardFor,
@@ -41,7 +42,7 @@ function CardActionWidget({
   onClick,
 }: Pick<
   ICard,
-  'authorId' | 'id' | 'cardFor' | 'commentId' | 'likes' | 'onClick'
+  'authorId' | 'id' | 'cardFor' | 'commentId' | 'likes' | 'onClick' | 'username'
 >) {
   const currentUser = useStore(UserSettingsStore, state => state.current)
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false)
@@ -137,6 +138,7 @@ function CardActionWidget({
 
   const handleShareClick = () => {
     handleShare({
+      username,
       postId: id,
       commentId,
       title: 'Zling',
@@ -145,7 +147,7 @@ function CardActionWidget({
   }
 
   const handleCopyLink = () => {
-    const shareUrl = getShareUrl(id, commentId)
+    const shareUrl = getShareUrl(username, id, commentId)
     copyToClipboard(shareUrl, id)
   }
 
@@ -277,7 +279,7 @@ function CardActionWidget({
                         transition={{ duration: 0.5, bounce: 0 }}
                         layout="position"
                       >
-                        <Link key={like.id} href={`/users/${like.userId}`}>
+                        <Link key={like.id} href={`/${like.userId}`}>
                           <Divider className="mb-2" />
                           <div className="flex items-start justify-between gap-1">
                             <User

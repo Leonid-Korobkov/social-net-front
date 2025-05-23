@@ -4,7 +4,8 @@ import Profile from '@/components/shared/Profile'
 
 export default function ProfileSidebar() {
   const pathname = usePathname()
-  const isUserProfilePage = pathname.match(/^\/users\/[^/]+$/)
+  // Если профиль по адресу /@username или /username
+  const isUserProfilePage = /^\/(@)?[^/]+$/.test(pathname)
 
   if (isUserProfilePage) {
     return null

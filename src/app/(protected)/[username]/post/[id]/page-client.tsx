@@ -9,10 +9,12 @@ import CreateCommentSkeleton from '@/components/ui/CommentCreateSkeleton'
 import { useGetCommentsByPostId } from '@/services/api/comment.api'
 import { useGetPostById } from '@/services/api/post.api'
 import { useRouter } from 'next/navigation'
-import { use, useEffect } from 'react'
+import { use, useEffect, useState } from 'react'
+import CommentCreateRichModal from '@/components/shared/CommentCreate/CommentCreateRichModal'
+import { Button } from '@heroui/react'
 
 type PageProps = {
-  params: { id: string }
+  params: { id: string; username: string }
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
@@ -34,6 +36,7 @@ function CurrentPost({
   const commentId = searchParamsIn.comment
   const router = useRouter()
   const { data, isLoading } = useGetPostById(paramsIn.id)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Скролл к комменту при открытии страницы
   useEffect(() => {
@@ -45,7 +48,7 @@ function CurrentPost({
           commentElement.classList.add('highlight')
           setTimeout(() => {
             commentElement.classList.remove('highlight')
-            router.push(`/posts/${paramsIn.id}`)
+            router.push(`/${paramsIn.username}/post/${paramsIn.id}`)
           }, 2000)
         }, 200)
       }
@@ -83,7 +86,7 @@ function CurrentPost({
     isFollowing,
     viewCount,
     shareCount,
-    media
+    media,
   } = data
 
   return (
@@ -106,8 +109,15 @@ function CurrentPost({
         media={media}
       />
       <div className="mt-10">
-        <CreateComment params={paramsIn} />
+        <Button color="primary" onClick={() => setIsModalOpen(true)}>
+          Оставить комментарий
+        </Button>
       </div>
+      <CommentCreateRichModal
+        isOpen={isModalOpen}
+        onOpenChange={() => setIsModalOpen(false)}
+        postId={id}
+      />
       <div className="mt-10">
         <CommentList
           data={comments}

@@ -14,12 +14,12 @@ import { use, useRef } from 'react'
 import { useStore } from 'zustand'
 
 type PageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 function FollowersClient({ params }: PageProps) {
-  const { id } = use(params)
+  const { username: id } = use(params)
 
   const currentUser = useStore(UserSettingsStore, state => state.current)
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
@@ -119,7 +119,7 @@ function FollowersClient({ params }: PageProps) {
 
                 return (
                   <Link
-                    href={`/users/${followerItem.follower.userName}`}
+                    href={`/${followerItem.follower.userName}`}
                     key={followerItem.follower.id}
                   >
                     <Card>

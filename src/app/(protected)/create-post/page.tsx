@@ -14,11 +14,12 @@ import {
   Divider,
 } from '@heroui/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import { FaRegSave } from 'react-icons/fa'
 import { IoMdCreate } from 'react-icons/io'
 import { UserSettingsStore } from '@/store/userSettings.store'
+import { isPostEmpty, stripHtml } from '@/utils/stripHtml'
 
 export default function CreatePostPage() {
   const { mutateAsync: createPost, isPending: isLoading } = useCreatePost()
@@ -36,6 +37,16 @@ export default function CreatePostPage() {
     wordCount,
   } = useEditorText()
 
+  useEffect(() => {
+    const uploads = UserSettingsStore.getState().mediaUploads
+    if (uploads && uploads.length > 0) {
+      const urls = uploads
+        .filter(u => u.status === 'success' && u.url)
+        .map(u => u.url!)
+      setMediaUrls(urls)
+    }
+  }, [])
+
   // Обработчик успешного создания поста
   const handleSuccess = () => {
     // Очищаем медиа-загрузки из localStorage после успешной публикации
@@ -45,10 +56,16 @@ export default function CreatePostPage() {
 
   // Обработчик отправки поста
   const onSubmit = async () => {
+    const html = getHTML()
+    if (isPostEmpty(html, mediaUrls)) {
+      toast.error('Нельзя отправить пустой пост')
+      return
+    }
     try {
       const toastId = toast.loading('Создание поста...')
+      const contentToSend = stripHtml(html).trim() === '' ? '' : html
       const promise = createPost({
-        content: getHTML(),
+        content: contentToSend,
         media: mediaUrls,
       })
 
@@ -82,7 +99,7 @@ export default function CreatePostPage() {
 
   return (
     <div className="container mx-auto h-full w-full">
-      <Card style={{ height: 'calc(100vh - 180px)' }}>
+      <Card style={{ minHeight: 'calc(100vh - 180px)' }}>
         <CardHeader className="max-w-md:flex-col max-w-md:items-start flex flex-row gap-1 overflow-visible justify-between">
           <h1 className="text-large font-bold">Новый пост</h1>
           <Button

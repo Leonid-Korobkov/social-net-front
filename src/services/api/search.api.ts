@@ -30,10 +30,22 @@ interface Comment {
   }
 }
 
+type SearchPost = {
+  id: string
+  title: string
+  content: string
+  author: {
+    userName: string
+  }
+}
+type SearchComment = Comment & {
+  post: SearchPost
+}
+
 export interface SearchResponse {
   users: (User & { _count: { followers: number } })[]
   posts: Post[]
-  comments: Comment[]
+  comments: SearchComment[]
 }
 
 // Ключи для кэширования

@@ -4,17 +4,17 @@ import { join } from 'node:path'
 
 import { apiClient } from '@/services/ApiConfig'
 import { User } from '@/store/types'
-import { FaUsers } from 'react-icons/fa6'
+import { RiUserFollowFill } from 'react-icons/ri'
 import { pluralizeRu } from '@/utils/pluralizeRu'
 
-export const alt = 'Подписчики пользователя в Zling'
+export const alt = 'Подписки пользователя в Zling'
 export const size = {
   width: 1200,
   height: 630,
 }
 export const contentType = 'image/png'
 
-export default async function Image({ params }: { params: { id: string } }) {
+export default async function Image({ params }: { params: { username: string } }) {
   let fontData
   try {
     fontData = await readFile(
@@ -31,7 +31,7 @@ export default async function Image({ params }: { params: { id: string } }) {
     }
   }
   try {
-    const response = await apiClient<string, User>(`users/${params.id}`, {
+    const response = await apiClient<string, User>(`users/${params.username}`, {
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
       },
@@ -149,7 +149,7 @@ export default async function Image({ params }: { params: { id: string } }) {
                     overflow: 'hidden',
                   }}
                 >
-                  Подписчики
+                  Подписки
                 </h1>
                 <h2
                   style={{
@@ -194,13 +194,13 @@ export default async function Image({ params }: { params: { id: string } }) {
                   fontWeight: 'bold',
                 }}
               >
-                <FaUsers />
+                <RiUserFollowFill />
                 <span>
-                  {user.followers?.length || 0}{' '}
-                  {pluralizeRu(user.followers?.length || 0, [
-                    'подписчик',
-                    'подписчика',
-                    'подписчиков',
+                  {user.following?.length || 0}{' '}
+                  {pluralizeRu(user.following?.length || 0, [
+                    'подписка',
+                    'подписки',
+                    'подписок',
                   ])}
                 </span>
               </div>
@@ -271,7 +271,7 @@ async function fallbackImage(fontData: Buffer | null) {
         <div style={{ fontSize: 80, fontWeight: 'bold', marginBottom: 20 }}>
           Zling
         </div>
-        <div>Подписчики пользователя</div>
+        <div>Подписки пользователя</div>
         <div
           style={{
             fontSize: 30,

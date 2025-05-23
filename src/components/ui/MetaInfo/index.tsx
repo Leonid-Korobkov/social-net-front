@@ -8,6 +8,7 @@ import { IconType } from 'react-icons'
 import { FaHeart, FaRegHeart } from 'react-icons/fa6'
 
 interface IMetaInfo {
+  username?: string
   count: number
   Icon?: IconType | typeof Spinner
   className?: string
@@ -22,6 +23,7 @@ interface IMetaInfo {
 }
 
 function MetaInfo({
+  username = '',
   count,
   Icon,
   classNameForIcon,
@@ -53,6 +55,7 @@ function MetaInfo({
       setIsLoading(true)
       try {
         await handleShare({
+          username,
           postId,
           title: shareTitle,
           text: shareText,

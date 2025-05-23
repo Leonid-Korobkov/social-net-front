@@ -15,12 +15,12 @@ function PostCard({ post }: PostCardProps) {
     <Card>
       <CardBody className="p-4">
         <div className="flex items-center gap-3 mb-3">
-          <Link href={`/users/${post.author.id}`}>
+          <Link href={`/${post.author.userName}`}>
             <Avatar src={post.author.avatarUrl} name={post.author.userName} />
           </Link>
           <div>
             <Link
-              href={`/users/${post.author.id}`}
+              href={`/${post.author.userName}`}
               className="font-semibold hover:text-primary transition-colors"
             >
               {post.author.userName}
@@ -33,11 +33,11 @@ function PostCard({ post }: PostCardProps) {
             </p>
           </div>
         </div>
-        <Link href={`/posts/${post.id}`}>
+        <Link href={`/${post.author.userName}/post/${post.id}`}>
           <CollapsibleText
             content={post.content}
             maxLines={15}
-            href={`/users/${post.author.userName}`}
+            href={`/${post.author.userName}`}
             title={`Переход на страницу автора ${post.author.userName}`}
           />
         </Link>

@@ -2,7 +2,7 @@ import { use } from 'react'
 import CurrentPostClient from './page-client'
 
 type PageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string; username: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
@@ -15,7 +15,7 @@ import { stripHtml } from '@/utils/stripHtml'
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string; username: string }>
 }): Promise<Metadata> {
   const paramsResolved = await params
   try {
@@ -52,7 +52,7 @@ export async function generateMetadata({
         type: 'article',
         title,
         description,
-        url: `${APP_URL}/posts/${paramsResolved.id}`,
+        url: `${APP_URL}/${post.author.userName}/post/${post.id}`,
         siteName: 'Zling',
         publishedTime: post.createdAt.toString(),
         authors: [`${post.author?.name || 'Пользователь Zling'}`],
@@ -64,7 +64,7 @@ export async function generateMetadata({
         creator: post.author?.userName ? `@${post.author.userName}` : '@krbln',
       },
       alternates: {
-        canonical: `${APP_URL}/posts/${paramsResolved.id}`,
+        canonical: `${APP_URL}/${post.author.userName}/post/${post.id}`,
       },
     }
   } catch (error) {

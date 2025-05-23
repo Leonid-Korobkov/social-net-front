@@ -9,12 +9,12 @@ import { User } from '@/store/types'
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
 }): Promise<Metadata> {
   const paramsResolved = await params
   try {
     const response = await apiClient<string, User>(
-      `users/${paramsResolved.id}`,
+      `users/${paramsResolved.username}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
@@ -41,7 +41,7 @@ export async function generateMetadata({
         type: 'profile',
         title,
         description,
-        url: `${APP_URL}/users/${user.userName}`,
+        url: `${APP_URL}/@${user.userName}`,
         siteName: 'Zling',
         firstName: user.name?.split(' ')[0] || '',
         lastName: user.name?.split(' ')[1] || '',
@@ -54,7 +54,7 @@ export async function generateMetadata({
         creator: '@krbln',
       },
       alternates: {
-        canonical: `${APP_URL}/users/${paramsResolved.id}`,
+        canonical: `${APP_URL}/@${paramsResolved.username}`,
       },
     }
   } catch (error) {
@@ -92,7 +92,7 @@ function defaultMetadata(): Metadata {
 }
 
 type PageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 

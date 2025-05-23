@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast'
 import { useState, useEffect } from 'react'
 
 interface ShareOptions {
+  username: string
   title?: string
   text?: string
   postId: string
@@ -19,20 +20,25 @@ export function useShare() {
     setCanNativeShare(typeof navigator !== 'undefined' && 'share' in navigator)
   }, [])
 
-  const getShareUrl = (postId: string, commentId?: string) => {
+  const getShareUrl = (
+    username: string,
+    postId: string,
+    commentId?: string
+  ) => {
     const baseUrl = APP_URL
     return commentId
-      ? `${baseUrl}/posts/${postId}?comment=${commentId}`
-      : `${baseUrl}/posts/${postId}`
+      ? `${baseUrl}/${username}/post/${postId}?comment=${commentId}`
+      : `${baseUrl}/${username}/post/${postId}`
   }
 
   const handleShare = async ({
+    username,
     title = 'Zling',
     text = 'Интересный пост в соцсети Zling',
     postId,
     commentId,
   }: ShareOptions) => {
-    const shareUrl = getShareUrl(postId, commentId)
+    const shareUrl = getShareUrl(username, postId, commentId)
 
     try {
       if (canNativeShare && navigator.share) {

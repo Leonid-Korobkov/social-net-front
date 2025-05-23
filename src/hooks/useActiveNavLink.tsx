@@ -14,7 +14,7 @@ export function useActiveNavLink(path: string) {
     // Простой вариант для точного совпадения
     if (pattern === pathname) return true
 
-    // Для путей с параметрами (например, /users/:id)
+    // Для путей с параметрами (например, /:username)
     const patternSegments = pattern.split('/')
     const pathnameSegments = pathname.split('/')
 
@@ -29,12 +29,12 @@ export function useActiveNavLink(path: string) {
   }
 
   const match = matchPath(path, pathname || '')
-  const userProfileMatch = matchPath('/users/:id', pathname || '')
+  const userProfileMatch = matchPath('/:username', pathname || '')
 
   // Для профиля пользователя проверяем точное совпадение
   if (
-    path === `/users/${currentUser?.id}` &&
-    pathname === `/users/${currentUser?.id}`
+    path === `/${currentUser?.userName}` &&
+    pathname === `/${currentUser?.userName}`
   ) {
     return (
       userProfileMatch &&

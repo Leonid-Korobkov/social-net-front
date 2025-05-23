@@ -120,7 +120,7 @@ function FollowingClient({ params }: PageProps) {
                     layout="position"
                   >
                     <Link
-                      href={`/users/${followingItem.following.userName}`}
+                      href={`/${followingItem.following.userName}`}
                       key={followingItem.following.id}
                     >
                       <Card>

@@ -7,12 +7,12 @@ import FollowersClient from './page-client'
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
 }): Promise<Metadata> {
   const paramsResolved = await params
   try {
     const response = await apiClient<string, UserNext>(
-      `users/${paramsResolved.id}`,
+      `users/${paramsResolved.username}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
@@ -35,7 +35,7 @@ export async function generateMetadata({
         type: 'profile',
         title,
         description,
-        url: `${APP_URL}/users/${user.userName}/followers`,
+        url: `${APP_URL}/${user.userName}/followers`,
         siteName: 'Zling',
       },
       twitter: {
@@ -45,7 +45,7 @@ export async function generateMetadata({
         creator: '@krbln',
       },
       alternates: {
-        canonical: `${APP_URL}/users/${paramsResolved.id}/followers`,
+        canonical: `${APP_URL}/${paramsResolved.username}/followers`,
       },
     }
   } catch (error) {
@@ -74,7 +74,7 @@ function defaultMetadata(): Metadata {
 }
 
 type PageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 

@@ -52,7 +52,7 @@ function MobileNavBar({ onCreatePost }: MobileNavBarProps) {
       label: 'Создать',
     },
     {
-      path: `/users/${currentUser?.id}`,
+      path: `/${currentUser?.userName}`,
       icon: FaUser,
       label: 'Профиль',
     },

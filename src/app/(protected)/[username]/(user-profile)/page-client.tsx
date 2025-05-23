@@ -33,12 +33,12 @@ import { RiUserFollowFill } from 'react-icons/ri'
 import { useStore } from 'zustand'
 
 type PageProps = {
-  params: Promise<{ id: string }>
+  params: Promise<{ username: string }>
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 function UserProfileClient({ params }: PageProps) {
-  const { id } = use(params)
+  const { username: id } = use(params)
 
   const [party, setParty] = useState(false)
   const [isImageOpen, setImageOpen] = useState(false)

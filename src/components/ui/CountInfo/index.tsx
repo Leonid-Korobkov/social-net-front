@@ -53,7 +53,7 @@ function CountInfo({
   return (
     <Link
       className="transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
-      href={`/users/${userId}/${type}`}
+      href={`/${userId}/${type}`}
     >
       {content}
     </Link>

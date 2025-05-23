@@ -32,7 +32,7 @@ export async function generateMetadata({
         type: 'profile',
         title,
         description,
-        url: `${APP_URL}/users/${user.userName}/following`,
+        url: `${APP_URL}/${user.userName}/following`,
         siteName: 'Zling',
       },
       twitter: {
@@ -42,7 +42,7 @@ export async function generateMetadata({
         creator: '@krbln',
       },
       alternates: {
-        canonical: `${APP_URL}/users/${paramsResolved.id}/following`,
+        canonical: `${APP_URL}/${paramsResolved.id}/following`,
       },
     }
   } catch (error) {

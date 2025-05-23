@@ -24,7 +24,7 @@ function Profile() {
         />
       </CardHeader>
       <CardBody className="overflow-visible py-2">
-        <Link href={`/users/${userName}`}>
+        <Link href={`/${userName}`}>
           <h4 className="font-bold text-large mb-2">@{userName}</h4>
         </Link>
         <p className="text-default-500 gap-2 font-mono">

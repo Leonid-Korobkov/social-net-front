@@ -36,17 +36,17 @@ function NavBar({ onCreatePost }: NavBarProps) {
       onClick: onCreatePost,
     },
     {
-      path: `/users/${currentUser?.id}/following`,
+      path: `/${currentUser?.id}/following`,
       icon: RiUserFollowFill,
       label: 'Подписки',
     },
     {
-      path: `/users/${currentUser?.id}/followers`,
+      path: `/${currentUser?.id}/followers`,
       icon: FaUsers,
       label: 'Подписчики',
     },
     {
-      path: `/users/${currentUser?.id}`,
+      path: `/${currentUser?.userName}`,
       icon: FaUser,
       label: 'Профиль',
     },
