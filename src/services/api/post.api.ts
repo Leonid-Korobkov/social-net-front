@@ -33,7 +33,7 @@ export interface FeedRequest extends PostsRequest {
   feedType: FeedType
 }
 
-export type FeedType = 'for-you' | 'new' | 'following' | 'viewed'
+export type FeedType = 'for-you' | 'new' | 'following' | 'viewed' | 'top'
 
 export interface PostsDTO {
   data: Post[]

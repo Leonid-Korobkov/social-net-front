@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { TbChevronDown, TbClock, TbEye, TbFlame } from 'react-icons/tb'
+import { FaChartLine } from "react-icons/fa6";
 import { useStore } from 'zustand'
 
 // Мапинг типов лент на их иконки и описания
@@ -35,6 +36,11 @@ const feedTypeInfo = {
     icon: <TbEye className="text-green-500" />,
     label: 'Просмотренное',
     description: 'Посты, которые вы уже смотрели',
+  },
+  top: {
+    icon: <FaChartLine className="text-red-500" />,
+    label: 'Топ',
+    description: 'Посты с самым высоким рейтингом',
   },
 }
 
@@ -152,6 +158,13 @@ function FeedTypeDropdown({
             description={feedTypeInfo['viewed'].description}
           >
             {feedTypeInfo['viewed'].label}
+          </DropdownItem>
+          <DropdownItem
+            key="top"
+            startContent={feedTypeInfo['top'].icon}
+            description={feedTypeInfo['top'].description}
+          >
+            {feedTypeInfo['top'].label}
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
