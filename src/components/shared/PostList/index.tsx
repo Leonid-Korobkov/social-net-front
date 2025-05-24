@@ -85,7 +85,7 @@ function PostList({
         <>
           {data.length === 0 && allViewed && <ViewedAllPosts />}
           {data.length === 0 && !allViewed && (
-            <EmptyPosts isOwnProfile={currentFeedType ? false : true} />
+            <EmptyPosts/>
           )}
           {data.length > 0 && (
             <div

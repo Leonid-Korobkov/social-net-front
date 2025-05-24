@@ -3,9 +3,14 @@ import { motion } from 'framer-motion'
 import { Button } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { BsFilePost } from 'react-icons/bs'
+import { useStore } from 'zustand'
+import { UserSettingsStore } from '@/store/userSettings.store'
 
-function EmptyPosts({ isOwnProfile = false }: { isOwnProfile?: boolean }) {
+function EmptyPosts() {
   const router = useRouter()
+  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const isOwnProfile = location.pathname.includes(currentUser?.userName || '')
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -39,14 +44,14 @@ function EmptyPosts({ isOwnProfile = false }: { isOwnProfile?: boolean }) {
           </motion.div>
         </div>
         <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-r from-primary-300 to-primary-500 flex items-center justify-center shadow-lg">
-            <motion.div
-              initial={{ scale: 0.5 }}
-              animate={{ scale: [0.5, 1.2, 1] }}
-              transition={{ delay: 0.3, duration: 0.6, ease: 'easeOut' }}
-            >
-              <BsFilePost size={60} className="text-white" />
-            </motion.div>
-          </div>
+          <motion.div
+            initial={{ scale: 0.5 }}
+            animate={{ scale: [0.5, 1.2, 1] }}
+            transition={{ delay: 0.3, duration: 0.6, ease: 'easeOut' }}
+          >
+            <BsFilePost size={60} className="text-white" />
+          </motion.div>
+        </div>
         <motion.h3
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
