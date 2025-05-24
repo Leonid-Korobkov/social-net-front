@@ -258,3 +258,19 @@ export const useGetNewRandomImage = () => {
     // refetchOnReconnect: false,
   })
 }
+
+// Delete user account
+export const useDeleteUser = () => {
+  return useMutation({
+    mutationFn: ({
+      userId,
+      confirmationText,
+    }: {
+      userId: string
+      confirmationText: string
+    }) =>
+      apiClient
+        .delete(`/users/${userId}`, { data: { confirmationText } })
+        .then(res => res.data),
+  })
+}

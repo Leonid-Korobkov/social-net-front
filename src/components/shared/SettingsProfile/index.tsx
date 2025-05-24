@@ -1,5 +1,5 @@
 'use client'
-import { useUpdateUserSettings } from '@/services/api/user.api'
+import { useUpdateUserSettings, useDeleteUser } from '@/services/api/user.api'
 import { User } from '@/store/types'
 import { IUserSettings } from '@/types/user.interface'
 import {
@@ -18,6 +18,7 @@ import {
   Tab,
   RadioGroup,
   Radio,
+  Input,
 } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -31,6 +32,9 @@ import toast from 'react-hot-toast'
 import { ApiErrorResponse } from '@/services/ApiConfig'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import { UserThemeStore } from '@/store/userTheme.store'
+import { useUserStore } from '@/store/user.store'
+import { useStore } from 'zustand'
+import { useRouter } from 'next/navigation'
 
 interface SettingsProfileProps {
   isOpen: boolean
@@ -49,6 +53,7 @@ export default function SettingsProfile({
 }: SettingsProfileProps) {
   const { mutateAsync: updateSettings, isPending: isUpdatingSettings } =
     useUpdateUserSettings()
+  const { mutateAsync: deleteUser, isPending: isDeletingUser } = useDeleteUser()
   const { id } = params
   const setReduce = UserSettingsStore.getState().setReduceAnimation
   const setTheme = UserThemeStore.getState().setTheme
@@ -56,6 +61,12 @@ export default function SettingsProfile({
   const [selectedTheme, setSelectedTheme] = useState<string>(
     UserThemeStore.getState().theme
   )
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteConfirmation, setDeleteConfirmation] = useState('')
+  const isDeleteConfirmed = deleteConfirmation === 'Delete'
+  const logout = useUserStore(state => state.logout)
+  const logoutSettings = useStore(UserSettingsStore, state => state.logout)
+  const router = useRouter()
 
   const {
     reset,
@@ -134,6 +145,29 @@ export default function SettingsProfile({
 
   const handleThemeChange = (theme: string) => {
     setSelectedTheme(theme)
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!isDeleteConfirmed) return
+    try {
+      const toastId = toast.loading('Удаление аккаунта...')
+      await deleteUser({
+        userId: id.toString(),
+        confirmationText: deleteConfirmation,
+      })
+      toast.success('Аккаунт успешно удален!')
+      logout()
+      logoutSettings()
+      router.push('/auth')
+      onClose()
+    } catch (err: any) {
+      console.error('Ошибка при удалении аккаунта:', err)
+      toast.error(err.errorMessage || 'Не удалось удалить аккаунт')
+    } finally {
+      toast.dismiss()
+      setShowDeleteConfirm(false)
+      setDeleteConfirmation('')
+    }
   }
 
   return (
@@ -316,6 +350,28 @@ export default function SettingsProfile({
                   </RadioGroup>
                 </CardBody>
               </Card>
+
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-danger">
+                  <h3 className="text-lg font-semibold">Удаление аккаунта</h3>
+                </CardHeader>
+                <CardBody>
+                  <div className="flex justify-between items-center">
+                    <div className="flex flex-col">
+                      <span>Полностью удалить ваш аккаунт и все данные.</span>
+                      <span className="text-sm text-gray-400">
+                        Это действие необратимо.
+                      </span>
+                    </div>
+                    <Button
+                      color="danger"
+                      onClick={() => setShowDeleteConfirm(true)}
+                    >
+                      Удалить
+                    </Button>
+                  </div>
+                </CardBody>
+              </Card>
             </div>
           </ModalBody>
           <Divider />
@@ -363,6 +419,55 @@ export default function SettingsProfile({
             </Button>
             <Button color="primary" onClick={handleReload}>
               Обновить сейчас
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false)
+          setDeleteConfirmation('')
+        }}
+        size="sm"
+      >
+        <ModalContent>
+          <ModalHeader className="flex gap-2 items-center text-danger">
+            <h3 className="text-lg font-semibold">Подтвердите удаление</h3>
+          </ModalHeader>
+          <ModalBody className="gap-2">
+            <p>
+              Для удаления аккаунта введите <b>Delete</b> в поле ниже:
+            </p>
+            <Input
+              type="text"
+              label="Подтверждение удаления"
+              placeholder="Delete"
+              value={deleteConfirmation}
+              onChange={e => setDeleteConfirmation(e.target.value)}
+              variant="bordered"
+              className="mt-1"
+            />
+          </ModalBody>
+          <Divider />
+          <ModalFooter>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowDeleteConfirm(false)
+                setDeleteConfirmation('')
+              }}
+            >
+              Отмена
+            </Button>
+            <Button
+              color="danger"
+              onClick={handleDeleteAccount}
+              isLoading={isDeletingUser}
+              isDisabled={!isDeleteConfirmed}
+            >
+              Удалить аккаунт
             </Button>
           </ModalFooter>
         </ModalContent>

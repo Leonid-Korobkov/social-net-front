@@ -31,6 +31,7 @@ import {
 } from 'react-icons/md'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { useStore } from 'zustand'
+import ShareDropdown from '@/components/ui/ShareDropdown'
 
 type PageProps = {
   params: Promise<{ username: string }>
@@ -141,7 +142,7 @@ function UserProfileClient({ params }: PageProps) {
               ) : (
                 <div className="flex gap-2 flex-col w-full">
                   <Button
-                    endContent={<AiFillEdit />}
+                    startContent={<AiFillEdit />}
                     onClick={() => openEditProfile(currentUser.id)}
                     variant="ghost"
                     color="warning"
@@ -150,7 +151,7 @@ function UserProfileClient({ params }: PageProps) {
                     Редактировать
                   </Button>
                   <Button
-                    endContent={<IoIosSettings />}
+                    startContent={<IoIosSettings />}
                     onClick={() => openSettings(currentUser.id)}
                     variant="ghost"
                     color="primary"
@@ -159,6 +160,17 @@ function UserProfileClient({ params }: PageProps) {
                     Настройки
                   </Button>
                 </div>
+              )}
+              {user && (
+                <ShareDropdown
+                  url={
+                    typeof window !== 'undefined' ? window.location.href : ''
+                  }
+                  title={`Профиль ${user.name}`}
+                  text={`Посмотрите профиль ${user.name} в социальной сети Zling!`}
+                  buttonText="Поделиться профилем"
+                  className="w-full"
+                />
               )}
             </div>
           </Card>

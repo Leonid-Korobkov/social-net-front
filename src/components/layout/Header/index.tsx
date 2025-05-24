@@ -100,7 +100,7 @@ function Header({ className }: { className?: string }) {
                   <DropdownSection showDivider>
                     <DropdownItem
                       key="profile"
-                      onClick={() => router.push(`/${currentUser?.id}`)}
+                      onClick={() => router.push(`/${currentUser?.userName}`)}
                       textValue="Мой профиль"
                       startContent={<FaUser />}
                     >
