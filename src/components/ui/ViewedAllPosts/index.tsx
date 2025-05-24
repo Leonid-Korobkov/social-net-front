@@ -136,8 +136,8 @@ function ViewedAllPosts() {
           </motion.div>
 
           {/* Декоративные круги в фоне */}
-          <div className="absolute -z-10 -top-10 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 opacity-30 blur-2xl" />
-          <div className="absolute -z-10 -bottom-10 -left-20 w-40 h-40 rounded-full bg-gradient-to-tr from-secondary-100 to-secondary-200 opacity-30 blur-2xl" />
+          <div className="absolute -z-10 top-0 right-0 w-48 h-48 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 opacity-30 blur-2xl" />
+          <div className="absolute -z-10 bottom-0 left-0 w-40 h-40 rounded-full bg-gradient-to-tr from-secondary-100 to-secondary-200 opacity-30 blur-2xl" />
         </div>
       </motion.div>
     </>

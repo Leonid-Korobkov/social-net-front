@@ -9,6 +9,7 @@ import { useInView } from 'react-intersection-observer'
 import CardSkeleton from '../../ui/CardSkeleton'
 import FeedTypeDropdown from '../FeedTypeDropdown'
 import PostItem from '../PostItem'
+import EmptyPosts from '@/components/ui/EmptyPosts'
 
 interface PostListProps {
   data: Post[]
@@ -83,6 +84,9 @@ function PostList({
         // Отображаем список постов или сообщение о просмотре всех постов
         <>
           {data.length === 0 && allViewed && <ViewedAllPosts />}
+          {data.length === 0 && !allViewed && (
+            <EmptyPosts isOwnProfile={currentFeedType ? false : true} />
+          )}
           {data.length > 0 && (
             <div
               ref={parentRef}
