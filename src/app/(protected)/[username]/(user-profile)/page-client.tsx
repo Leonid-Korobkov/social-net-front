@@ -142,7 +142,7 @@ function UserProfileClient({ params }: PageProps) {
                 <div className="flex gap-2 flex-col w-full">
                   <Button
                     endContent={<AiFillEdit />}
-                    onClick={() => openEditProfile(id)}
+                    onClick={() => openEditProfile(currentUser.id)}
                     variant="ghost"
                     color="warning"
                     fullWidth
@@ -151,7 +151,7 @@ function UserProfileClient({ params }: PageProps) {
                   </Button>
                   <Button
                     endContent={<IoIosSettings />}
-                    onClick={() => openSettings(id)}
+                    onClick={() => openSettings(currentUser.id)}
                     variant="ghost"
                     color="primary"
                     fullWidth
