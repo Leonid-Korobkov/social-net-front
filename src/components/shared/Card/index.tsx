@@ -125,12 +125,12 @@ const Card = memo(
           if (likedByUser) {
             await unlikePost({
               postId: id,
-              userId: authorId,
+              userId: username,
             })
           } else {
             await likePost({
               postId: id,
-              userId: authorId,
+              userId: username,
             })
           }
         }
