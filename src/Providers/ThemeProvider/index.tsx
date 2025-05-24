@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import { UserThemeStore } from '@/store/userTheme.store'
 import { useState, useEffect } from 'react'
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
 
 // Компонент-обертка для содержимого
 const ThemeContent = ({ children }: { children: React.ReactNode }) => {
@@ -76,7 +77,36 @@ const ThemeContent = ({ children }: { children: React.ReactNode }) => {
           <main className="min-h-dvh flex flex-col">{children}</main>
         </div>
       )}
-      <Toaster />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: 'hsl(var(--heroui-content1))',
+            color: 'hsl(var(--heroui-foreground))',
+            borderRadius: '0.75rem',
+            boxShadow: '0 4px 32px 0 rgba(80, 0, 120, 0.10)',
+            border: '1px solid hsl(var(--heroui-content2))',
+            padding: '12px 16px',
+            fontWeight: 500,
+          },
+          success: {
+            style: {
+              background: 'hsl(var(--heroui-success))',
+            },
+            icon: (
+              <FaCheckCircle className="text-content1-foreground" size={22} />
+            ),
+          },
+          error: {
+            style: {
+              background: 'hsl(var(--heroui-danger))',
+            },
+            icon: (
+              <FaTimesCircle className="text-content1-foreground" size={22} />
+            ),
+          },
+        }}
+      />
     </HeroUIProvider>
   )
 }

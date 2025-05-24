@@ -16,6 +16,7 @@ import {
   handleAxiosError,
 } from '../ApiConfig'
 import { PostsDTO, PostsRequest } from './post.api'
+import { useStore } from 'zustand'
 
 // Типы для запросов и для ответов API, которые приходят с backend
 type LoginRequest = {
@@ -147,19 +148,26 @@ export const useGetUserById = (id: string) => {
 // Хук для обновления пользователя
 export const useUpdateUser = () => {
   const queryClient = useQueryClient()
+  const currentUser = useStore(UserSettingsStore, state => state.current)!
 
   return useMutation({
-    mutationFn: async ({ id, body }: { id: string; body: FormData }) => {
+    mutationFn: async ({
+      username,
+      body,
+    }: {
+      username: string
+      body: FormData
+    }) => {
       try {
-        return await apiClient.put(`/users/${id}`, body)
+        return await apiClient.put(`/users/${currentUser.id}`, body)
       } catch (error) {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
-    onSuccess: (data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.profile(id) })
+    onSuccess: (data, { username }) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.profile(username) })
       queryClient.invalidateQueries({ queryKey: userKeys.current() })
-      queryClient.invalidateQueries({ queryKey: userKeys.posts(id) })
+      queryClient.invalidateQueries({ queryKey: userKeys.posts(username) })
     },
   })
 }
@@ -169,8 +177,6 @@ export const useGetPostsByUserId = ({
   limit,
   userId,
 }: PostsRequest & { userId: string }) => {
-  const queryClient = useQueryClient()
-
   return useInfiniteQuery({
     queryKey: userKeys.posts(userId),
     queryFn: async ({ pageParam: page = 1 }) => {
@@ -196,9 +202,9 @@ export const useGetPostsByUserId = ({
       return lastPageParam + 1
     },
     select: result => result.pages.map(page => page.data).flat(),
-    refetchOnMount: false,
+    // refetchOnMount: false,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    // refetchOnReconnect: false,
   })
 }
 

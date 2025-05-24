@@ -104,7 +104,10 @@ export default function MediaUploader({
           onChange={handleFileInputChange}
         />
         <IoCloudUploadOutline className="text-3xl mb-2" />
-        <p className="text-sm">Перетащите файлы сюда или кликните для выбора</p>
+        <p className="text-sm">
+          Перетащите файл сюда или кликните для выбора или вставьте из буфера
+          обмена (Ctrl+V)
+        </p>
         <p className="text-xs text-default-400 mt-1">
           Поддерживаются изображения (JPG, PNG, GIF, WebP, HEIC) и видео (MP4,
           WebM)

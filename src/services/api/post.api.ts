@@ -56,9 +56,8 @@ export const useCreatePost = () => {
       }
     },
     onSuccess: newPost => {
-      // 1) Вставляем новый пост на первую страницу
-      queryClient.setQueryData<InfiniteData<PostsDTO>>(postKeys.all, old => {
-        if (!old) return old
+      // --- Обновляем все feed-кэши ---
+      updateAllFeedCaches(queryClient, old => {
         const newPages = [...old.pages]
         newPages[0] = {
           ...newPages[0],
@@ -72,16 +71,18 @@ export const useCreatePost = () => {
 
       // 3) Обновляем кэш постов пользователя
       if (currentUser?.id) {
-        const key = userKeys.posts(currentUser.id.toString())
-        queryClient.setQueryData<InfiniteData<PostsDTO>>(key, old => {
-          if (!old) return old
-          const newPages = [...old.pages]
-          newPages[0] = {
-            ...newPages[0],
-            data: [newPost, ...newPages[0].data],
+        updateUserPostsCache(
+          queryClient,
+          currentUser.userName.toString(),
+          old => {
+            const newPages = [...old.pages]
+            newPages[0] = {
+              ...newPages[0],
+              data: [newPost, ...newPages[0].data],
+            }
+            return { ...old, pages: newPages }
           }
-          return { ...old, pages: newPages }
-        })
+        )
       }
     },
   })
@@ -89,8 +90,6 @@ export const useCreatePost = () => {
 
 // Хук для получения всех постов
 export const useGetAllPosts = ({ limit }: PostsRequest) => {
-  const queryClient = useQueryClient()
-
   return useInfiniteQuery({
     queryKey: postKeys.all,
     queryFn: async ({ pageParam: page = 1 }) => {
@@ -122,8 +121,6 @@ export const useGetAllPosts = ({ limit }: PostsRequest) => {
 
 // Хук для получения поста по id
 export const useGetPostById = (id: string) => {
-  const queryClient = useQueryClient()
-
   return useQuery({
     queryKey: postKeys.postId(id),
     queryFn: async () => {
@@ -145,12 +142,11 @@ export const useDeletePost = () => {
   return useMutation<Post, ApiErrorResponse, { id: string }>({
     mutationFn: ({ id }) => apiClient.delete<string, Post>(`/posts/${id}`),
     onSuccess: (_, { id }) => {
-      // a) Убираем из кэша infinite-query все вхождения поста
-      queryClient.setQueryData<InfiniteData<PostsDTO>>(postKeys.all, old => {
-        if (!old) return old
-        const filteredPages = old.pages.map(page => ({
+      // --- Удаляем из всех feed-кэшей ---
+      updateAllFeedCaches(queryClient, old => {
+        const filteredPages = old.pages.map((page: PostsDTO) => ({
           ...page,
-          data: page.data.filter(post => post.id !== id),
+          data: page.data.filter((post: Post) => post.id !== id),
         }))
         return { ...old, pages: filteredPages }
       })
@@ -158,29 +154,26 @@ export const useDeletePost = () => {
       // b) Удаляем кэш отдельного запроса
       queryClient.removeQueries({ queryKey: postKeys.postId(id) })
 
-      // c) Инвалидируем пользовательские посты
-      // 3) Обновляем кэш постов пользователя
+      // c) Обновляем кэш постов пользователя
       if (currentUser?.id) {
-        const key = userKeys.posts(currentUser.id.toString())
-        queryClient.setQueryData<InfiniteData<PostsDTO>>(key, old => {
-          if (!old) return old
-          const filteredPages = old.pages.map(page => ({
-            ...page,
-            data: page.data.filter(post => post.id !== id),
-          }))
-          return { ...old, pages: filteredPages }
-        })
+        updateUserPostsCache(
+          queryClient,
+          currentUser.userName.toString(),
+          old => {
+            const filteredPages = old.pages.map((page: PostsDTO) => ({
+              ...page,
+              data: page.data.filter((post: Post) => post.id !== id),
+            }))
+            return { ...old, pages: filteredPages }
+          }
+        )
       }
-      // queryClient.invalidateQueries({
-      //   queryKey: userKeys.posts(currentUser.id.toString()),
-      // })
     },
   })
 }
 
 // Хук для увеличения счетчика просмотров поста
 export const useIncrementViewCount = () => {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (postId: string) => {
       try {
@@ -189,13 +182,8 @@ export const useIncrementViewCount = () => {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
-    onSuccess: (_, postId) => {
-      // Актуализируем кэш поста
-      // queryClient.invalidateQueries({ queryKey: postKeys.postId(postId) })
-    },
+    onSuccess: (_, postId) => {},
     onError: error => {
-      // Можно добавить toast или логирование
-      // toast.error('Ошибка при увеличении просмотров')
       console.error('Ошибка при увеличении просмотров', error)
     },
   })
@@ -203,7 +191,6 @@ export const useIncrementViewCount = () => {
 
 // Хук для увеличения счетчика "поделиться"
 export const useIncrementShareCount = () => {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (postId: string) => {
       try {
@@ -212,13 +199,8 @@ export const useIncrementShareCount = () => {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
-    onSuccess: (_, postId) => {
-      // Актуализируем кэш поста
-      // queryClient.invalidateQueries({ queryKey: postKeys.postId(postId) })
-    },
+    onSuccess: (_, postId) => {},
     onError: error => {
-      // Можно добавить toast или логирование
-      // toast.error('Ошибка при увеличении "поделиться"')
       console.error('Ошибка при увеличении "поделиться"', error)
     },
   })
@@ -235,8 +217,6 @@ export const useIncrementViewsBatch = () => {
       }
     },
     onError: error => {
-      // Можно добавить toast или логирование
-      // toast.error('Ошибка при batch просмотрах')
       console.error('Ошибка при batch просмотрах', error)
     },
   })
@@ -244,8 +224,6 @@ export const useIncrementViewsBatch = () => {
 
 // Хук для получения ленты с разными типами
 export const useGetFeed = ({ limit, feedType }: FeedRequest) => {
-  const queryClient = useQueryClient()
-
   return useInfiniteQuery({
     queryKey: postKeys.feed(feedType),
     queryFn: async ({ pageParam: page = 1 }) => {
@@ -279,5 +257,34 @@ export const useGetFeed = ({ limit, feedType }: FeedRequest) => {
       const allViewed = result.pages[0]?.allViewed
       return { data: allData, allViewed }
     },
+  })
+}
+
+// Вспомогательная функция для обновления всех feed-кэшей
+function updateAllFeedCaches(
+  queryClient: ReturnType<typeof useQueryClient>,
+  updater: (old: InfiniteData<PostsDTO>) => InfiniteData<PostsDTO>
+) {
+  const feedQueries = queryClient
+    .getQueryCache()
+    .findAll({ queryKey: ['posts', 'feed'] })
+  feedQueries.forEach(query => {
+    queryClient.setQueryData<InfiniteData<PostsDTO>>(query.queryKey, old => {
+      if (!old || !('pages' in old)) return old
+      return updater(old)
+    })
+  })
+}
+
+// Вспомогательная функция для обновления кэша постов пользователя
+function updateUserPostsCache(
+  queryClient: ReturnType<typeof useQueryClient>,
+  username: string,
+  updater: (old: InfiniteData<PostsDTO>) => InfiniteData<PostsDTO>
+) {
+  const key = userKeys.posts(username)
+  queryClient.setQueryData<InfiniteData<PostsDTO>>(key, old => {
+    if (!old) return old
+    return updater(old)
   })
 }

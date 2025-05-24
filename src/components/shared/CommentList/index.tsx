@@ -76,6 +76,7 @@ function CommentList({
                     likedByUser={comment.likedByUser}
                     likesCount={comment.likeCount}
                     likes={comment.likes}
+                    media={comment.media}
                   />
                 </motion.div>
               ))

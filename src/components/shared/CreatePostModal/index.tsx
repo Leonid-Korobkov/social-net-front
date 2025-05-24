@@ -13,13 +13,14 @@ import {
   ModalHeader,
 } from '@heroui/react'
 import { toast } from 'react-hot-toast'
-import { FaRegSave } from 'react-icons/fa'
+import { FaRegSave, FaArrowRight } from 'react-icons/fa'
 import { IoMdCreate } from 'react-icons/io'
 import CreatePost from '../PostCreate'
 import { useState, useEffect } from 'react'
 import MediaUploader from '../MediaUploader'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import { isPostEmpty, stripHtml } from '@/utils/stripHtml'
+import Link from 'next/link'
 
 interface CreatePostModalProps {
   isOpen: boolean
@@ -75,8 +76,18 @@ function CreatePostModal({ isOpen, onOpenChange }: CreatePostModalProps) {
       })
 
       promise
-        .then(() => {
-          toast.success('Пост успешно создан!')
+        .then(newPost => {
+          toast.success(
+            <span className="flex flex-col items-center gap-1 text-center">
+              <span>Пост успешно создан!</span>
+              <Link
+                href={`/${newPost.author.userName}/post/${newPost.id}`}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md font-semibold text-foreground hover:text-foreground-600 bg-foreground/10 hover:bg-foreground/20 transition-colors duration-200 mt-1"
+              >
+                Перейти к посту <FaArrowRight className="ml-1" />
+              </Link>
+            </span>
+          )
           clearContent()
           setMediaUrls([])
           handleSuccess()

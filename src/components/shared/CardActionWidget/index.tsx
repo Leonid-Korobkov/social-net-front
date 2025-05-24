@@ -171,7 +171,7 @@ function CardActionWidget({
             startContent={<FaRegHeart />}
             onClick={handleOpenModalLikes}
           >
-            Просмотр лайков
+            Кто поставил лайк
           </DropdownItem>
           <DropdownItem
             key="share"

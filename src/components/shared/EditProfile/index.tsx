@@ -108,7 +108,10 @@ function EditProfile({
           }
         }
 
-        const promise = updateUser({ body: formData, id: id.toString() })
+        const promise = updateUser({
+          body: formData,
+          username: user?.userName?.toString() || '',
+        })
 
         const toastId = toast.loading('Сохранение...')
 

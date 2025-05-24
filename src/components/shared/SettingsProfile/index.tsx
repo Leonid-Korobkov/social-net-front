@@ -271,82 +271,84 @@ export default function SettingsProfile({
                     value={selectedTheme}
                     onValueChange={handleThemeChange}
                     orientation="horizontal"
-                    className="grid gap-2"
+                    className="grid gap-2 w-full"
                   >
-                    <Radio
-                      value="default"
-                      classNames={{
-                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                      }}
-                    >
-                      <div className="w-full flex flex-col gap-1">
-                        <p className="text-medium">По умолчанию</p>
-                        <div className="flex gap-1">
-                          <span className="w-4 h-4 rounded-full bg-[#9353D3]" />
-                          <span className="w-4 h-4 rounded-full bg-[#18181B]" />
+                    <div className="grid gap-2 w-full">
+                      <Radio
+                        value="default"
+                        classNames={{
+                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                        }}
+                      >
+                        <div className="w-full flex flex-col gap-1">
+                          <p className="text-medium">По умолчанию</p>
+                          <div className="flex gap-1">
+                            <span className="w-4 h-4 rounded-full bg-[#9353D3]" />
+                            <span className="w-4 h-4 rounded-full bg-[#18181B]" />
+                          </div>
                         </div>
-                      </div>
-                    </Radio>
+                      </Radio>
 
-                    <Radio
-                      value="purple"
-                      classNames={{
-                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                      }}
-                    >
-                      <div className="w-full flex flex-col gap-1">
-                        <p className="text-medium">Фиолетовая</p>
-                        <div className="flex gap-1">
-                          <span className="w-4 h-4 rounded-full bg-[#9353d3]" />
-                          <span className="w-4 h-4 rounded-full bg-[#637aff]" />
+                      <Radio
+                        value="purple"
+                        classNames={{
+                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                        }}
+                      >
+                        <div className="w-full flex flex-col gap-1">
+                          <p className="text-medium">Фиолетовая</p>
+                          <div className="flex gap-1">
+                            <span className="w-4 h-4 rounded-full bg-[#9353d3]" />
+                            <span className="w-4 h-4 rounded-full bg-[#637aff]" />
+                          </div>
                         </div>
-                      </div>
-                    </Radio>
+                      </Radio>
 
-                    <Radio
-                      value="monochrome"
-                      classNames={{
-                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                      }}
-                    >
-                      <div className="w-full flex flex-col gap-1">
-                        <p className="text-medium">Монохромная</p>
-                        <div className="flex gap-1">
-                          <span className="w-4 h-4 rounded-full bg-black dark:bg-white" />
-                          <span className="w-4 h-4 rounded-full bg-gray-400" />
+                      <Radio
+                        value="monochrome"
+                        classNames={{
+                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                        }}
+                      >
+                        <div className="w-full flex flex-col gap-1">
+                          <p className="text-medium">Монохромная</p>
+                          <div className="flex gap-1">
+                            <span className="w-4 h-4 rounded-full bg-black dark:bg-white" />
+                            <span className="w-4 h-4 rounded-full bg-gray-400" />
+                          </div>
                         </div>
-                      </div>
-                    </Radio>
+                      </Radio>
 
-                    <Radio
-                      value="brown"
-                      classNames={{
-                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                      }}
-                    >
-                      <div className="w-full flex flex-col gap-1">
-                        <p className="text-medium">Коричневая</p>
-                        <div className="flex gap-1">
-                          <span className="w-4 h-4 rounded-full bg-[#db924b]" />
-                          <span className="w-4 h-4 rounded-full bg-[#5a8486]" />
+                      <Radio
+                        value="brown"
+                        classNames={{
+                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                        }}
+                      >
+                        <div className="w-full flex flex-col gap-1">
+                          <p className="text-medium">Коричневая</p>
+                          <div className="flex gap-1">
+                            <span className="w-4 h-4 rounded-full bg-[#db924b]" />
+                            <span className="w-4 h-4 rounded-full bg-[#5a8486]" />
+                          </div>
                         </div>
-                      </div>
-                    </Radio>
+                      </Radio>
 
-                    <Radio
-                      value="green"
-                      classNames={{
-                        base: 'inline-flex m-0 flex-1 min-w-[200px] bg-green-50 dark:bg-green-950 hover:bg-green-100 dark:hover:bg-green-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                      }}
-                    >
-                      <div className="w-full flex flex-col gap-1">
-                        <p className="text-medium">Зеленая</p>
-                        <div className="flex gap-1">
-                          <span className="w-4 h-4 rounded-full bg-[#66cc8a]" />
-                          <span className="w-4 h-4 rounded-full bg-[#377cfb]" />
+                      <Radio
+                        value="green"
+                        classNames={{
+                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-green-50 dark:bg-green-950 hover:bg-green-100 dark:hover:bg-green-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                        }}
+                      >
+                        <div className="w-full flex flex-col gap-1">
+                          <p className="text-medium">Зеленая</p>
+                          <div className="flex gap-1">
+                            <span className="w-4 h-4 rounded-full bg-[#66cc8a]" />
+                            <span className="w-4 h-4 rounded-full bg-[#377cfb]" />
+                          </div>
                         </div>
-                      </div>
-                    </Radio>
+                      </Radio>
+                    </div>
                   </RadioGroup>
                 </CardBody>
               </Card>
