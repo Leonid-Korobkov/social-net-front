@@ -53,12 +53,11 @@ export default function VideoPlayer({
 
   // Обработчик обновления прогресса воспроизведения
   const handleTimeUpdate = () => {
-    if (!videoRef.current) return
-
-    const currentTime = videoRef.current.currentTime
-    const duration = videoRef.current.duration
-    setCurrentTime(currentTime)
-    setProgress((currentTime / duration) * 100)
+    // if (!videoRef.current) return
+    // const currentTime = videoRef.current.currentTime
+    // const duration = videoRef.current.duration
+    // setCurrentTime(currentTime)
+    // setProgress((currentTime / duration) * 100)
   }
 
   // Изменение прогресса воспроизведения через перетаскивание
@@ -118,8 +117,25 @@ export default function VideoPlayer({
   // Обработчик ожидания загрузки данных
   const handleWaiting = () => setIsVideoLoading(true)
 
+  const animateProgress = () => {
+    if (!videoRef.current) return
+
+    const duration = videoRef.current.duration
+    const currentTime = videoRef.current.currentTime
+    const newProgress = (currentTime / duration) * 100
+
+    setProgress(newProgress)
+
+    if (!videoRef.current.paused && !videoRef.current.ended) {
+      requestAnimationFrame(animateProgress)
+    }
+  }
+
   // Обработчик возобновления воспроизведения
-  const handlePlaying = () => setIsVideoLoading(false)
+  const handlePlaying = () => {
+    setIsVideoLoading(false)
+    requestAnimationFrame(animateProgress)
+  }
 
   // Обработка окончания воспроизведения
   const handleEnded = () => {
@@ -256,7 +272,7 @@ export default function VideoPlayer({
           {/* Время видео */}
           <div
             className={cn(
-              'absolute bottom-4 left-2 text-xs text-white bg-black/40 px-2 py-1 rounded-lg transition-opacity z-10 opacity-0',
+              'absolute bottom-6 left-2 text-xs text-white bg-black/40 px-2 py-1 rounded-lg transition-opacity z-10 opacity-0',
               videoRef.current?.paused && 'opacity-100'
             )}
           >
@@ -268,7 +284,7 @@ export default function VideoPlayer({
           <button
             onClick={toggleMute}
             className={cn(
-              'absolute bottom-4 right-2 text-white backdrop-blur-md bg-content1/30 hover:bg-content1/50 p-2 rounded-full z-30'
+              'absolute bottom-6 right-2 text-white backdrop-blur-md bg-content1/30 hover:bg-content1/50 p-2 rounded-full z-30'
             )}
           >
             {isMuted ? <IoVolumeMute size={16} /> : <IoVolumeHigh size={16} />}
@@ -282,7 +298,7 @@ export default function VideoPlayer({
           >
             <Slider
               aria-label="Player progress"
-              className="w-full max-w-full"
+              className="w-full max-w-full "
               size="sm"
               color="foreground"
               value={progress}
@@ -291,6 +307,10 @@ export default function VideoPlayer({
               onChange={handleSliderChange}
               onChangeEnd={handleSliderChangeEnd}
               hideThumb={true}
+              classNames={{
+                track: 'h-2 border-none rounded-full',
+                filler: 'h-2 border-none rounded-full',
+              }}
             />
           </div>
         </>
