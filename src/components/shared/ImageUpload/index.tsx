@@ -197,7 +197,7 @@ function ImageUpload({
             width={200}
             height={200}
             // isBlurred
-            className="object-cover border-4 border-white"
+            className="object-cover"
           />
         </div>
       )}

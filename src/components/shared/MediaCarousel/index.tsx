@@ -202,7 +202,6 @@ export default function MediaCarousel({
             1000
           )
 
-
           return (
             <div
               key={index}
@@ -219,7 +218,7 @@ export default function MediaCarousel({
                 <div className="w-full h-full flex items-center justify-start">
                   <VideoPlayer
                     src={optimizedUrl}
-                    thumbnail={item.thumbnail}
+                    thumbnail={imageForThumbnail}
                     className="w-full h-full max-h-[430px]"
                     autoPlay={true}
                     controls={true}
