@@ -1,7 +1,5 @@
 import UserProfileClient from './page-client'
 import { Metadata } from 'next'
-import axios from 'axios'
-
 import { APP_URL } from '@/app/constants'
 import { apiClient } from '@/services/ApiConfig'
 import { User } from '@/store/types'
@@ -30,9 +28,6 @@ export async function generateMetadata({
     const title = `${user.name} (@${user.userName}) | Zling`
     const description =
       user.bio || `Профиль ${user.name} в социальной сети Zling`
-
-    // Формируем URL для OG изображения
-    const ogImageUrl = `${APP_URL}/api/og?type=profile&id=${user.id}`
 
     return {
       title,
