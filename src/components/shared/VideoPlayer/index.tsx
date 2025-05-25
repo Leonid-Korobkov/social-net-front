@@ -53,11 +53,9 @@ export default function VideoPlayer({
 
   // Обработчик обновления прогресса воспроизведения
   const handleTimeUpdate = () => {
-    // if (!videoRef.current) return
-    // const currentTime = videoRef.current.currentTime
-    // const duration = videoRef.current.duration
-    // setCurrentTime(currentTime)
-    // setProgress((currentTime / duration) * 100)
+    if (!videoRef.current) return
+    const currentTime = videoRef.current.currentTime
+    setCurrentTime(currentTime)
   }
 
   // Изменение прогресса воспроизведения через перетаскивание

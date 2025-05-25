@@ -17,7 +17,11 @@ export const size = {
 }
 export const contentType = 'image/png'
 
-export default async function Image({ params }: { params: { username: string } }) {
+export default async function Image({
+  params,
+}: {
+  params: { username: string }
+}) {
   let fontData
   try {
     fontData = await readFile(
@@ -26,7 +30,7 @@ export default async function Image({ params }: { params: { username: string } }
   } catch (error) {
     try {
       fontData = await readFile(
-        join(process.cwd(), '/public/assets/font/Rubik-SemiBold.ttf')
+        join(process.cwd(), '../../public/assets/font/Rubik-SemiBold.ttf')
       )
     } catch (error) {
       console.error('Не удалось загрузить шрифт:', error)

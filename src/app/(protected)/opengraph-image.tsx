@@ -18,7 +18,7 @@ export default async function OpImage() {
   } catch (error) {
     try {
       fontData = await readFile(
-        join(process.cwd(), '/public/assets/font/Rubik-SemiBold.ttf')
+        join(process.cwd(), '../../public/assets/font/Rubik-SemiBold.ttf')
       )
     } catch (error) {
       console.error('Не удалось загрузить шрифт:', error)
