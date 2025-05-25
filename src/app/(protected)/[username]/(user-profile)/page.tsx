@@ -67,21 +67,12 @@ function defaultMetadata(): Metadata {
       description: 'Профиль пользователя в социальной сети Zling',
       url: APP_URL,
       siteName: 'Zling',
-      images: [
-        {
-          url: `${APP_URL}/api/og?title=Профиль пользователя`,
-          width: 1200,
-          height: 630,
-          alt: 'Профиль пользователя в Zling',
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: 'Профиль пользователя | Zling',
       description: 'Профиль пользователя в социальной сети Zling',
       creator: '@krbln',
-      images: [`${APP_URL}/api/og?title=Профиль пользователя`],
     },
   }
 }
