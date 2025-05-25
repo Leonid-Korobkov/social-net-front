@@ -1,0 +1,12 @@
+#nprogress .bar {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--heroui-primary-400)),
+    hsl(var(--heroui-primary-500)),
+    hsl(var(--heroui-primary-600))
+  ) !important;
+  box-shadow: 0 0 8px 2px hsl(var(--heroui-primary-400)),
+    0 0 16px 4px hsl(var(--heroui-primary-500)) !important;
+  border-radius: 4px;
+  height: 3px !important;
+}

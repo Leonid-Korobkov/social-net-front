@@ -105,10 +105,10 @@ const Card = memo(
     const [selectedMediaIndex, setSelectedMediaIndex] = useState(0)
 
     // Функция для открытия медиа в модальном окне по индексу
-    const openMediaModal = useCallback((index: number) => {
+    const openMediaModal = (index: number) => {
       setSelectedMediaIndex(index)
       setIsMediaModalOpen(true)
-    }, [])
+    }
 
     const handleLike = async () => {
       if (isLikeInProgress) return

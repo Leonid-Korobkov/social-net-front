@@ -1,16 +1,12 @@
 'use client'
 import NextTopLoader from 'nextjs-toploader'
+import './ProgressProvider.css'
+import React from 'react'
 
 function ProgressProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <NextTopLoader
-        color="#9353D3"
-        crawl={true}
-        height={6}
-        showSpinner={false}
-        shadow="0 0 20px #2299DD,0 0 10px #2299DD"
-      />
+      <NextTopLoader crawl={true} showSpinner={false} height={0} />
       {children}
     </>
   )
