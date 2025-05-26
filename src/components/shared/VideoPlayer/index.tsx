@@ -206,8 +206,7 @@ export default function VideoPlayer({
           src={src}
           poster={thumbnail}
           className={cn(
-            'rounded-lg border border-default-200 object-contain z-10',
-            isVideoLoaded ? 'opacity-100' : 'opacity-0'
+            'rounded-lg border border-default-200 object-contain z-10'
           )}
           style={{
             maxHeight: '100%',
@@ -217,10 +216,10 @@ export default function VideoPlayer({
           }}
           playsInline
           webkit-playsinline="true"
-          muted={isMuted}
-          loop={loop}
+          muted={true}
+          loop={true}
           preload="metadata"
-          autoPlay={autoPlay}
+          autoPlay={true}
         />
 
         <button
