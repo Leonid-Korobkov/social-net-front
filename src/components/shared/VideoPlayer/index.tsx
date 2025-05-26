@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Slider, cn } from '@heroui/react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IoVolumeHigh, IoVolumeMute } from 'react-icons/io5'
 import { useInView } from 'react-intersection-observer'
 
@@ -136,108 +136,43 @@ export default function VideoPlayer({
   }
 
   // Обработка окончания воспроизведения
-  const handleEnded = useCallback(() => {
+  const handleEnded = () => {
     setProgress(0)
     setCurrentTime(0)
-
     if (loop && videoRef.current) {
       videoRef.current.currentTime = 0
-      videoRef.current
-        .play()
-        .then()
-        .catch(e =>
-          console.error('Ошибка воспроизведения после завершения:', e)
-        )
+      videoRef.current.play()
     }
-  }, [loop])
+  }
 
-  // Наблюдатель за видимостью видео для автовоспроизведения (только для карусели)
   useEffect(() => {
-    if (!videoRef.current || !autoPlay || mode === 'modal') return
+    if (videoRef.current) {
+      setIsMuted(muted)
 
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.6, // 60% видео должно быть видимым
+      const video = videoRef.current
+      video.addEventListener('timeupdate', handleTimeUpdate)
+      video.addEventListener('loadeddata', handleLoadedData)
+      video.addEventListener('waiting', handleWaiting)
+      video.addEventListener('playing', handlePlaying)
+      video.addEventListener('ended', handleEnded)
+
+      return () => {
+        video.removeEventListener('timeupdate', handleTimeUpdate)
+        video.removeEventListener('loadeddata', handleLoadedData)
+        video.removeEventListener('waiting', handleWaiting)
+        video.removeEventListener('playing', handlePlaying)
+        video.removeEventListener('ended', handleEnded)
+      }
     }
+  }, [muted])
 
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (
-          entry.isIntersecting &&
-          videoRef.current &&
-          videoRef.current.paused
-        ) {
-          // Автовоспроизведение при появлении в viewport
-          videoRef.current
-            .play()
-            .then()
-            .catch(e => console.error('Ошибка автовоспроизведения:', e))
-        } else if (
-          !entry.isIntersecting &&
-          videoRef.current &&
-          !videoRef.current.paused
-        ) {
-          // Пауза при исчезновении из viewport
-          videoRef.current.pause()
-        }
-      })
-    }, options)
-
-    observer.observe(videoRef.current)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [autoPlay, mode])
-
-  // Автовоспроизведение в модальном режиме, если указан autoPlay
   useEffect(() => {
-    if (
-      mode === 'modal' &&
-      autoPlay &&
-      videoRef.current &&
-      videoRef.current.paused
-    ) {
-      videoRef.current
-        .play()
-        .then()
-        .catch(e =>
-          console.error('Ошибка автовоспроизведения в модальном режиме:', e)
-        )
+    if (autoPlay && inView && videoRef.current) {
+      videoRef.current.play()
+    } else if (!inView && videoRef.current) {
+      videoRef.current.pause()
     }
-  }, [autoPlay, mode])
-
-  // Инициализация видео при монтировании компонента
-  useEffect(() => {
-    if (!videoRef.current) return
-
-    videoRef.current.muted = muted
-    setIsMuted(muted)
-
-    // Добавляем обработчики событий
-    const video = videoRef.current
-    video.addEventListener('timeupdate', handleTimeUpdate)
-    video.addEventListener('loadeddata', handleLoadedData)
-    video.addEventListener('waiting', handleWaiting)
-    video.addEventListener('playing', handlePlaying)
-    video.addEventListener('ended', handleEnded)
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate)
-      video.removeEventListener('loadeddata', handleLoadedData)
-      video.removeEventListener('waiting', handleWaiting)
-      video.removeEventListener('playing', handlePlaying)
-      video.removeEventListener('ended', handleEnded)
-    }
-  }, [
-    handleEnded,
-    handleLoadedData,
-    handleWaiting,
-    handlePlaying,
-    handleTimeUpdate,
-    muted,
-  ])
+  }, [autoPlay, inView])
 
   if (mode === 'carousel') {
     return (
