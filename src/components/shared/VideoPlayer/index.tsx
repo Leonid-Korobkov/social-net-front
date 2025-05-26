@@ -147,7 +147,6 @@ export default function VideoPlayer({
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.muted = muted
       setIsMuted(muted)
 
       const video = videoRef.current
@@ -216,17 +215,12 @@ export default function VideoPlayer({
             height: 'auto',
           }}
           playsInline
+          webkit-playsinline="true"
           muted={isMuted}
           loop={loop}
           preload="metadata"
+          autoPlay={autoPlay}
         />
-
-        {/* Индикатор загрузки */}
-        {isVideoLoading && (
-          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
 
         <button
           onClick={toggleMute}
@@ -253,6 +247,7 @@ export default function VideoPlayer({
         poster={thumbnail}
         className="object-cover w-full h-full"
         playsInline
+        webkit-playsinline="true"
         onClick={togglePlay}
         muted={isMuted}
         loop={loop}
