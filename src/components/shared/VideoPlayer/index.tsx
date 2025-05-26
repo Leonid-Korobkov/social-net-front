@@ -166,13 +166,11 @@ export default function VideoPlayer({
   }, [muted])
 
   useEffect(() => {
-    setTimeout(() => {
-      if (autoPlay && inView && videoRef.current) {
-        videoRef.current.play()
-      } else if (!inView && videoRef.current) {
-        videoRef.current.pause()
-      }
-    }, 10)
+    if (autoPlay && inView && videoRef.current) {
+      videoRef.current.play()
+    } else if (!inView && videoRef.current) {
+      videoRef.current.pause()
+    }
   }, [autoPlay, inView])
 
   if (mode === 'carousel') {
@@ -202,10 +200,12 @@ export default function VideoPlayer({
         )}
 
         <video
+          ref={setRefs}
           src={src}
           poster={thumbnail}
           className={cn(
-            'rounded-lg border border-default-200 object-contain z-10'
+            'rounded-lg border border-default-200 object-contain z-10',
+            isVideoLoaded ? 'opacity-100' : 'opacity-0'
           )}
           style={{
             maxHeight: '100%',
@@ -215,10 +215,9 @@ export default function VideoPlayer({
           }}
           playsInline
           webkit-playsinline="true"
-          muted={true}
-          loop={true}
+          muted={isMuted}
+          loop={loop}
           preload="metadata"
-          autoPlay={true}
         />
 
         <button
