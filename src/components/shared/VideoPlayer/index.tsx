@@ -38,7 +38,6 @@ export default function VideoPlayer({
 
   const { ref: inViewRef, inView } = useInView({ threshold: 0.6 })
 
-  // Ref assignment for both video and inView observation
   const setRefs = (node: HTMLVideoElement | null) => {
     videoRef.current = node
     inViewRef(node)
@@ -167,11 +166,13 @@ export default function VideoPlayer({
   }, [muted])
 
   useEffect(() => {
-    if (autoPlay && inView && videoRef.current) {
-      videoRef.current.play()
-    } else if (!inView && videoRef.current) {
-      videoRef.current.pause()
-    }
+    setTimeout(() => {
+      if (autoPlay && inView && videoRef.current) {
+        videoRef.current.play()
+      } else if (!inView && videoRef.current) {
+        videoRef.current.pause()
+      }
+    }, 10)
   }, [autoPlay, inView])
 
   if (mode === 'carousel') {
