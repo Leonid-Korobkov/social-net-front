@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Slider, cn } from '@heroui/react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { IoVolumeHigh, IoVolumeMute } from 'react-icons/io5'
 import { useInView } from 'react-intersection-observer'
 
@@ -35,11 +35,8 @@ export default function VideoPlayer({
   const [currentTime, setCurrentTime] = useState(0)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [isVideoLoading, setIsVideoLoading] = useState(true)
-  const [isPlaying, setIsPlaying] = useState(false)
 
-  const { ref: inViewRef, inView } = useInView({
-    threshold: 0.6,
-  })
+  const { ref: inViewRef, inView } = useInView({ threshold: 0.6 })
 
   // Ref assignment for both video and inView observation
   const setRefs = (node: HTMLVideoElement | null) => {
@@ -77,17 +74,13 @@ export default function VideoPlayer({
   const handleSliderChangeStart = () => {
     if (videoRef.current) {
       videoRef.current.pause()
-      setIsPlaying(false)
     }
   }
 
   const handleSliderChangeEnd = (value: number | number[]) => {
     handleSliderChange(value)
-    if (videoRef.current && inView) {
-      videoRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false))
+    if (videoRef.current) {
+      videoRef.current.play()
     }
   }
 
@@ -95,13 +88,9 @@ export default function VideoPlayer({
   const togglePlay = () => {
     if (!videoRef.current) return
     if (videoRef.current.paused) {
-      videoRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false))
+      videoRef.current.play()
     } else {
       videoRef.current.pause()
-      setIsPlaying(false)
     }
   }
 
@@ -124,10 +113,7 @@ export default function VideoPlayer({
   }
 
   // Обработчик ожидания загрузки данных
-  const handleWaiting = () => {
-    setIsVideoLoading(true)
-    setIsPlaying(false)
-  }
+  const handleWaiting = () => setIsVideoLoading(true)
 
   const animateProgress = () => {
     if (!videoRef.current) return
@@ -146,72 +132,112 @@ export default function VideoPlayer({
   // Обработчик возобновления воспроизведения
   const handlePlaying = () => {
     setIsVideoLoading(false)
-    setIsPlaying(true)
     requestAnimationFrame(animateProgress)
   }
 
   // Обработка окончания воспроизведения
-  const handleEnded = () => {
+  const handleEnded = useCallback(() => {
     setProgress(0)
     setCurrentTime(0)
-    setIsPlaying(false)
+
     if (loop && videoRef.current) {
       videoRef.current.currentTime = 0
       videoRef.current
         .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false))
+        .then()
+        .catch(e =>
+          console.error('Ошибка воспроизведения после завершения:', e)
+        )
     }
-  }
+  }, [loop])
 
-  // Обработчик паузы
-  const handlePause = () => {
-    setIsPlaying(false)
-  }
-
+  // Наблюдатель за видимостью видео для автовоспроизведения (только для карусели)
   useEffect(() => {
-    if (videoRef.current) {
-      setIsMuted(muted)
+    if (!videoRef.current || !autoPlay || mode === 'modal') return
 
-      const video = videoRef.current
-      video.addEventListener('timeupdate', handleTimeUpdate)
-      video.addEventListener('loadeddata', handleLoadedData)
-      video.addEventListener('waiting', handleWaiting)
-      video.addEventListener('playing', handlePlaying)
-      video.addEventListener('ended', handleEnded)
-
-      return () => {
-        video.removeEventListener('timeupdate', handleTimeUpdate)
-        video.removeEventListener('loadeddata', handleLoadedData)
-        video.removeEventListener('waiting', handleWaiting)
-        video.removeEventListener('playing', handlePlaying)
-        video.removeEventListener('ended', handleEnded)
-      }
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.6, // 60% видео должно быть видимым
     }
-  }, [muted])
 
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (
+          entry.isIntersecting &&
+          videoRef.current &&
+          videoRef.current.paused
+        ) {
+          // Автовоспроизведение при появлении в viewport
+          videoRef.current
+            .play()
+            .then()
+            .catch(e => console.error('Ошибка автовоспроизведения:', e))
+        } else if (
+          !entry.isIntersecting &&
+          videoRef.current &&
+          !videoRef.current.paused
+        ) {
+          // Пауза при исчезновении из viewport
+          videoRef.current.pause()
+        }
+      })
+    }, options)
+
+    observer.observe(videoRef.current)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [autoPlay, mode])
+
+  // Автовоспроизведение в модальном режиме, если указан autoPlay
   useEffect(() => {
-    if (autoPlay && inView && videoRef.current && !isPlaying) {
-      // Для iOS важно, чтобы видео было muted
-      videoRef.current.muted = muted
-      setIsMuted(muted)
-
+    if (
+      mode === 'modal' &&
+      autoPlay &&
+      videoRef.current &&
+      videoRef.current.paused
+    ) {
       videoRef.current
         .play()
-        .then(() => {
-          setIsPlaying(true)
-          setIsVideoLoading(false)
-        })
-        .catch(error => {
-          console.error('Ошибка автовоспроизведения:', error)
-          setIsPlaying(false)
-          setIsVideoLoading(false)
-        })
-    } else if (!inView && videoRef.current && isPlaying) {
-      videoRef.current.pause()
-      setIsPlaying(false)
+        .then()
+        .catch(e =>
+          console.error('Ошибка автовоспроизведения в модальном режиме:', e)
+        )
     }
-  }, [autoPlay, inView, isPlaying])
+  }, [autoPlay, mode])
+
+  // Инициализация видео при монтировании компонента
+  useEffect(() => {
+    if (!videoRef.current) return
+
+    videoRef.current.muted = muted
+    setIsMuted(muted)
+
+    // Добавляем обработчики событий
+    const video = videoRef.current
+    video.addEventListener('timeupdate', handleTimeUpdate)
+    video.addEventListener('loadeddata', handleLoadedData)
+    video.addEventListener('waiting', handleWaiting)
+    video.addEventListener('playing', handlePlaying)
+    video.addEventListener('ended', handleEnded)
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeUpdate)
+      video.removeEventListener('loadeddata', handleLoadedData)
+      video.removeEventListener('waiting', handleWaiting)
+      video.removeEventListener('playing', handlePlaying)
+      video.removeEventListener('ended', handleEnded)
+    }
+  }, [
+    handleEnded,
+    handleLoadedData,
+    handleWaiting,
+    handlePlaying,
+    handleTimeUpdate,
+    muted,
+  ])
 
   if (mode === 'carousel') {
     return (
@@ -236,7 +262,6 @@ export default function VideoPlayer({
               maxWidth: '100%',
               width: 'auto',
             }}
-            alt="Video thumbnail"
           />
         )}
 
@@ -256,18 +281,11 @@ export default function VideoPlayer({
           }}
           playsInline
           webkit-playsinline="true"
-          x-webkit-airplay="allow"
-          preload="metadata"
           muted={isMuted}
           loop={loop}
+          preload="metadata"
           autoPlay={autoPlay}
         />
-
-        {isVideoLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
-            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
 
         <button
           onClick={toggleMute}
@@ -295,7 +313,6 @@ export default function VideoPlayer({
         className="object-cover w-full h-full"
         playsInline
         webkit-playsinline="true"
-        x-webkit-airplay="allow"
         onClick={togglePlay}
         muted={isMuted}
         loop={loop}
@@ -314,7 +331,7 @@ export default function VideoPlayer({
           <div
             className={cn(
               'absolute bottom-6 left-2 text-xs text-white bg-black/40 px-2 py-1 rounded-lg transition-opacity z-10 opacity-0',
-              !isPlaying && 'opacity-100'
+              videoRef.current?.paused && 'opacity-100'
             )}
           >
             {formatTime(currentTime)} /{' '}
@@ -339,7 +356,7 @@ export default function VideoPlayer({
           >
             <Slider
               aria-label="Player progress"
-              className="w-full max-w-full"
+              className="w-full max-w-full "
               size="sm"
               color="foreground"
               value={progress}
@@ -354,12 +371,6 @@ export default function VideoPlayer({
               }}
             />
           </div>
-
-          {isVideoLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-              <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            </div>
-          )}
         </>
       )}
     </div>
