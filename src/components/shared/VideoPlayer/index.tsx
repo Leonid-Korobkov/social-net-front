@@ -202,7 +202,6 @@ export default function VideoPlayer({
         )}
 
         <video
-          ref={setRefs}
           src={src}
           poster={thumbnail}
           className={cn(
