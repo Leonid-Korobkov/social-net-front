@@ -147,7 +147,9 @@ export default function VideoPlayer({
 
   useEffect(() => {
     if (videoRef.current) {
-      setIsMuted(muted)
+      // Принудительно устанавливаем мутирование при загрузке для совместимости с автовоспроизведением на iOS
+      videoRef.current.muted = true
+      setIsMuted(true)
 
       const video = videoRef.current
       video.addEventListener('timeupdate', handleTimeUpdate)
@@ -168,7 +170,21 @@ export default function VideoPlayer({
 
   useEffect(() => {
     if (autoPlay && inView && videoRef.current) {
-      videoRef.current.play()
+      // Проверяем, мутировано ли видео перед попыткой воспроизведения
+      if (videoRef.current.muted) {
+        videoRef.current.play().catch(e => {
+          console.error('Ошибка автовоспроизведения (мутированное):', e)
+          // Если автовоспроизведение мутированного видео не удалось, возможно, нужно сообщить пользователю
+          // или предложить включить звук вручную.
+        })
+      } else {
+        // Попытка автовоспроизведения немутированного видео (может быть заблокирована)
+        videoRef.current.play().catch(e => {
+          console.error('Ошибка автовоспроизведения (немутированное):', e)
+          // На iOS это, скорее всего, вызовет ошибку и будет заблокировано.
+          // В этом случае, видео останется в состоянии паузы/загрузки.
+        })
+      }
     } else if (!inView && videoRef.current) {
       videoRef.current.pause()
     }
