@@ -5,7 +5,7 @@ import { join } from 'node:path'
 export const alt = 'Zling - Социальная сеть'
 export const size = {
   width: 1200,
-  height: 630,
+  height: 1200,
 }
 export const contentType = 'image/png'
 
@@ -46,31 +46,10 @@ export default async function OpImage() {
           src={
             'https://res.cloudinary.com/djsmqdror/image/upload/v1746202177/social-net/wbk0hwzwrswxcwtfhnit.png'
           }
-          width={400}
+          height={1000}
           alt={'Zling логотип'}
           style={{ objectFit: 'cover' }}
         />
-        <div
-          style={{
-            display: 'flex',
-            gap: 30,
-            marginTop: 20,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: '#1E102B',
-              padding: '16px 32px',
-              borderRadius: 20,
-              fontSize: 46,
-              fontWeight: 'bold',
-              letterSpacing: '1.4',
-              color: '#AE7EDE',
-            }}
-          >
-            Главная
-          </div>
-        </div>
       </div>
     ),
     {

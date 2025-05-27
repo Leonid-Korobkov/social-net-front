@@ -203,6 +203,11 @@ export default function VideoPlayer({
           ref={setRefs}
           src={src}
           poster={thumbnail}
+          autoPlay={autoPlay}
+          loop={loop}
+          muted={isMuted}
+          playsInline
+          preload="metadata"
           className={cn(
             'rounded-lg border border-default-200 object-contain z-10',
             isVideoLoaded ? 'opacity-100' : 'opacity-0'
@@ -213,11 +218,10 @@ export default function VideoPlayer({
             width: 'auto',
             height: 'auto',
           }}
-          playsInline
-          webkit-playsinline="true"
-          muted={isMuted}
-          loop={loop}
-          preload="metadata"
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedData={handleLoadedData}
+          onLoadStart={() => setIsVideoLoading(true)}
+          onCanPlay={() => setIsVideoLoading(false)}
         />
 
         <button
@@ -238,27 +242,23 @@ export default function VideoPlayer({
         'relative group block w-auto h-full max-w-[100vw] flex items-center',
         className
       )}
-      onClick={togglePlay}
     >
       <video
         ref={setRefs}
         src={src}
         poster={thumbnail}
-        autoPlay={autoPlay}
-        loop={loop}
+        className="object-cover w-full h-full"
+        playsInline
+        webkit-playsinline="true"
+        onClick={togglePlay}
         muted={isMuted}
+        loop={loop}
         style={{
           maxHeight: '100%',
           maxWidth: '100%',
           width: 'auto',
           height: 'auto',
         }}
-        playsInline
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedData={handleLoadedData}
-        onLoadStart={() => setIsVideoLoading(true)}
-        onCanPlay={() => setIsVideoLoading(false)}
-        className={cn('h-full w-full object-cover', isVideoLoading && 'hidden')}
       />
 
       {/* Элементы управления для модального окна */}
