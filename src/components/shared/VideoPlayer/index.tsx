@@ -291,6 +291,7 @@ export default function VideoPlayer({
               value={progress}
               minValue={0}
               maxValue={100}
+              step={0.01}
               onChange={handleSliderChange}
               onChangeEnd={handleSliderChangeEnd}
               hideThumb={true}
