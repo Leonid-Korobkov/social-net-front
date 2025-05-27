@@ -34,7 +34,6 @@ export default function VideoPlayer({
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
-  const [isVideoLoading, setIsVideoLoading] = useState(true)
 
   const { ref: inViewRef, inView } = useInView({ threshold: 0.6 })
 
@@ -105,14 +104,10 @@ export default function VideoPlayer({
   // Обработчик загрузки данных видео
   const handleLoadedData = () => {
     setIsVideoLoaded(true)
-    setIsVideoLoading(false)
     if (onVideoLoad && videoRef.current) {
       onVideoLoad(videoRef.current)
     }
   }
-
-  // Обработчик ожидания загрузки данных
-  const handleWaiting = () => setIsVideoLoading(true)
 
   const animateProgress = () => {
     if (!videoRef.current) return
@@ -130,7 +125,6 @@ export default function VideoPlayer({
 
   // Обработчик возобновления воспроизведения
   const handlePlaying = () => {
-    setIsVideoLoading(false)
     requestAnimationFrame(animateProgress)
   }
 
@@ -151,14 +145,12 @@ export default function VideoPlayer({
       const video = videoRef.current
       video.addEventListener('timeupdate', handleTimeUpdate)
       video.addEventListener('loadeddata', handleLoadedData)
-      video.addEventListener('waiting', handleWaiting)
       video.addEventListener('playing', handlePlaying)
       video.addEventListener('ended', handleEnded)
 
       return () => {
         video.removeEventListener('timeupdate', handleTimeUpdate)
         video.removeEventListener('loadeddata', handleLoadedData)
-        video.removeEventListener('waiting', handleWaiting)
         video.removeEventListener('playing', handlePlaying)
         video.removeEventListener('ended', handleEnded)
       }
@@ -220,8 +212,6 @@ export default function VideoPlayer({
           }}
           onTimeUpdate={handleTimeUpdate}
           onLoadedData={handleLoadedData}
-          onLoadStart={() => setIsVideoLoading(true)}
-          onCanPlay={() => setIsVideoLoading(false)}
         />
 
         <button
@@ -268,7 +258,8 @@ export default function VideoPlayer({
           <div
             className={cn(
               'absolute bottom-6 left-2 text-xs text-white bg-black/40 px-2 py-1 rounded-lg transition-opacity z-10 opacity-0',
-              videoRef.current?.paused && 'opacity-100'
+              videoRef.current?.paused && 'opacity-100',
+              isVideoLoaded ? 'opacity-100' : 'opacity-0'
             )}
           >
             {formatTime(currentTime)} /{' '}
@@ -288,7 +279,8 @@ export default function VideoPlayer({
           {/* Полоса прогресса через Slider */}
           <div
             className={cn(
-              'absolute bottom-0 left-0 right-0 flex items-center px-2'
+              'absolute bottom-0 left-0 right-0 flex items-center px-2',
+              isVideoLoaded ? 'opacity-100' : 'opacity-0'
             )}
           >
             <Slider
