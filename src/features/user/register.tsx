@@ -61,7 +61,6 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-4 h-full"
-      autoComplete="on"
     >
       <Input
         label="Имя"
