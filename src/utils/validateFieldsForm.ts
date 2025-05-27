@@ -1,6 +1,6 @@
 export const validatePassword = {
   minLength: (value: string) => value.length >= 6 || 'Минимум 6 символов',
-  maxLength: (value: string) => value.length <= 16 || 'Максимум 16 символов',
+  maxLength: (value: string) => value.length <= 24 || 'Максимум 24 символа',
   hasUppercase: (value: string) =>
     /[A-Z]/.test(value) || 'Минимум 1 большая буква',
   hasLowercase: (value: string) =>
