@@ -375,7 +375,7 @@ export default function MediaModal({
 
         {/* Индикаторы слайдов */}
         {mediaItems.length > 1 && !isMobile && (
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1">
+          <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-1">
             {mediaItems.map((_, index) => (
               <button
                 key={index}

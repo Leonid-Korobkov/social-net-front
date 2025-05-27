@@ -238,23 +238,27 @@ export default function VideoPlayer({
         'relative group block w-auto h-full max-w-[100vw] flex items-center',
         className
       )}
+      onClick={togglePlay}
     >
       <video
         ref={setRefs}
         src={src}
         poster={thumbnail}
-        className="object-cover w-full h-full"
-        playsInline
-        webkit-playsinline="true"
-        onClick={togglePlay}
-        muted={isMuted}
+        autoPlay={autoPlay}
         loop={loop}
+        muted={isMuted}
         style={{
           maxHeight: '100%',
           maxWidth: '100%',
           width: 'auto',
           height: 'auto',
         }}
+        playsInline
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedData={handleLoadedData}
+        onLoadStart={() => setIsVideoLoading(true)}
+        onCanPlay={() => setIsVideoLoading(false)}
+        className={cn('h-full w-full object-cover', isVideoLoading && 'hidden')}
       />
 
       {/* Элементы управления для модального окна */}
