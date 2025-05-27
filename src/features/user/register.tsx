@@ -61,6 +61,7 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-4 h-full"
+      autoComplete="on"
     >
       <Input
         label="Имя"
@@ -161,9 +162,11 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         <div className="text-sm text-default-400 mb-2">
           *После регистрации пройдите процесс авторизации.
         </div>
-        {error && hasErrorField(error) && (
+        {(error && hasErrorField(error) && (
           <Alert color="danger" title={error.data.error} />
-        )}
+        )) || (error && (
+          <Alert color="danger" title={error.errorMessage} />
+        ))}
         {isSuccess && (
           <Alert color="success" title="Регистрация выполнена успешно" />
         )}
