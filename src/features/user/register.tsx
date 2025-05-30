@@ -6,7 +6,7 @@ import {
   validatePassword,
   validateUserName,
 } from '@/utils/validateFieldsForm'
-import { Alert, Button, Input, Link } from '@heroui/react'
+import { Alert, Button, Divider, Input, Link } from '@heroui/react'
 import { useState } from 'react'
 import { SubmitHandler, useForm, Controller } from 'react-hook-form'
 import { IoMdMail } from 'react-icons/io'
@@ -64,42 +64,6 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       autoComplete="on"
     >
       <Input
-        label="Имя"
-        type="text"
-        errorMessage={errors.name ? errors.name.message : ''}
-        isInvalid={errors.name ? true : false}
-        placeholder="Иван Петрович"
-        {...register('name', {
-          required: 'Обязательное поле',
-          minLength: { value: 3, message: 'Минимум 3 символа' },
-          validate: value => {
-            if (value.trim() === '') {
-              return 'Имя не может содержать пробелы'
-            }
-            return true
-          },
-        })}
-      />
-      <Controller
-        name="userName"
-        control={control}
-        rules={{
-          required: 'Обязательное поле',
-          validate: validateUserName,
-        }}
-        render={({ field }) => (
-          <Input
-            {...field}
-            label="Имя пользователя"
-            type="text"
-            errorMessage={errors.userName?.message || ''}
-            isInvalid={errors.userName ? true : false}
-            placeholder="username_100500"
-            onChange={e => field.onChange(e.target.value.toLowerCase())}
-          />
-        )}
-      />
-      <Input
         label="Email"
         type="email"
         autoComplete="email"
@@ -141,6 +105,45 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         })}
       />
 
+      <Divider className="my-2" />
+
+      <Input
+        label="Имя"
+        type="text"
+        errorMessage={errors.name ? errors.name.message : ''}
+        isInvalid={errors.name ? true : false}
+        placeholder="Иван Петрович"
+        {...register('name', {
+          required: 'Обязательное поле',
+          minLength: { value: 3, message: 'Минимум 3 символа' },
+          validate: value => {
+            if (value.trim() === '') {
+              return 'Имя не может содержать пробелы'
+            }
+            return true
+          },
+        })}
+      />
+      <Controller
+        name="userName"
+        control={control}
+        rules={{
+          required: 'Обязательное поле',
+          validate: validateUserName,
+        }}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Имя пользователя"
+            type="text"
+            errorMessage={errors.userName?.message || ''}
+            isInvalid={errors.userName ? true : false}
+            placeholder="username_100500"
+            onChange={e => field.onChange(e.target.value.toLowerCase())}
+          />
+        )}
+      />
+
       <p className="text-center text-small">
         Есть аккаунт? -&nbsp;
         <Link
@@ -164,9 +167,8 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
         </div>
         {(error && hasErrorField(error) && (
           <Alert color="danger" title={error.data.error} />
-        )) || (error && (
-          <Alert color="danger" title={error.errorMessage} />
-        ))}
+        )) ||
+          (error && <Alert color="danger" title={error.errorMessage} />)}
         {isSuccess && (
           <Alert color="success" title="Регистрация выполнена успешно" />
         )}

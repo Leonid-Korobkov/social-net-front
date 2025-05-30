@@ -241,8 +241,12 @@ const Card = memo(
                   e.preventDefault()
                   return
                 }
-                loader.start()
-                router.push(`/${username}/post/${id}`)
+                if ((e.target as HTMLElement).closest('a')) {
+                  return
+                } else {
+                  loader.start()
+                  router.push(`/${username}/post/${id}`)
+                }
               }
             }}
           >
