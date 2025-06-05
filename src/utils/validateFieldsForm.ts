@@ -7,7 +7,7 @@ export const validatePassword = {
     /[a-z]/.test(value) || 'Минимум 1 маленькая буква',
   hasNumber: (value: string) => /\d/.test(value) || 'Минимум 1 цифра',
   hasSpecial: (value: string) =>
-    /[!@#$%^&*(),.?":{}|<>]/.test(value) || 'Минимум 1 спецсимвол',
+    /[-!@#$%^&*(),.?":{}|<>]/.test(value) || 'Минимум 1 спецсимвол',
 }
 
 export const validateEmailPattern = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/
