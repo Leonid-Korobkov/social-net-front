@@ -94,8 +94,8 @@ export default async function Image({
             >
               <div
                 style={{
-                  width: 200,
-                  height: 200,
+                  width: 250,
+                  height: 250,
                   borderRadius: '0.75rem',
                   overflow: 'hidden',
                   border: '5px solid white',
@@ -109,8 +109,8 @@ export default async function Image({
                   <img
                     src={user.avatarUrl.replace('.webp', '.png')}
                     alt={user.name}
-                    width={160}
-                    height={160}
+                    width={240}
+                    height={240}
                     style={{ objectFit: 'cover', borderRadius: '0.75rem' }}
                   />
                 ) : (
@@ -141,6 +141,7 @@ export default async function Image({
                     margin: 0,
                     lineHeight: 1,
                     width: 650,
+                    color: '#6120A0',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
