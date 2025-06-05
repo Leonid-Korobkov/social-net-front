@@ -27,7 +27,7 @@ export async function generateMetadata({
         type: 'profile',
         title,
         description,
-        url: `${APP_URL}/@${user.userName}`,
+        url: `${APP_URL}/${user.userName}`,
         siteName: 'Zling',
         firstName: user.name?.split(' ')[0] || '',
         lastName: user.name?.split(' ')[1] || '',
@@ -40,7 +40,7 @@ export async function generateMetadata({
         creator: '@krbln',
       },
       alternates: {
-        canonical: `${APP_URL}/@${paramsResolved.username}`,
+        canonical: `${APP_URL}/${paramsResolved.username}`,
       },
     }
   } catch (error) {

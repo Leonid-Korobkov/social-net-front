@@ -1,5 +1,4 @@
 import { ImageResponse } from 'next/og'
-import { User } from '@/store/types'
 import { BsPostcardFill } from 'react-icons/bs'
 import { FaUsers } from 'react-icons/fa6'
 import { RiUserFollowFill } from 'react-icons/ri'

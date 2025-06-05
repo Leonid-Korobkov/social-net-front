@@ -1,5 +1,4 @@
 import { ImageResponse } from 'next/og'
-import { User } from '@/store/types'
 import { FaUsers } from 'react-icons/fa6'
 import { pluralizeRu } from '@/utils/pluralizeRu'
 import { fetchOpenGraphUserData } from '@/app/utils/opengraph-api'
