@@ -38,6 +38,7 @@ function Login({ setSelected }: LoginProps) {
     mutateAsync: login,
     isPending: isLoading,
     error,
+    data,
     isSuccess,
   } = useLogin()
 
@@ -61,10 +62,12 @@ function Login({ setSelected }: LoginProps) {
 
   // Если вход успешен и email подтвержден, показываем успешное сообщение
   if (isSuccess) {
-    toast.success('Вход успешно выполнен')
-    setTimeout(() => {
-      router.push('/')
-    }, 500)
+    if (!data.requiresVerification) {
+      toast.success('Вход успешно выполнен')
+      setTimeout(() => {
+        router.push('/')
+      }, 500)
+    }
   }
 
   return (
