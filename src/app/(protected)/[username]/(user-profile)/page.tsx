@@ -1,8 +1,7 @@
 import UserProfileClient from './page-client'
 import { Metadata } from 'next'
 import { APP_URL } from '@/app/constants'
-import { apiClient } from '@/services/ApiConfig'
-import { User } from '@/store/types'
+import { fetchOpenGraphUserData } from '@/app/utils/opengraph-api'
 
 export async function generateMetadata({
   params,
@@ -11,15 +10,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const paramsResolved = await params
   try {
-    const response = await apiClient<string, User>(
-      `users/${paramsResolved.username}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
-        },
-      }
-    )
-    const user = response
+    const user = await fetchOpenGraphUserData(paramsResolved.username)
 
     if (!user) {
       return defaultMetadata()
@@ -53,6 +44,7 @@ export async function generateMetadata({
       },
     }
   } catch (error) {
+    console.log(error)
     return defaultMetadata()
   }
 }

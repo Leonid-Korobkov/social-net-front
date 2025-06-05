@@ -36,15 +36,14 @@ import { LuSunMedium } from 'react-icons/lu'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import Logo from '../../shared/Logo'
 import { useStore } from 'zustand'
+import { useLogout } from '@/services/api/user.api'
 
 function Header({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const queryClient = useQueryClient()
 
-  const logout = useUserStore(state => state.logout)
-  const logoutSettings = useStore(UserSettingsStore, state => state.logout)
+  const { mutateAsync: logout } = useLogout()
 
   const currentUser = useStore(UserSettingsStore, state => state.current)
   const isAuth = currentUser != null
@@ -60,9 +59,6 @@ function Header({ className }: { className?: string }) {
 
   const handleLogout = () => {
     logout()
-    logoutSettings()
-    router.push('/auth')
-    queryClient.removeQueries()
   }
 
   return (
@@ -103,6 +99,7 @@ function Header({ className }: { className?: string }) {
                       onClick={() => router.push(`/${currentUser?.userName}`)}
                       textValue="Мой профиль"
                       startContent={<FaUser />}
+                      isDisabled={!currentUser.isEmailVerified}
                     >
                       Мой профиль
                     </DropdownItem>
@@ -113,6 +110,7 @@ function Header({ className }: { className?: string }) {
                       }
                       textValue="Настройки"
                       startContent={<IoIosSettings />}
+                      isDisabled={!currentUser.isEmailVerified}
                     >
                       Настройки
                     </DropdownItem>
@@ -123,6 +121,7 @@ function Header({ className }: { className?: string }) {
                       }
                       textValue="Редактировать профиль"
                       startContent={<AiFillEdit />}
+                      isDisabled={!currentUser.isEmailVerified}
                     >
                       Редактировать профиль
                     </DropdownItem>

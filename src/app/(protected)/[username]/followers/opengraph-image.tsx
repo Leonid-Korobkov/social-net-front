@@ -1,50 +1,90 @@
 import { ImageResponse } from 'next/og'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-
-import { apiClient } from '@/services/ApiConfig'
 import { User } from '@/store/types'
 import { FaUsers } from 'react-icons/fa6'
 import { pluralizeRu } from '@/utils/pluralizeRu'
+import { fetchOpenGraphUserData } from '@/app/utils/opengraph-api'
+import {
+  DEFAULT_SIZE,
+  DEFAULT_CONTENT_TYPE,
+  loadFont,
+  generateFallbackImage,
+  handleApiError,
+} from '@/app/utils/fallback-opengraph'
 
 export const alt = 'Подписчики пользователя в Zling'
-export const size = {
-  width: 1200,
-  height: 630,
-}
-export const contentType = 'image/png'
+export const size = DEFAULT_SIZE
+export const contentType = DEFAULT_CONTENT_TYPE
 
 export default async function Image({
   params,
 }: {
   params: { username: string }
 }) {
-  let fontData
+  const fontData = await loadFont()
+
   try {
-    fontData = await readFile(
-      join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
-    )
-  } catch (error) {
-    try {
-      fontData = await readFile(
-        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
-      )
-    } catch (error) {
-      console.error('Не удалось загрузить шрифт:', error)
-      fontData = null
-    }
-  }
-  try {
-    const response = await apiClient<string, User>(`users/${params.username}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
-      },
-    })
-    const user = response
+    const user = await fetchOpenGraphUserData(params.username)
 
     if (!user) {
-      return fallbackImage(fontData)
+      return generateFallbackImage({
+        title: 'Подписчики пользователя',
+        subtitle: 'Современная социальная сеть для своих',
+        fontData,
+      })
     }
+
+    // Создаем сетку аватаров подписчиков
+    const followersGrid = Array.from({ length: 9 }, (_, index) => {
+      const follower = user.followers?.[index]
+      const avatarUrl = follower?.avatarUrl?.startsWith('http')
+        ? follower.avatarUrl.replace('.webp', '.png')
+        : null
+
+      return (
+        <div
+          key={index}
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '2px solid white',
+            backgroundColor: '#f5f5f5',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexShrink: 0,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          }}
+        >
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={follower?.name || 'Подписчик'}
+              width={60}
+              height={60}
+              style={{ objectFit: 'cover' }}
+            />
+          ) : (
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 20,
+                fontWeight: 'bold',
+                color: '#663399',
+                background: 'linear-gradient(45deg, #9c66f6, #663399)',
+              }}
+            >
+              {String.fromCharCode(65 + index)}
+            </div>
+          )}
+        </div>
+      )
+    })
 
     return new ImageResponse(
       (
@@ -200,8 +240,8 @@ export default async function Image({
               >
                 <FaUsers />
                 <span>
-                  {user.followers?.length || 0}{' '}
-                  {pluralizeRu(user.followers?.length || 0, [
+                  {user.stats.followers || 0}{' '}
+                  {pluralizeRu(user.stats.followers || 0, [
                     'подписчик',
                     'подписчика',
                     'подписчиков',
@@ -209,6 +249,21 @@ export default async function Image({
                 </span>
               </div>
             </div>
+
+            {user.stats.followers && user.stats.followers > 0 && (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 15,
+                  justifyContent: 'center',
+                  marginTop: 20,
+                  width: '100%',
+                  maxWidth: 800,
+                }}
+              >
+                {followersGrid}
+              </div>
+            )}
 
             <div
               style={{
@@ -248,57 +303,30 @@ export default async function Image({
       }
     )
   } catch (error) {
-    return fallbackImage(fontData)
-  }
-}
+    await handleApiError(error, `подписчиков пользователя ${params.username}`)
 
-async function fallbackImage(fontData: Buffer | null) {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          fontSize: 60,
-          backgroundImage:
-            'linear-gradient(to bottom, #9c66f6 0%, #663399 100%)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          lineHeight: 1.2,
-          textAlign: 'center',
-          padding: 40,
-        }}
-      >
-        <div style={{ fontSize: 80, fontWeight: 'bold', marginBottom: 20 }}>
-          Zling
-        </div>
-        <div>Подписчики пользователя</div>
-        <div
-          style={{
-            fontSize: 30,
-            marginTop: 40,
-            maxWidth: 800,
-          }}
-        >
-          Современная социальная сеть для своих
-        </div>
-      </div>
-    ),
-    {
-      ...size,
-      fonts: fontData
-        ? [
-            {
-              name: 'Rubik',
-              data: fontData,
-              style: 'normal',
-              weight: 600,
-            },
-          ]
-        : undefined,
+    // Пробуем использовать аватар пользователя как фолбэк
+    try {
+      const userData = await fetchOpenGraphUserData(params.username)
+      if (userData?.avatarUrl) {
+        return generateFallbackImage({
+          title: 'Подписчики',
+          subtitle: `${userData.name || 'Пользователь'} (@${
+            userData.userName || params.username
+          })`,
+          fontData,
+          avatarUrl: userData.avatarUrl,
+        })
+      }
+    } catch (fallbackError) {
+      console.error('Ошибка при попытке получить аватар:', fallbackError)
     }
-  )
+
+    // Если не удалось получить аватар, используем стандартный фолбэк
+    return generateFallbackImage({
+      title: 'Подписчики пользователя',
+      subtitle: 'Современная социальная сеть для своих',
+      fontData,
+    })
+  }
 }

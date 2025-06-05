@@ -17,25 +17,45 @@ import {
 } from '../ApiConfig'
 import { PostsDTO, PostsRequest } from './post.api'
 import { useStore } from 'zustand'
+import { useUserStore } from '@/store/user.store'
+import { useRouter } from 'next/navigation'
 
 // Типы для запросов и для ответов API, которые приходят с backend
 type LoginRequest = {
   email: string
   password: string
 }
+
 type LoginDTO = {
-  token: string
-  user?: User
+  accessToken: string
+  user: User
+
+  // Если email не подтвержден, то c бака приходит эти поля
+  error?: string
+  requiresVerification?: boolean
+  userId?: number
+  message?: string
 }
 
 type RegisterRequest = {
   name: string
   email: string
   password: string
+  userName: string
 }
+
 type RegisterDTO = {
+  id: number
+  message: string
+}
+
+type VerifyEmailRequest = {
   token: string
-  user?: User
+  code: string
+}
+
+type ResendVerificationRequest = {
+  token: string
 }
 
 // Ключи для кэширования
@@ -52,33 +72,61 @@ export const userKeys = {
 // Хук для авторизации
 export const useLogin = () => {
   const queryClient = useQueryClient()
+  const setToken = useUserStore(state => state.setAccessToken)
 
   return useMutation({
     mutationFn: async (body: LoginRequest) => {
       try {
         const response = await apiClient.post<LoginRequest, LoginDTO>(
-          '/login',
+          '/auth/login',
           body
         )
-        if (response.token) {
-          Cookies.set('token', response.token, {
-            expires: 7,
-            path: '/',
+
+        // Если есть токен, сохраняем его
+        if (response.accessToken) {
+          Cookies.set('accessToken', response.accessToken, {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
+          })
+          setToken(response.accessToken)
+        }
+
+        // Если есть данные пользователя, обновляем их в store
+        if (response.user) {
+          UserSettingsStore.setState({
+            current: response.user,
+            reduceAnimation: response.user.reduceAnimation,
           })
         }
 
         return response
       } catch (error) {
-        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+        const apiError = handleAxiosError(
+          error as AxiosError<ErrorResponseData>
+        )
+        // Если это ошибка неподтвержденного email, возвращаем специальный ответ
+        if (
+          apiError.status === 403 &&
+          apiError.errorMessage === 'Email не подтвержден'
+        ) {
+          return {
+            error: apiError.errorMessage,
+            requiresVerification: true,
+            userId: (error as AxiosError<any>).response?.data?.userId,
+            message: (error as AxiosError<any>).response?.data?.message,
+          } as LoginDTO
+        }
+        throw apiError
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.current() })
+    onSuccess: data => {
+      // Инвалидируем кэш только если это успешный вход (не требующий верификации)
+      if (!data.requiresVerification) {
+        queryClient.invalidateQueries({ queryKey: userKeys.current() })
+      }
     },
     onError: (error: ApiErrorResponse) => {
-      console.error('Ошибка авторизации :', error.errorMessage)
+      console.error('Ошибка авторизации: ', error.errorMessage)
     },
   })
 }
@@ -86,10 +134,10 @@ export const useLogin = () => {
 // Хук для регистрации
 export const useRegister = () => {
   return useMutation({
-    mutationFn: async (body: LoginRequest) => {
+    mutationFn: async (body: RegisterRequest) => {
       try {
         const response = await apiClient.post<RegisterRequest, RegisterDTO>(
-          '/register',
+          '/auth/register',
           body
         )
         return response
@@ -100,6 +148,119 @@ export const useRegister = () => {
     onSuccess: () => {},
     onError: (error: ApiErrorResponse) => {
       console.error('Ошибка регистрации :', error.errorMessage)
+    },
+  })
+}
+
+// Хук для подтверждения email
+export const useVerifyEmail = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: VerifyEmailRequest) => {
+      try {
+        const response = await apiClient.post<VerifyEmailRequest, LoginDTO>(
+          '/auth/verify-email',
+          data
+        )
+        if (response.accessToken) {
+          Cookies.set('accessToken', response.accessToken, {
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+          })
+        }
+        return response
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.current() })
+    },
+    onError: (error: ApiErrorResponse) => {
+      console.error('Ошибка подтверждения аккаунта :', error.errorMessage)
+    },
+  })
+}
+
+// Хук для повторной отправки кода подтверждения
+export const useResendVerification = () => {
+  return useMutation({
+    mutationFn: async (data: ResendVerificationRequest) => {
+      try {
+        return await apiClient.post('/auth/resend-verification', data)
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+    onError: (error: ApiErrorResponse) => {
+      console.error('Ошибка подтверждения аккаунта :', error.errorMessage)
+    },
+  })
+}
+
+// Хук для обновления токена
+export const useRefreshToken = () => {
+  const updateAccessToken = useUserStore(state => state.updateAccessToken)
+
+  return useMutation({
+    mutationFn: async (refreshToken: string) => {
+      try {
+        const response = await apiClient.post<
+          { refreshToken: string },
+          { accessToken: string }
+        >('/auth/refresh', { refreshToken })
+        updateAccessToken(response.accessToken)
+        return response
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+  })
+}
+
+// Хук для выхода из системы
+export const useLogout = () => {
+  const logout = useUserStore(state => state.logout)
+  const logoutSettings = useStore(UserSettingsStore, state => state.logout)
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
+  return useMutation({
+    mutationFn: async () => {
+      try {
+        await apiClient.post('/auth/logout')
+        logout()
+        logoutSettings()
+        router.push('/auth')
+        queryClient.removeQueries()
+        queryClient.clear()
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
+    },
+  })
+}
+
+// Хук для выхода со всех устройств
+export const useLogoutAllDevices = () => {
+  const logout = useUserStore(state => state.logout)
+  const logoutSettings = useStore(UserSettingsStore, state => state.logout)
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
+  return useMutation({
+    mutationFn: async () => {
+      try {
+        await apiClient.post('/auth/logout-all')
+        logout()
+        logoutSettings()
+        router.push('/auth')
+        queryClient.removeQueries()
+        queryClient.clear()
+      } catch (error) {
+        throw handleAxiosError(error as AxiosError<ErrorResponseData>)
+      }
     },
   })
 }

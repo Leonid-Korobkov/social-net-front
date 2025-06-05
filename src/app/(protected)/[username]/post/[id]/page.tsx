@@ -1,16 +1,15 @@
 import { use } from 'react'
 import CurrentPostClient from './page-client'
+import { Metadata } from 'next'
+import { APP_URL } from '@/app/constants'
+import { Post } from '@/store/types'
+import { stripHtml } from '@/utils/stripHtml'
+import { fetchOpenGraphPostData } from '@/app/utils/opengraph-api'
 
 type PageProps = {
   params: Promise<{ id: string; username: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
-
-import { Metadata } from 'next'
-import { APP_URL } from '@/app/constants'
-import { apiClient } from '@/services/ApiConfig'
-import { Post } from '@/store/types'
-import { stripHtml } from '@/utils/stripHtml'
 
 export async function generateMetadata({
   params,
@@ -19,15 +18,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const paramsResolved = await params
   try {
-    const response = await apiClient<string, Post>(
-      `posts/${paramsResolved.id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
-        },
-      }
-    )
-    const post = response
+    const post = await fetchOpenGraphPostData(paramsResolved.id)
 
     if (!post) {
       return defaultMetadata()
@@ -68,6 +59,7 @@ export async function generateMetadata({
       },
     }
   } catch (error) {
+    console.log(error)
     return defaultMetadata()
   }
 }

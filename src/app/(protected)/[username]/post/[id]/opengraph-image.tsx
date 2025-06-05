@@ -1,20 +1,21 @@
 import { ImageResponse } from 'next/og'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-
-import { apiClient } from '@/services/ApiConfig'
 import { Post } from '@/store/types'
 import { FaComment, FaHeart } from 'react-icons/fa6'
 import { stripHtml } from '@/utils/stripHtml'
 import { LuSend } from 'react-icons/lu'
 import { FaCalendarAlt } from 'react-icons/fa'
+import { fetchOpenGraphPostData } from '@/app/utils/opengraph-api'
+import {
+  DEFAULT_SIZE,
+  DEFAULT_CONTENT_TYPE,
+  loadFont,
+  generateFallbackImage,
+  handleApiError,
+} from '@/app/utils/fallback-opengraph'
 
 export const alt = 'Пост в Zling'
-export const size = {
-  width: 1200,
-  height: 630,
-}
-export const contentType = 'image/png'
+export const size = DEFAULT_SIZE
+export const contentType = DEFAULT_CONTENT_TYPE
 
 // Функция для преобразования Cloudinary URL в JPG формат
 function optimizeCloudinaryImage(
@@ -24,16 +25,13 @@ function optimizeCloudinaryImage(
   if (!imageUrl) return ''
   if (!imageUrl.includes('cloudinary.com')) return imageUrl
 
-  // Разбиваем URL на базовый URL и путь к изображению
   const baseUrl = imageUrl.split('upload/')[0] + 'upload/'
   const imagePath = imageUrl.split('upload/')[1]
-
-  // Формируем параметры трансформации
   const transforms = [
     'q_auto:best',
     'fl_progressive',
     `w_${width}`,
-    'f_jpg',
+    'f_png',
     'fl_immutable_cache',
   ].join(',')
 
@@ -51,33 +49,17 @@ function formatDate(dateString: string | Date): string {
 }
 
 export default async function Image({ params }: { params: { id: string } }) {
-  // Загрузка шрифта
-  let fontData
-  try {
-    fontData = await readFile(
-      join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
-    )
-  } catch (error) {
-    try {
-      fontData = await readFile(
-        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
-      )
-    } catch (error) {
-      console.error('Не удалось загрузить шрифт:', error)
-      fontData = null
-    }
-  }
+  const fontData = await loadFont()
 
   try {
-    const response = await apiClient<string, Post>(`posts/${params.id}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
-      },
-    })
-    const post = response
+    const post = await fetchOpenGraphPostData(params.id)
 
     if (!post) {
-      return fallbackImage(fontData)
+      return generateFallbackImage({
+        title: 'Пост',
+        subtitle: 'Современная социальная сеть для своих',
+        fontData,
+      })
     }
 
     // Парсим HTML-контент и преобразуем его в текст без тегов
@@ -112,7 +94,7 @@ export default async function Image({ params }: { params: { id: string } }) {
                 overflow: 'hidden',
               }}
             >
-              {post.media.slice(0, 4).map((url, index) => (
+              {post.media.slice(0, 4).map((url: string, index: number) => (
                 <div
                   key={index}
                   style={{
@@ -425,65 +407,34 @@ export default async function Image({ params }: { params: { id: string } }) {
       }
     )
   } catch (error) {
-    return fallbackImage(fontData)
-  }
-}
+    await handleApiError(error, `поста ${params.id}`)
 
-async function fallbackImage(fontData: Buffer | null) {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          fontSize: 60,
-          backgroundImage:
-            'linear-gradient(to bottom, #9c66f6 0%, #663399 100%)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          lineHeight: 1.2,
-          textAlign: 'center',
-          padding: 40,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 80,
-            fontWeight: 'bold',
-            marginBottom: 20,
-            display: 'flex',
-          }}
-        >
-          Zling
-        </div>
-        <div style={{ display: 'flex' }}>Пост</div>
-        <div
-          style={{
-            fontSize: 30,
-            marginTop: 40,
-            maxWidth: 800,
-            display: 'flex',
-          }}
-        >
-          Современная социальная сеть для своих
-        </div>
-      </div>
-    ),
-    {
-      ...size,
-      fonts: fontData
-        ? [
-            {
-              name: 'Rubik',
-              data: fontData,
-              style: 'normal',
-              weight: 600,
-            },
-          ]
-        : undefined,
+    // Пробуем использовать первое изображение из поста как фолбэк
+    try {
+      const postData = await fetchOpenGraphPostData(params.id)
+      if (postData?.media?.[0]) {
+        const cleanContent = stripHtml(postData.content || '')
+        return generateFallbackImage({
+          title: postData.author?.name || 'Пост',
+          subtitle:
+            cleanContent.substring(0, 100) +
+            (cleanContent.length > 100 ? '...' : ''),
+          fontData,
+          avatarUrl: postData.media[0],
+        })
+      }
+    } catch (fallbackError) {
+      console.error(
+        'Ошибка при попытке получить изображение поста:',
+        fallbackError
+      )
     }
-  )
+
+    // Если не удалось получить изображение поста, используем стандартный фолбэк
+    return generateFallbackImage({
+      title: 'Пост',
+      subtitle: 'Современная социальная сеть для своих',
+      fontData,
+    })
+  }
 }

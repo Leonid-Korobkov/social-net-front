@@ -12,7 +12,6 @@ function AuthClient() {
   const router = useRouter()
   const initialTab = searchParams.get('tab') || 'login'
   const [selected, setSelected] = useState(initialTab)
-  const [isRegisterSuccess, setRegisterSuccess] = useState(false)
   const error = useUserStore(state => state.error)
 
   return (
@@ -20,16 +19,6 @@ function AuthClient() {
       <div className="flex flex-1 items-center justify-center w-full h-full flex-col ">
         <div className="flex flex-col w-full max-w-[390px] ">
           <Card className="min-h-[450px] m-5">
-            <Alert
-              color="success"
-              description={
-                'Вы успешно зарегистрировались. Пройдите процесс авторизации'
-              }
-              isVisible={isRegisterSuccess}
-              title={'Успешная регистрация'}
-              variant="faded"
-              onClose={() => setRegisterSuccess(false)}
-            />
             <CardBody className="overflow-hidden">
               <Tabs
                 aria-label="Options"
@@ -53,10 +42,7 @@ function AuthClient() {
                     </div>
                   }
                 >
-                  <Login
-                    setSelected={setSelected}
-                    isRegisterSuccess={isRegisterSuccess}
-                  />
+                  <Login setSelected={setSelected} />
                 </Tab>
                 <Tab
                   key="register"
@@ -67,10 +53,7 @@ function AuthClient() {
                     </div>
                   }
                 >
-                  <Register
-                    setSelected={setSelected}
-                    setRegisterSuccess={setRegisterSuccess}
-                  />
+                  <Register setSelected={setSelected} />
                 </Tab>
               </Tabs>
             </CardBody>

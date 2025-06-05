@@ -1,10 +1,8 @@
 import { BASE_URL } from '@/app/constants'
 import { useUserStore } from '@/store/user.store'
-import { UserSettingsStore } from '@/store/userSettings.store'
 import axios, { AxiosError, AxiosHeaders, AxiosResponse } from 'axios'
 import Cookies from 'js-cookie'
 import toast from 'react-hot-toast'
-import { useStore } from 'zustand'
 
 // Типизация для ошибок
 export interface ApiErrorResponse {
@@ -20,17 +18,25 @@ export interface ErrorOptions {
 
 export const apiClient = axios.create({
   baseURL: `${BASE_URL}/api`,
+  withCredentials: true,
 })
 
-// Интерцептор для добавления токена
+// Интерцептор для добавления токена и CSRF
 apiClient.interceptors.request.use(config => {
-  const token =
+  const accessToken =
     typeof window !== 'undefined'
-      ? Cookies.get('token') || useUserStore.getState().token
+      ? Cookies.get('accessToken') || useUserStore.getState().accessToken
       : ''
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  const csrfToken =
+    typeof window !== 'undefined' ? Cookies.get('csrf-token') : ''
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`
+  }
+
+  if (csrfToken) {
+    config.headers['X-CSRF-Token'] = csrfToken
   }
 
   // Устанавливаем таймаут только для запросов, не связанных с загрузкой медиа
@@ -47,7 +53,7 @@ apiClient.interceptors.request.use(config => {
   return config
 })
 
-// Интерцептор для обработки ответов
+// Интерцептор для обработки ответов и обновления токена
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // Для мультипарт запросов возвращаем полный ответ, для остальных только data
@@ -64,12 +70,40 @@ apiClient.interceptors.response.use(
 
     return response.data
   },
-  error => {
-    console.error('API response error:', error)
-    if (error.response?.status === 401) {
-      useUserStore.getState().logout()
-      useStore(UserSettingsStore, state => state.logout)
+  async error => {
+    const originalRequest = error.config
+
+    // Если ошибка 401 и это не запрос на обновление токена
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+
+      try {
+        // Запрашиваем новый access token
+        const response = await axios.get(`${BASE_URL}/api/auth/refresh`, {
+          withCredentials: true,
+        })
+
+        const { accessToken } = response.data
+
+        // Обновляем токен в store и cookies
+        useUserStore.getState().updateAccessToken(accessToken)
+        Cookies.set('accessToken', accessToken, {
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+        })
+
+        // Повторяем оригинальный запрос с новым токеном
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
+        return apiClient.request(originalRequest)
+      } catch (refreshError) {
+        // Если не удалось обновить токен, выходим из системы
+        // useStore(UserStore, state => state.logout)
+        // useStore(UserSettingsStore, state => state.logout)
+        return Promise.reject(refreshError)
+      }
     }
+
+    console.error('API response error:', error)
     return Promise.reject(error)
   }
 )

@@ -10,6 +10,8 @@ import {
   validatePassword,
 } from '../../utils/validateFieldsForm'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+
 interface IForm {
   email: string
   password: string
@@ -17,10 +19,9 @@ interface IForm {
 
 interface LoginProps {
   setSelected: (value: string) => void
-  isRegisterSuccess: boolean
 }
 
-function Login({ setSelected, isRegisterSuccess }: LoginProps) {
+function Login({ setSelected }: LoginProps) {
   const [isVisiblePass, setIsVisiblePass] = useState(false)
   const router = useRouter()
 
@@ -41,15 +42,30 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
   } = useLogin()
 
   const onSubmit: SubmitHandler<IForm> = async data => {
-    await login(data)
+    try {
+      const response = await login(data)
+      // Если email не подтвержден, показываем сообщение и перенаправляем на страницу верификации
+      if (response?.requiresVerification) {
+        toast.success(
+          response.message || 'На вашу почту отправлен код подтверждения'
+        )
+        const verificationToken = btoa(`${response.userId}_${Date.now()}`)
+        router.push(`/verify-email?token=${verificationToken}`)
+        return
+      }
+    } catch (error) {
+      // Ошибка уже обрабатывается в useLogin
+      console.error('Login error:', error)
+    }
   }
 
-  useEffect(() => {
-    if (isSuccess) {
+  // Если вход успешен и email подтвержден, показываем успешное сообщение
+  if (isSuccess) {
+    toast.success('Вход успешно выполнен')
+    setTimeout(() => {
       router.push('/')
-      location.reload()
-    }
-  }, [isSuccess, router])
+    }, 500)
+  }
 
   return (
     <form
@@ -68,7 +84,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
           required: 'Обязательное поле',
           pattern: {
             value: validateEmailPattern,
-            message: `Некорректный email`,
+            message: `Некорректный email`,
           },
         })}
       />
@@ -105,7 +121,7 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
           className="cursor-pointer"
           onClick={() => setSelected('register')}
         >
-          Зарегистрируйтесь
+          Зарегистрируйтесь
         </Link>
       </p>
 
@@ -116,12 +132,11 @@ function Login({ setSelected, isRegisterSuccess }: LoginProps) {
           color="primary"
           type="submit"
         >
-          {isSuccess ? 'Перенаправление...' : 'Войти'}
+          {isSuccess ? 'Перенаправление...' : 'Войти'}
         </Button>
       </div>
 
       {error && <Alert color="danger" title={error.errorMessage} />}
-      {isSuccess && <Alert color="success" title="Вход успешно выполнен" />}
     </form>
   )
 }

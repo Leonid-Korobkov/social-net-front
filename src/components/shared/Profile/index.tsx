@@ -12,14 +12,15 @@ function Profile() {
   if (!currentUser) {
     return <ProfileSkeleton />
   }
-  const { userName, name, avatarUrl, id } = currentUser
+  const { userName, name, avatarUrl } = currentUser
 
   return (
     <Card className="py-4 w-[302px]">
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
         <Image
           alt="Изображение профиля"
-          src={`${avatarUrl}`}
+          src={avatarUrl}
+          width={1000}
           className="w-full min-w-full"
         />
       </CardHeader>

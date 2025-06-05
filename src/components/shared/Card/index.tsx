@@ -231,6 +231,9 @@ const Card = memo(
           </CardHeader>
           <CardBody
             className={`card-body px-3 py-2 overflow-hidden`}
+            style={{
+              overflowWrap: 'anywhere',
+            }}
             onClick={e => {
               if (cardFor === 'post' || cardFor === 'search') {
                 // Если пользователь выделял текст или кликнул по кнопке "Читать далее", не переходим по ссылке

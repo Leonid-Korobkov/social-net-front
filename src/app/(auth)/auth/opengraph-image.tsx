@@ -44,9 +44,7 @@ export default async function OpImage() {
         }}
       >
         <img
-          src={
-            'https://res.cloudinary.com/djsmqdror/image/upload/v1746202177/social-net/wbk0hwzwrswxcwtfhnit.png'
-          }
+          src={'https://zling.vercel.app/Zling-logo-white.svg'}
           width={400}
           alt={'Zling логотип'}
           style={{ objectFit: 'cover' }}

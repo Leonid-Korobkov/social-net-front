@@ -13,7 +13,7 @@ import { IoMdMail } from 'react-icons/io'
 import { IoEye, IoEyeOff } from 'react-icons/io5'
 import { useRouter } from 'next/navigation'
 
-interface IForm {
+interface IRegisterForm {
   email: string
   password: string
   name: string
@@ -22,10 +22,9 @@ interface IForm {
 
 interface RegisterProps {
   setSelected: (value: string) => void
-  setRegisterSuccess: (value: boolean) => void
 }
 
-function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
+function Register({ setSelected }: RegisterProps) {
   const [isVisiblePass, setIsVisiblePass] = useState(false)
   const router = useRouter()
 
@@ -33,28 +32,26 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
     register,
     formState: { errors },
     handleSubmit,
-    setValue,
     control,
-  } = useForm<IForm>({
+  } = useForm<IRegisterForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
   })
 
   const {
     mutateAsync: registerUser,
-    isPending: isLoading,
-    error,
-    isSuccess,
+    isPending: isRegisterLoading,
+    error: registerError,
+    isSuccess: isRegisterSuccess,
   } = useRegister()
 
-  const onSubmit: SubmitHandler<IForm> = async data => {
+  const onSubmit: SubmitHandler<IRegisterForm> = async data => {
     setIsVisiblePass(false)
-    await registerUser(data)
-    setRegisterSuccess(true)
-    setTimeout(() => {
-      router.push('/auth?tab=login')
-      setSelected('login')
-    }, 1500)
+    const response = await registerUser(data)
+    if (response) {
+      const verificationToken = btoa(`${response.id}_${Date.now()}`)
+      router.push(`/verify-email?token=${verificationToken}`)
+    }
   }
 
   return (
@@ -63,21 +60,29 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       className="flex flex-col gap-4 h-full"
       autoComplete="on"
     >
-      <Input
-        label="Email"
-        type="email"
-        autoComplete="email"
-        errorMessage={errors.email?.message || ''}
-        isInvalid={errors.email ? true : false}
-        endContent={<IoMdMail className="form-icon" />}
-        placeholder="example@gmail.com"
-        {...register('email', {
+      <Controller
+        name="email"
+        control={control}
+        rules={{
           required: 'Обязательное поле',
           pattern: {
             value: validateEmailPattern,
-            message: `Некорректный email`,
+            message: `Некорректный email`,
           },
-        })}
+        }}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Email"
+            type="email"
+            autoComplete="email"
+            errorMessage={errors.email?.message || ''}
+            isInvalid={errors.email ? true : false}
+            endContent={<IoMdMail className="form-icon" />}
+            placeholder="example@gmail.com"
+            onChange={e => field.onChange(e.target.value.toLowerCase())}
+          />
+        )}
       />
       <Input
         label="Пароль"
@@ -156,20 +161,27 @@ function Register({ setSelected, setRegisterSuccess }: RegisterProps) {
       </p>
 
       <div className="flex gap-2 justify-end">
-        <Button isLoading={isLoading} fullWidth color="primary" type="submit">
+        <Button
+          isLoading={isRegisterLoading}
+          fullWidth
+          color="primary"
+          type="submit"
+        >
           Зарегистрироваться
         </Button>
       </div>
 
       <div>
         <div className="text-sm text-default-400 mb-2">
-          *После регистрации пройдите процесс авторизации.
+          После регистрации вам будет отправлен код подтверждения на ваш email.
         </div>
-        {(error && hasErrorField(error) && (
-          <Alert color="danger" title={error.data.error} />
+        {(registerError && hasErrorField(registerError) && (
+          <Alert color="danger" title={registerError.data.error} />
         )) ||
-          (error && <Alert color="danger" title={error.errorMessage} />)}
-        {isSuccess && (
+          (registerError && (
+            <Alert color="danger" title={registerError.errorMessage} />
+          ))}
+        {isRegisterSuccess && (
           <Alert color="success" title="Регистрация выполнена успешно" />
         )}
       </div>

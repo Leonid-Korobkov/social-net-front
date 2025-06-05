@@ -32,7 +32,8 @@ export const useCreateComment = () => {
 
   return useMutation({
     mutationFn: async (
-      comment: Partial<Comment> & Required<Pick<Comment, 'postId' | 'content'>>
+      comment: Partial<Comment> &
+        Required<Pick<Comment, 'postId' | 'content'>> & { media?: string[] }
     ) => {
       try {
         return await apiClient.post<Comment>(`/comments`, comment)

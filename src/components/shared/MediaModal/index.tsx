@@ -348,7 +348,7 @@ export default function MediaModal({
         {mediaItems.length > 1 && (
           <>
             <div
-              className="absolute left-0 top-0 bottom-0 w-24 flex items-center justify-start px-4 cursor-pointer bg-gradient-to-r from-black/10 to-transparent hidden md:flex"
+              className="absolute left-0 top-0 bottom-0 w-24 flex items-center justify-start px-4 cursor-pointer bg-gradient-to-r from-black/10 to-transparent hidden md:flex hover:bg-black/20"
               onClick={prevItem}
             >
               <button
@@ -360,7 +360,7 @@ export default function MediaModal({
             </div>
 
             <div
-              className="absolute right-0 top-0 bottom-0 w-24 flex items-center justify-end px-4 cursor-pointer bg-gradient-to-l from-black/10 to-transparent hidden md:flex"
+              className="absolute right-0 top-0 bottom-0 w-24 flex items-center justify-end px-4 cursor-pointer bg-gradient-to-l from-black/10 to-transparent hidden md:flex hover:bg-black/20"
               onClick={nextItem}
             >
               <button

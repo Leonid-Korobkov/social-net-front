@@ -20,7 +20,7 @@ function ImageWithSkeleton({
   onClick,
   ...props
 }: ImageWithSkeletonProps) {
-  const { isLoading, error, getOptimizedUrl, handleLoad, handleError } =
+  const { error, getOptimizedUrl, handleLoad, handleError } =
     useCloudinaryImage({ src, width })
 
   return (
@@ -31,9 +31,7 @@ function ImageWithSkeleton({
             src={src}
             alt={alt}
             fill={true}
-            className={`absolute inset-0 w-full h-full object-cover rounded-xl z-10 ${
-              error ? 'hidden' : ''
-            }`}
+            className={`absolute inset-0 w-full h-full object-cover rounded-xl z-10`}
             onLoad={handleLoad}
             onError={handleError}
             onClick={onClick}

@@ -29,6 +29,8 @@ export type User = {
   _count: {
     followers: number
   }
+
+  isEmailVerified: boolean
 }
 
 export type Follows = {

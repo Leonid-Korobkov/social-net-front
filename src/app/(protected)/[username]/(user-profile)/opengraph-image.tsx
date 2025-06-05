@@ -1,56 +1,43 @@
 import { ImageResponse } from 'next/og'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
-
 import { User } from '@/store/types'
-import { apiClient } from '@/services/ApiConfig'
 import { BsPostcardFill } from 'react-icons/bs'
 import { FaUsers } from 'react-icons/fa6'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { pluralizeRu } from '@/utils/pluralizeRu'
 import { stripHtml } from '@/utils/stripHtml'
+import { fetchOpenGraphUserData } from '@/app/utils/opengraph-api'
+import {
+  DEFAULT_SIZE,
+  DEFAULT_CONTENT_TYPE,
+  loadFont,
+  generateFallbackImage,
+  handleApiError,
+} from '@/app/utils/fallback-opengraph'
 
 export const alt = 'Профиль пользователя Zling'
-export const size = {
-  width: 1200,
-  height: 630,
-}
-export const contentType = 'image/png'
+export const size = DEFAULT_SIZE
+export const contentType = DEFAULT_CONTENT_TYPE
 
 export default async function Image({
   params,
 }: {
   params: { username: string }
 }) {
-  let fontData
+  const fontData = await loadFont()
+
   try {
-    fontData = await readFile(
-      join(process.cwd(), '/assets/font/Rubik-SemiBold.ttf')
-    )
-  } catch (error) {
-    try {
-      fontData = await readFile(
-        join(process.cwd(), 'public/assets/font/Rubik-SemiBold.ttf')
-      )
-    } catch (error) {
-      console.error('Не удалось загрузить шрифт:', error)
-      fontData = null
-    }
-  }
-  try {
-    const response = await apiClient<string, User>(`users/${params.username}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_TOKEN_FOR_REQ}`,
-      },
-    })
-    const user = response
+    const user = await fetchOpenGraphUserData(params.username)
 
     if (!user) {
-      return fallbackImage(fontData)
+      return generateFallbackImage({
+        title: 'Профиль пользователя',
+        subtitle: 'Современная социальная сеть для своих',
+        fontData,
+      })
     }
 
     // Очищаем bio от HTML если это необходимо
-    const cleanBio = user.bio ? stripHtml(user.bio) : ''
+    const cleanBio = user.bio && user.showBio ? stripHtml(user.bio) : ''
 
     return new ImageResponse(
       (
@@ -156,6 +143,8 @@ export default async function Image({
                     lineHeight: 1,
                     width: 650,
                     overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {user.name}
@@ -195,7 +184,7 @@ export default async function Image({
                 }}
               >
                 <span style={{ fontSize: 40, fontWeight: 'bold' }}>
-                  {user.postCount || 0}
+                  {user.stats.posts || 0}
                 </span>
                 <span
                   style={{
@@ -206,7 +195,7 @@ export default async function Image({
                   }}
                 >
                   <BsPostcardFill />
-                  {pluralizeRu(user.postCount || 0, [
+                  {pluralizeRu(user.stats.posts || 0, [
                     'публикация',
                     'публикации',
                     'публикаций',
@@ -225,7 +214,7 @@ export default async function Image({
                 }}
               >
                 <span style={{ fontSize: 40, fontWeight: 'bold' }}>
-                  {user.followers?.length || 0}
+                  {user.stats.followers || 0}
                 </span>
                 <span
                   style={{
@@ -236,7 +225,7 @@ export default async function Image({
                   }}
                 >
                   <FaUsers />
-                  {pluralizeRu(user.followers?.length || 0, [
+                  {pluralizeRu(user.stats.followers || 0, [
                     'подписчик',
                     'подписчика',
                     'подписчиков',
@@ -255,7 +244,7 @@ export default async function Image({
                 }}
               >
                 <span style={{ fontSize: 40, fontWeight: 'bold' }}>
-                  {user.following?.length || 0}
+                  {user.stats.following || 0}
                 </span>
                 <span
                   style={{
@@ -266,7 +255,7 @@ export default async function Image({
                   }}
                 >
                   <RiUserFollowFill />
-                  {pluralizeRu(user.following?.length || 0, [
+                  {pluralizeRu(user.stats.following || 0, [
                     'подписка',
                     'подписки',
                     'подписок',
@@ -274,21 +263,22 @@ export default async function Image({
                 </span>
               </div>
             </div>
-            <div
-              style={{
-                fontSize: 26,
-                maxWidth: 800,
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {user.bio && user.showBio
-                ? cleanBio.length > 100
+            {cleanBio && (
+              <div
+                style={{
+                  fontSize: 26,
+                  maxWidth: 800,
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  color: '#333333',
+                }}
+              >
+                {cleanBio.length > 100
                   ? `${cleanBio.substring(0, 100)}...`
-                  : cleanBio
-                : ' '}
-            </div>
+                  : cleanBio}
+              </div>
+            )}
             <div
               style={{
                 display: 'flex',
@@ -327,57 +317,28 @@ export default async function Image({
       }
     )
   } catch (error) {
-    return fallbackImage(fontData)
-  }
-}
+    await handleApiError(error, `профиля пользователя ${params.username}`)
 
-async function fallbackImage(fontData: Buffer | null) {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          fontSize: 60,
-          backgroundImage:
-            'linear-gradient(to bottom, #9c66f6 0%, #663399 100%)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          lineHeight: 1.2,
-          textAlign: 'center',
-          padding: 40,
-        }}
-      >
-        <div style={{ fontSize: 80, fontWeight: 'bold', marginBottom: 20 }}>
-          Zling
-        </div>
-        <div>Профиль пользователя</div>
-        <div
-          style={{
-            fontSize: 30,
-            marginTop: 40,
-            maxWidth: 800,
-          }}
-        >
-          Современная социальная сеть для своих
-        </div>
-      </div>
-    ),
-    {
-      ...size,
-      fonts: fontData
-        ? [
-            {
-              name: 'Rubik',
-              data: fontData,
-              style: 'normal',
-              weight: 600,
-            },
-          ]
-        : undefined,
+    // Пробуем использовать аватар пользователя как фолбэк
+    try {
+      const userData = await fetchOpenGraphUserData(params.username)
+      if (userData?.avatarUrl) {
+        return generateFallbackImage({
+          title: userData.name || 'Профиль пользователя',
+          subtitle: `@${userData.userName || params.username}`,
+          fontData,
+          avatarUrl: userData.avatarUrl,
+        })
+      }
+    } catch (fallbackError) {
+      console.error('Ошибка при попытке получить аватар:', fallbackError)
     }
-  )
+
+    // Если не удалось получить аватар, используем стандартный фолбэк
+    return generateFallbackImage({
+      title: 'Профиль пользователя',
+      subtitle: 'Современная социальная сеть для своих',
+      fontData,
+    })
+  }
 }
