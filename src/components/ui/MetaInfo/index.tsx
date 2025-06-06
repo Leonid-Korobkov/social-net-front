@@ -3,7 +3,7 @@ import { useShare } from '@/hooks/useShare'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import { Spinner } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { IconType } from 'react-icons'
 import { FaHeart, FaRegHeart } from 'react-icons/fa6'
 
@@ -39,9 +39,19 @@ function MetaInfo({
   const reduce = UserSettingsStore.getState().reduceAnimation
   const { handleShare, isSharing } = useShare()
   const [isLoading, setIsLoading] = useState(false)
+  const [prevCount, setPrevCount] = useState(count)
 
   const iconSizeClass = size === 'small' ? 'text-sm' : 'text-xl'
   const textSizeClass = size === 'small' ? 'text-xs' : 'text-l'
+
+  const countStr = count.toString()
+  const prevCountStr = prevCount.toString()
+  const staticPart = countStr.slice(0, -1)
+  const animatedDigit = countStr.slice(-1)
+
+  useEffect(() => {
+    setPrevCount(count)
+  }, [count])
 
   const handleClick = async () => {
     if (onClick) {
@@ -100,45 +110,49 @@ function MetaInfo({
           {count}
         </span>
       ) : (
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.p
-            key={count}
-            initial={{
-              opacity: 0,
-              y: -20,
-              filter: 'blur(8px)',
-              scale: 1.2,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              filter: 'blur(0px)',
-              scale: 1,
-              transition: {
-                duration: 0.4,
-                type: 'spring',
-                damping: 15,
-                stiffness: 200,
-              },
-            }}
-            exit={{
-              opacity: 0,
-              y: 20,
-              filter: 'blur(8px)',
-              scale: 0.8,
-              transition: {
-                duration: 0.3,
-              },
-            }}
-            style={{
-              backfaceVisibility: 'hidden',
-              transform: 'perspective(100px)',
-            }}
-            className={`select-none font-semibold text-default-400 ${textSizeClass}`}
-          >
-            {count}
-          </motion.p>
-        </AnimatePresence>
+        <div
+          className={`select-none font-semibold text-default-400 ${textSizeClass} flex items-center`}
+        >
+          {staticPart}
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={animatedDigit}
+              initial={{
+                opacity: 0,
+                y: !isLiked ? 20 : -20,
+                filter: 'blur(8px)',
+                scale: 1.2,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                filter: 'blur(0px)',
+                scale: 1,
+                transition: {
+                  duration: 0.4,
+                  type: 'spring',
+                  damping: 15,
+                  stiffness: 200,
+                },
+              }}
+              exit={{
+                opacity: 0,
+                y: !isLiked ? -20 : 20,
+                filter: 'blur(8px)',
+                scale: 0.8,
+                transition: {
+                  duration: 0.3,
+                },
+              }}
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'perspective(100px)',
+              }}
+            >
+              {animatedDigit}
+            </motion.span>
+          </AnimatePresence>
+        </div>
       )}
     </div>
   )
