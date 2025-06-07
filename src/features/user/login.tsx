@@ -66,6 +66,7 @@ function Login({ setSelected }: LoginProps) {
       toast.success('Вход успешно выполнен')
       setTimeout(() => {
         router.push('/')
+        location.reload()
       }, 500)
     }
   }
