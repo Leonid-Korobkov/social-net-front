@@ -85,7 +85,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
     if (isToday(date)) {
       return format(date, 'HH:mm', { locale: ru })
     } else {
-      return format(date, 'E', { locale: ru }) // Например, 'Пн', 'Вт'
+      return format(date, "dd.MM.yyyy 'в' HH:mm", { locale: ru })
     }
   }
 
