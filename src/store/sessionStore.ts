@@ -42,6 +42,10 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
         console.error('Ошибка подключения WebSocket:', error)
       })
 
+      socket.io.on('reconnect', attempt => {
+        console.log('WebSocket переподключен:', attempt)
+      })
+
       socket.on('disconnect', reason => {
         console.log('WebSocket отключен:', reason)
         if (reason === 'io server disconnect') {
