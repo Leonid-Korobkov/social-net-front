@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
-        destination: 'https://social-net-back.onrender.com/api/:path*',
+        source: '/apis/:path*',
+        destination: 'https://social-net-back.onrender.com/apis/:path*',
       },
       {
         source: '/socket.io/:path*',
