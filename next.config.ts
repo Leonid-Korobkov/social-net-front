@@ -1,14 +1,14 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: '/api/:path*',
-  //       destination: 'https://social-net-back.onrender.com/api/:path*',
-  //     },
-  //   ]
-  // },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://social-net-back.onrender.com/api/:path*',
+      },
+    ]
+  },
   serverExternalPackages: ['autoprefixer'],
   experimental: {
     optimizePackageImports: [
