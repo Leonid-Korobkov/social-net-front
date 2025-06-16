@@ -13,7 +13,7 @@ export async function GET(
 
     const { id } = await context.params
 
-    const response = await fetch(`${BACKEND_URL_FOR_OG}/og/post/${id}`, {
+    const response = await fetch(`${BACKEND_URL_FOR_OG}/api/og/post/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         'x-opengraph-secret': process.env.OPENGRAPH_SECRET_PATH,
