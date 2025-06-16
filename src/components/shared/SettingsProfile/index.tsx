@@ -174,7 +174,7 @@ export default function SettingsProfile({
         isOpen={isOpen}
         onClose={onClose}
         backdrop="blur"
-        scrollBehavior="inside"
+        placement="top"
         size="2xl"
       >
         <ModalContent>
@@ -242,7 +242,7 @@ export default function SettingsProfile({
                 <CardBody>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <MdAnimation className="text-xl" />
+                      <MdAnimation className="text-xl flex-shrink-0" />
                       <div className="flex flex-col">
                         <span>Уменьшить анимацию</span>
                         <span className="text-sm text-gray-400">
@@ -364,13 +364,11 @@ export default function SettingsProfile({
                   <h3>Сброс пароля</h3>
                 </CardHeader>
                 <CardBody>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between md:items-center flex-col md:flex-row gap-2 md:gap-0">
                     <div className="flex items-center gap-2">
-                      <TbLockPassword className="text-xl" />
+                      <TbLockPassword className="text-xl flex-shrink-0" />
                       <div className="flex flex-col">
-                        <span>
-                          Мы отправили код подтверждения на ваш email.
-                        </span>
+                        <span>Мы отправим код подтверждения на ваш email.</span>
                         <span className="text-sm text-gray-400">
                           Затем нужно будет ввести новый пароль и подтвердить
                           его.
@@ -391,11 +389,11 @@ export default function SettingsProfile({
               </Card>
 
               <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-danger">
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-danger max-w-3xl:flex-col">
                   <h3>Удаление аккаунта</h3>
                 </CardHeader>
                 <CardBody>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between md:items-center flex-col md:flex-row gap-2 md:gap-0">
                     <div className="flex flex-col">
                       <span>Полностью удалить ваш аккаунт и все данные.</span>
                       <span className="text-sm text-gray-400">

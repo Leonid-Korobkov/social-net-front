@@ -112,12 +112,12 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               </div>
 
               <div className="flex items-center space-x-2 text-sm text-default-500">
-                <RiGlobalLine className="w-4 h-4" />
+                <RiGlobalLine className="w-4 h-4 flex-shrink-0" />
                 <span>{session.device}</span>
               </div>
 
               <div className="flex items-center space-x-2 text-sm text-default-500">
-                <RiMapPinLine className="w-4 h-4" />
+                <RiMapPinLine className="w-4 h-4 flex-shrink-0" />
                 <span>
                   {session.location.city}, {session.location.region1},{' '}
                   {session.location.country}
@@ -130,7 +130,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               {/* Время */}
               <div>
                 {isCurrentSession ? (
-                  <span className="text-primary-600 lowercase text-sm">
+                  <span className="text-primary-600 lowercase text-sm whitespace-nowrap">
                     В сети
                   </span>
                 ) : (

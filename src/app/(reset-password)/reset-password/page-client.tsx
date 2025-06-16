@@ -48,7 +48,7 @@ export default function ResetPasswordPageClient() {
   const [timer, setTimer] = useState<number>(0)
 
   const [isSendCodeToAuthenticatedUser, setIsSendCodeToAuthenticatedUser] =
-    useState<boolean>(true)
+    useState<boolean>(false)
 
   const [isVisibleNewPwd, setIsVisibleNewPwd] = useState<boolean>(false)
   const [isVisibleConfirmPwd, setIsVisibleConfirmPwd] = useState<boolean>(false)
@@ -108,9 +108,9 @@ export default function ResetPasswordPageClient() {
     setTimer(30)
   }
 
-  if (isSendCodeToAuthenticatedUser && isAuthenticated) {
+  const handleResendForAuthenticatedUser = () => {
     handleResend()
-    setIsSendCodeToAuthenticatedUser(false)
+    setIsSendCodeToAuthenticatedUser(true)
     setTimer(30)
   }
 
@@ -166,7 +166,9 @@ export default function ResetPasswordPageClient() {
                 Код подтверждения
               </h2>
               <p className="mt-2 text-center text-sm text-gray-400">
-                Мы отправили код подтверждения на ваш email.
+                {!isSendCodeToAuthenticatedUser && isAuthenticated
+                  ? 'Нажмите на кнопку и мы пришлем код подтверждения на ваш E-mail'
+                  : 'Мы отправили код подтверждения на ваш E-mail.'}
               </p>
             </div>
 
@@ -193,24 +195,37 @@ export default function ResetPasswordPageClient() {
                   }}
                 />
               </div>
-              <Button
-                color="primary"
-                fullWidth
-                isLoading={loadingCode}
-                type="submit"
-              >
-                Подтвердить
-              </Button>
-              <Button
-                fullWidth
-                disabled={timer > 0}
-                type="button"
-                onClick={handleResend}
-              >
-                {timer > 0
-                  ? `Отправить код повторно через ${timer}s`
-                  : 'Отправить код повторно'}
-              </Button>
+              {!isSendCodeToAuthenticatedUser && isAuthenticated ? (
+                <Button
+                  fullWidth
+                  color="primary"
+                  type="button"
+                  onClick={handleResendForAuthenticatedUser}
+                >
+                  Отправить код
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    color="primary"
+                    fullWidth
+                    isLoading={loadingCode}
+                    type="submit"
+                  >
+                    Подтвердить
+                  </Button>
+                  <Button
+                    fullWidth
+                    disabled={timer > 0}
+                    type="button"
+                    onClick={handleResend}
+                  >
+                    {timer > 0
+                      ? `Отправить код повторно через ${timer}s`
+                      : 'Отправить код повторно'}
+                  </Button>
+                </>
+              )}
             </form>
           </>
         )

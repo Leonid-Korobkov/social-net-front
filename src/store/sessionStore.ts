@@ -30,6 +30,7 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
           userId,
         },
         withCredentials: true,
+        transports: ['websocket'],
       })
 
       socket.on('connect', () => {
