@@ -28,6 +28,9 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
           userId,
         },
         withCredentials: true,
+        reconnection: true, // Включить автоматическое переподключение
+        reconnectionAttempts: 2, // Количество попыток
+        reconnectionDelay: 1000, // Интервал между попытками (1 секунда)
       })
 
       socket.on('connect', () => {
@@ -39,8 +42,12 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
         console.error('Ошибка подключения WebSocket:', error)
       })
 
-      socket.on('disconnect', () => {
-        console.log('WebSocket отключен')
+      socket.on('disconnect', reason => {
+        console.log('WebSocket отключен:', reason)
+        if (reason === 'io server disconnect') {
+          // Сервер принудительно отключил соединение
+          socket.connect()
+        }
       })
 
       set({ socket })
