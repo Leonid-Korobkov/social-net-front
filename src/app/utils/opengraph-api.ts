@@ -6,14 +6,11 @@ export async function fetchOpenGraphPostData(id: string) {
     const host = headersList.get('host')
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
 
-    const response = await fetch(
-      `${protocol}://${host}/api/opengraph/post/${id}`,
-      {
-        next: {
-          revalidate: 3600, // Кэшируем на 1 час
-        },
-      }
-    )
+    const response = await fetch(`${protocol}://${host}/api/og/post/${id}`, {
+      next: {
+        revalidate: 3600, // Кэшируем на 1 час
+      },
+    })
 
     if (!response.ok) {
       throw new Error(`Failed to fetch post data: ${response.status}`)
@@ -33,7 +30,7 @@ export async function fetchOpenGraphUserData(username: string) {
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
 
     const response = await fetch(
-      `${protocol}://${host}/api/opengraph/user/${username}`,
+      `${protocol}://${host}/api/og/user/${username}`,
       {
         next: {
           revalidate: 3600, // Кэшируем на 1 час
