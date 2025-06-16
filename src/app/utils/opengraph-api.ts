@@ -29,14 +29,11 @@ export async function fetchOpenGraphUserData(username: string) {
     const host = headersList.get('host')
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
 
-    const response = await fetch(
-      `${protocol}://${host}/og/user/${username}`,
-      {
-        next: {
-          revalidate: 3600, // Кэшируем на 1 час
-        },
-      }
-    )
+    const response = await fetch(`/og/user/${username}`, {
+      next: {
+        revalidate: 3600, // Кэшируем на 1 час
+      },
+    })
 
     if (!response.ok) {
       throw new Error(`Failed to fetch user data: ${response.status}`)
@@ -44,7 +41,14 @@ export async function fetchOpenGraphUserData(username: string) {
 
     return await response.json()
   } catch (error) {
-    console.error('Error fetching OpenGraph user data:', error)
+    const headersList = await headers()
+    const host = headersList.get('host')
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
+    console.error(
+      'Error fetching OpenGraph user data:',
+      `${protocol}://${host}/og/user/${username}`,
+      error
+    )
     return null
   }
 }
