@@ -1,8 +1,6 @@
 import { create } from 'zustand'
-import { Session } from './types'
 import { io, Socket } from 'socket.io-client'
 import { BASE_URL } from '@/app/constants'
-import toast from 'react-hot-toast'
 
 interface SessionStore {
   currentSessionId: string | null
@@ -30,7 +28,6 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
           userId,
         },
         withCredentials: true,
-        transports: ['websocket'],
       })
 
       socket.on('connect', () => {
