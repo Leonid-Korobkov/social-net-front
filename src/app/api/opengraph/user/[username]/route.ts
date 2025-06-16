@@ -14,7 +14,7 @@ export async function GET(
     const { username } = await context.params
 
     const response = await fetch(
-      `${BACKEND_URL_FOR_OG}/api/og/user/${username}`,
+      `${BACKEND_URL_FOR_OG}/og/user/${username}`,
       {
         headers: {
           'Content-Type': 'application/json',
