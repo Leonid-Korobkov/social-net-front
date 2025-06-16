@@ -29,7 +29,7 @@ export async function fetchOpenGraphUserData(username: string) {
     const host = headersList.get('host')
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
 
-    const response = await fetch(`/og/user/${username}`, {
+    const response = await fetch(`api/og/user/${username}`, {
       next: {
         revalidate: 3600, // Кэшируем на 1 час
       },
