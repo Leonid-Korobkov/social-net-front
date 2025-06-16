@@ -107,7 +107,7 @@ export default function ResetPasswordPageClient() {
     await sendCode({ email })
   }
 
-  if (isSendCodeToAuthenticatedUser) {
+  if (isSendCodeToAuthenticatedUser && isAuthenticated) {
     handleResend()
     setIsSendCodeToAuthenticatedUser(false)
     setTimer(30)
