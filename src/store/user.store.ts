@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { User } from './types'
 import { createSelectors } from './createSelectors'
-import Cookies from 'js-cookie'
 
 // Интерфейс только для данных состояния
 interface UserDataState {
@@ -34,7 +33,6 @@ export const UserStore = create<UserState>(set => ({
     set({ user })
   },
   logout: () => {
-    Cookies.remove('sessionId')
     set(initialData)
   },
   setIsLoadingUser: isLoading => {

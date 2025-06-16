@@ -3,6 +3,7 @@ import { useStore } from 'zustand'
 import { useLogout } from '@/services/api/user.api'
 import { useSessionStore } from '@/store/sessionStore'
 import { UserSettingsStore } from '@/store/userSettings.store'
+import Cookies from 'js-cookie'
 import { useQueryClient } from '@tanstack/react-query'
 
 export const useAuth = () => {
@@ -20,13 +21,13 @@ export const useAuth = () => {
   const queryClient = useQueryClient()
 
   const handleLogout = async () => {
-    console.log('logout')
     logoutSettings()
     logoutUser()
     await logout()
     disconnectSocket()
     queryClient.removeQueries()
     queryClient.clear()
+    Cookies.remove('sessionId')
   }
   return {
     user,
