@@ -12,7 +12,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { TbChevronDown, TbClock, TbEye, TbFlame } from 'react-icons/tb'
-import { FaChartLine } from "react-icons/fa6";
+import { FaChartLine } from 'react-icons/fa6'
 import { useStore } from 'zustand'
 
 // Мапинг типов лент на их иконки и описания

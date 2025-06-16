@@ -1,6 +1,6 @@
 import { createStore } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { User, MediaType } from './types'
+import { MediaType } from './types'
 
 // Определяем интерфейс для загружаемых файлов
 export interface UploadStatus {
@@ -26,103 +26,76 @@ export interface StorableUpload {
   fileType?: string
 }
 
-interface initialUserSettingsStore {
+// Интерфейс только для данных состояния
+interface UserSettingsDataState {
   reduceAnimation: boolean
-  setReduceAnimation: (bool: boolean) => void
-
   searchText: string
-  setSearchText: (str: string) => void
   searchActiveTab: string
-  setSearchActiveTab: (tab: string) => void
-
   feedType: string
-  setFeedType: (type: string) => void
-
   postText: string
-  setPostText: (str: string) => void
-  reset: () => void
-  mediaUploads: StorableUpload[] // Изменил на сериализуемый тип
-  setMediaUploads: (uploads: StorableUpload[]) => void
-  resetMediaUploads: () => void
-
-  logout: () => void
+  mediaUploads: StorableUpload[]
   viewedPosts: string[]
   pendingViewPosts: string[]
+}
+
+// Начальные данные состояния
+const initialSettingsData: UserSettingsDataState = {
+  reduceAnimation: false,
+  searchText: '',
+  searchActiveTab: 'posts',
+  feedType: 'for-you',
+  postText: '',
+  mediaUploads: [],
+  viewedPosts: [],
+  pendingViewPosts: [],
+}
+
+// Интерфейс для действий + полный тип состояния
+export interface UserSettingsStoreState extends UserSettingsDataState {
+  setReduceAnimation: (bool: boolean) => void
+  setSearchText: (str: string) => void
+  setSearchActiveTab: (tab: string) => void
+  setFeedType: (type: string) => void
+  setPostText: (str: string) => void
+  reset: () => void
+  setMediaUploads: (uploads: StorableUpload[]) => void
+  resetMediaUploads: () => void
+  logout: () => void
   addViewedPost: (id: string) => void
   wasPostViewed: (id: string) => boolean
   addPendingViewPost: (id: string) => void
   getAndClearPendingViewPosts: () => string[]
   clearViewedPosts: () => void
-
-  current: User | null
-  setUser: (user: User) => void
 }
 
-const initialState: initialUserSettingsStore = {
-  reduceAnimation: false,
-  setReduceAnimation: (bool: boolean) => {},
-
-  searchText: '',
-  setSearchText: (str: string) => {},
-  searchActiveTab: 'posts',
-  setSearchActiveTab: (tab: string) => {},
-
-  feedType: 'for-you',
-  setFeedType: (type: string) => {},
-
-  postText: '',
-  setPostText: (str: string) => {},
-  reset: () => {},
-  mediaUploads: [], // Изменил на новый ключ
-  setMediaUploads: (uploads: StorableUpload[]) => {},
-  resetMediaUploads: () => {},
-
-  logout: () => {},
-  viewedPosts: [],
-  pendingViewPosts: [],
-  addViewedPost: (id: string) => {},
-  wasPostViewed: (id: string) => false,
-  addPendingViewPost: (id: string) => {},
-  getAndClearPendingViewPosts: () => [],
-  clearViewedPosts: () => {},
-
-  current: null,
-  setUser: () => {},
-}
-
-// Вынесу тип отдельно, чтобы избежать циклической ссылки
-export type UserSettingsStoreType = typeof initialState
-
-export const UserSettingsStore = createStore<initialUserSettingsStore>()(
+export const UserSettingsStore = createStore<UserSettingsStoreState>()(
   persist(
-    set => ({
-      ...initialState,
-      setReduceAnimation: (bool: boolean) => {
-        set(state => ({ reduceAnimation: bool }))
-      },
+    (set, get) => ({
+      ...initialSettingsData,
 
+      setReduceAnimation: (bool: boolean) => {
+        set({ reduceAnimation: bool })
+      },
       setSearchText: (str: string) => {
-        set(state => ({ searchText: str }))
+        set({ searchText: str })
       },
       setSearchActiveTab: (tab: string) => {
-        set(state => ({ searchActiveTab: tab }))
+        set({ searchActiveTab: tab })
       },
-
       setFeedType: (type: string) => {
-        set(state => ({ feedType: type }))
+        set({ feedType: type })
       },
-
       setPostText: (str: string) => {
-        set(state => ({ postText: str }))
+        set({ postText: str })
       },
       reset: () => set({ postText: '' }),
       setMediaUploads: (uploads: StorableUpload[]) => {
-        set(state => ({ mediaUploads: uploads }))
+        set({ mediaUploads: uploads })
       },
       resetMediaUploads: () => set({ mediaUploads: [] }),
 
       logout: () => {
-        set(initialState)
+        set(initialSettingsData)
       },
 
       addViewedPost: (id: string) => {
@@ -141,16 +114,12 @@ export const UserSettingsStore = createStore<initialUserSettingsStore>()(
         })
       },
       getAndClearPendingViewPosts: (): string[] => {
-        const posts: string[] = UserSettingsStore.getState().pendingViewPosts
-        set(state => ({ pendingViewPosts: [] }))
+        const posts: string[] = get().pendingViewPosts
+        set({ pendingViewPosts: [] })
         return posts
       },
       clearViewedPosts: () => {
-        set(state => ({ viewedPosts: [], pendingViewPosts: [] }))
-      },
-
-      setUser: user => {
-        set({ current: user })
+        set({ viewedPosts: [], pendingViewPosts: [] })
       },
     }),
     {

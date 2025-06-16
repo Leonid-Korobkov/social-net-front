@@ -3,7 +3,7 @@ import { useShare } from '@/hooks/useShare'
 import { useDeleteComment } from '@/services/api/comment.api'
 import { useGetLikes } from '@/services/api/like.api'
 import { useDeletePost } from '@/services/api/post.api'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import { useUserStore } from '@/store/user.store'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { hasErrorField } from '@/utils/hasErrorField'
 import {
@@ -44,7 +44,7 @@ function CardActionWidget({
   ICard,
   'authorId' | 'id' | 'cardFor' | 'commentId' | 'likes' | 'onClick' | 'username'
 >) {
-  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const currentUser = useStore(useUserStore, state => state.user)
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const {

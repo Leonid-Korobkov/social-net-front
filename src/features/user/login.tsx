@@ -43,21 +43,7 @@ function Login({ setSelected }: LoginProps) {
   } = useLogin()
 
   const onSubmit: SubmitHandler<IForm> = async data => {
-    try {
-      const response = await login(data)
-      // Если email не подтвержден, показываем сообщение и перенаправляем на страницу верификации
-      if (response?.requiresVerification) {
-        toast.success(
-          response.message || 'На вашу почту отправлен код подтверждения'
-        )
-        const verificationToken = btoa(`${response.userId}_${Date.now()}`)
-        router.push(`/verify-email?token=${verificationToken}`)
-        return
-      }
-    } catch (error) {
-      // Ошибка уже обрабатывается в useLogin
-      console.error('Login error:', error)
-    }
+    await login(data)
   }
 
   // Если вход успешен и email подтвержден, показываем успешное сообщение
@@ -65,10 +51,18 @@ function Login({ setSelected }: LoginProps) {
     if (!data.requiresVerification) {
       toast.success('Вход успешно выполнен')
       setTimeout(() => {
-        router.push('/')
-        location.reload()
-      }, 500)
+        // router.push('/')
+        // location.reload()
+      }, 300)
     }
+  }
+
+  // Если email не подтвержден, показываем сообщение и перенаправляем на страницу верификации
+  if (data && data?.requiresVerification) {
+    toast.success(data.message || 'На вашу почту отправлен код подтверждения')
+    const verificationToken = btoa(`${data.userId}_${Date.now()}`)
+    router.push(`/verify-email?token=${verificationToken}`)
+    return
   }
 
   return (
@@ -139,6 +133,16 @@ function Login({ setSelected }: LoginProps) {
           {isSuccess ? 'Перенаправление...' : 'Войти'}
         </Button>
       </div>
+
+      <p className="text-center text-small">
+        <Link
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => router.push('/reset-password')}
+        >
+          Забыли пароль?
+        </Link>
+      </p>
 
       {error && <Alert color="danger" title={error.errorMessage} />}
     </form>

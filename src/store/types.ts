@@ -103,3 +103,21 @@ export interface MediaItem {
   type: MediaType
   thumbnail?: string // Для видео может быть превью
 }
+
+export interface Session {
+  sessionId: string
+  userId: number
+  browser: string
+  browserVersion: string
+  os: string
+  device: string
+  ipAddress: string
+  timestamp: string
+  location: {
+    country: string
+    region: string
+    city: string
+  }
+  lastActivity: string
+  isCurrentSession?: boolean
+}

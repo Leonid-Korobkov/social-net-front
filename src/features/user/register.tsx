@@ -60,6 +60,47 @@ function Register({ setSelected }: RegisterProps) {
       className="flex flex-col gap-4 h-full"
       autoComplete="on"
     >
+      <Input
+        label="Имя"
+        type="text"
+        autoComplete="off"
+        errorMessage={errors.name ? errors.name.message : ''}
+        isInvalid={errors.name ? true : false}
+        placeholder="Иван Петрович"
+        {...register('name', {
+          required: 'Обязательное поле',
+          minLength: { value: 3, message: 'Минимум 3 символа' },
+          validate: value => {
+            if (value.trim() === '') {
+              return 'Имя не может содержать пробелы'
+            }
+            return true
+          },
+        })}
+      />
+      <Controller
+        name="userName"
+        control={control}
+        rules={{
+          required: 'Обязательное поле',
+          validate: validateUserName,
+        }}
+        render={({ field }) => (
+          <Input
+            {...field}
+            label="Имя пользователя"
+            type="text"
+            autoComplete="off"
+            errorMessage={errors.userName?.message || ''}
+            isInvalid={errors.userName ? true : false}
+            placeholder="username_100500"
+            onChange={e => field.onChange(e.target.value.toLowerCase())}
+          />
+        )}
+      />
+
+      <Divider className="my-2" />
+
       <Controller
         name="email"
         control={control}
@@ -108,45 +149,6 @@ function Register({ setSelected }: RegisterProps) {
           required: 'Обязательное поле',
           validate: validatePassword,
         })}
-      />
-
-      <Divider className="my-2" />
-
-      <Input
-        label="Имя"
-        type="text"
-        errorMessage={errors.name ? errors.name.message : ''}
-        isInvalid={errors.name ? true : false}
-        placeholder="Иван Петрович"
-        {...register('name', {
-          required: 'Обязательное поле',
-          minLength: { value: 3, message: 'Минимум 3 символа' },
-          validate: value => {
-            if (value.trim() === '') {
-              return 'Имя не может содержать пробелы'
-            }
-            return true
-          },
-        })}
-      />
-      <Controller
-        name="userName"
-        control={control}
-        rules={{
-          required: 'Обязательное поле',
-          validate: validateUserName,
-        }}
-        render={({ field }) => (
-          <Input
-            {...field}
-            label="Имя пользователя"
-            type="text"
-            errorMessage={errors.userName?.message || ''}
-            isInvalid={errors.userName ? true : false}
-            placeholder="username_100500"
-            onChange={e => field.onChange(e.target.value.toLowerCase())}
-          />
-        )}
       />
 
       <p className="text-center text-small">

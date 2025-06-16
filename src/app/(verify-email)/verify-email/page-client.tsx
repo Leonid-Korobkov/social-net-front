@@ -172,7 +172,6 @@ export default function VerifyEmailPageClient() {
                   Подтвердить
                 </Button>
                 <Button
-                  color="secondary"
                   onClick={handleResendCode}
                   isDisabled={countdown > 0 || isResendLoading}
                   type="button"

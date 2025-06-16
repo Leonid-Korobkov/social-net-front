@@ -1,8 +1,10 @@
 import { BASE_URL } from '@/app/constants'
 import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
 import axios, { AxiosError, AxiosHeaders, AxiosResponse } from 'axios'
 import Cookies from 'js-cookie'
 import toast from 'react-hot-toast'
+import { useStore } from 'zustand'
 
 // Типизация для ошибок
 export interface ApiErrorResponse {
@@ -21,24 +23,8 @@ export const apiClient = axios.create({
   withCredentials: true,
 })
 
-// Интерцептор для добавления токена и CSRF
+// Интерцептор запросов: здесь можно добавить логику, не связанную с токенами (например, таймауты)
 apiClient.interceptors.request.use(config => {
-  const accessToken =
-    typeof window !== 'undefined'
-      ? Cookies.get('accessToken') || useUserStore.getState().accessToken
-      : ''
-
-  const csrfToken =
-    typeof window !== 'undefined' ? Cookies.get('csrf-token') : ''
-
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`
-  }
-
-  if (csrfToken) {
-    config.headers['X-CSRF-Token'] = csrfToken
-  }
-
   // Устанавливаем таймаут только для запросов, не связанных с загрузкой медиа
   if (
     !config.url?.includes('/media/upload') &&
@@ -49,13 +35,12 @@ apiClient.interceptors.request.use(config => {
   ) {
     config.timeout = 5000 // Таймаут 5 секунд для обычных запросов
   }
-
   return config
 })
 
-// Интерцептор для обработки ответов и обновления токена
+// Интерцептор ответов: обработка ошибок и форматирование ответов
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
+  response => {
     // Для мультипарт запросов возвращаем полный ответ, для остальных только data
     const contentType = response.headers['content-type'] || ''
     const reqContentType = String(response.config.headers['Content-Type'] || '')
@@ -67,42 +52,20 @@ apiClient.interceptors.response.use(
     ) {
       return response
     }
-
     return response.data
   },
   async error => {
     const originalRequest = error.config
-
-    // Если ошибка 401 и это не запрос на обновление токена
+    // Обработка ошибок, например, редирект на страницу входа при 401
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
-      try {
-        // Запрашиваем новый access token
-        const response = await axios.get(`${BASE_URL}/api/auth/refresh`, {
-          withCredentials: true,
-        })
-
-        const { accessToken } = response.data
-
-        // Обновляем токен в store и cookies
-        useUserStore.getState().updateAccessToken(accessToken)
-        Cookies.set('accessToken', accessToken, {
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-        })
-
-        // Повторяем оригинальный запрос с новым токеном
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`
-        return apiClient.request(originalRequest)
-      } catch (refreshError) {
-        // Если не удалось обновить токен, выходим из системы
-        // useStore(UserStore, state => state.logout)
-        // useStore(UserSettingsStore, state => state.logout)
-        return Promise.reject(refreshError)
+      // Если сессия недействительна, выходим
+      if (typeof window !== 'undefined') {
+        useUserStore.getState().logout()
+        UserSettingsStore.getState().logout()
       }
     }
-
     console.error('API response error:', error)
     return Promise.reject(error)
   }

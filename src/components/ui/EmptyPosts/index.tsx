@@ -1,14 +1,14 @@
-import { TbUsers, TbMoodEmpty } from 'react-icons/tb'
-import { motion } from 'framer-motion'
+import { useUserStore } from '@/store/user.store'
 import { Button } from '@heroui/react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { BsFilePost } from 'react-icons/bs'
+import { TbMoodEmpty, TbUsers } from 'react-icons/tb'
 import { useStore } from 'zustand'
-import { UserSettingsStore } from '@/store/userSettings.store'
 
 function EmptyPosts() {
   const router = useRouter()
-  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const currentUser = useStore(useUserStore, state => state.user)
   const isOwnProfile = location.pathname.includes(currentUser?.userName || '')
 
   return (

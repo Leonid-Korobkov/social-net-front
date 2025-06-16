@@ -132,6 +132,7 @@ export default function MediaModal({
           prevItem()
           break
         case 'Escape':
+          e.preventDefault()
           onClose()
           break
       }

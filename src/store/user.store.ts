@@ -1,51 +1,48 @@
 import { create } from 'zustand'
+import { User } from './types'
 import { createSelectors } from './createSelectors'
 import Cookies from 'js-cookie'
 
-interface initialUserStore {
-  accessToken?: string
+// Интерфейс только для данных состояния
+interface UserDataState {
+  user: User | null
+  isLoadingUser: boolean
   error?: string
-
-  setAccessToken: (accessToken: string) => void
-  logout: () => void
-  setError: (error: string) => void
-  updateAccessToken: (accessToken: string) => void
 }
 
-const initialState: initialUserStore = {
-  accessToken: undefined,
+// Начальные данные состояния
+const initialData: UserDataState = {
+  user: null,
+  isLoadingUser: true,
   error: undefined,
-
-  setAccessToken: () => {},
-  logout: () => {},
-  setError: () => {},
-  updateAccessToken: () => {},
 }
 
-export const UserStore = create<initialUserStore>(set => ({
-  ...initialState,
-  setAccessToken: accessToken => {  
-    Cookies.set('accessToken', accessToken, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    })
+// Интерфейс для действий
+interface UserActionsState {
+  setUser: (user: User | null) => void
+  setIsLoadingUser: (isLoading: boolean) => void
+  setError: (error: string) => void
+  logout: () => void
+}
 
-    set({ accessToken: accessToken })
+// Полный тип состояния (данные + действия)
+export type UserState = UserDataState & UserActionsState
+
+export const UserStore = create<UserState>(set => ({
+  ...initialData,
+  setUser: user => {
+    set({ user })
   },
   logout: () => {
-    Cookies.remove('accessToken')
-    Cookies.remove('refreshToken')
-    set(initialState)
+    console.log('logou in user store')
+    Cookies.remove('sessionId')
+    set(initialData)
+  },
+  setIsLoadingUser: isLoading => {
+    set({ isLoadingUser: isLoading })
   },
   setError: error => {
     set({ error })
-  },
-  updateAccessToken: accessToken => {
-    Cookies.set('accessToken', accessToken, {
-      secure: true,
-      sameSite: 'strict',
-    })
-    set({ accessToken })
   },
 }))
 

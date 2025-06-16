@@ -1,5 +1,5 @@
 import { Post } from '@/store/types'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import { useUserStore } from '@/store/user.store'
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -8,6 +8,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
+import { useStore } from 'zustand'
 import {
   apiClient,
   ApiErrorResponse,
@@ -15,7 +16,6 @@ import {
   handleAxiosError,
 } from '../ApiConfig'
 import { userKeys } from './user.api'
-import { useStore } from 'zustand'
 
 // Ключи для кэширования
 export const postKeys = {
@@ -45,7 +45,7 @@ export interface PostsDTO {
 // Хук для создания поста
 export const useCreatePost = () => {
   const queryClient = useQueryClient()
-  const currentUser = useStore(UserSettingsStore, state => state.current)!
+  const currentUser = useStore(useUserStore, state => state.user)!
 
   return useMutation({
     mutationFn: async (content: { content: string; media?: string[] }) => {
@@ -137,7 +137,7 @@ export const useGetPostById = (id: string) => {
 // 4) Удаление поста с ручным вырезанием из кэша
 export const useDeletePost = () => {
   const queryClient = useQueryClient()
-  const currentUser = useStore(UserSettingsStore, state => state.current)!
+  const currentUser = useStore(useUserStore, state => state.user)!
 
   return useMutation<Post, ApiErrorResponse, { id: string }>({
     mutationFn: ({ id }) => apiClient.delete<string, Post>(`/posts/${id}`),

@@ -34,6 +34,7 @@ export default function VideoPlayer({
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   const { ref: inViewRef, inView } = useInView({ threshold: 0.6 })
 
@@ -72,6 +73,7 @@ export default function VideoPlayer({
   const handleSliderChangeStart = () => {
     if (videoRef.current) {
       videoRef.current.pause()
+      setIsVideoPlaying(false)
     }
   }
 
@@ -79,6 +81,7 @@ export default function VideoPlayer({
     handleSliderChange(value)
     if (videoRef.current) {
       videoRef.current.play()
+      setIsVideoPlaying(true)
     }
   }
 
@@ -87,8 +90,10 @@ export default function VideoPlayer({
     if (!videoRef.current) return
     if (videoRef.current.paused) {
       videoRef.current.play()
+      setIsVideoPlaying(true)
     } else {
       videoRef.current.pause()
+      setIsVideoPlaying(false)
     }
   }
 
@@ -135,6 +140,7 @@ export default function VideoPlayer({
     if (loop && videoRef.current) {
       videoRef.current.currentTime = 0
       videoRef.current.play()
+      setIsVideoPlaying(true)
     }
   }
 
@@ -160,8 +166,10 @@ export default function VideoPlayer({
   useEffect(() => {
     if (autoPlay && inView && videoRef.current) {
       videoRef.current.play()
+      setIsVideoPlaying(true)
     } else if (!inView && videoRef.current) {
       videoRef.current.pause()
+      setIsVideoPlaying(false)
     }
   }, [autoPlay, inView])
 
@@ -258,7 +266,7 @@ export default function VideoPlayer({
           <div
             className={cn(
               'absolute bottom-6 left-2 text-xs text-white bg-black/40 px-2 py-1 rounded-lg transition-opacity z-10 opacity-0',
-              videoRef.current?.paused && 'opacity-100',
+              isVideoPlaying && 'opacity-100',
               isVideoLoaded ? 'opacity-100' : 'opacity-0'
             )}
           >

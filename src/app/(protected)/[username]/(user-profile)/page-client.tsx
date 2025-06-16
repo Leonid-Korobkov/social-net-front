@@ -4,12 +4,13 @@ import PostList from '@/components/shared/PostList'
 import ProfileInfo from '@/components/shared/ProfileInfo'
 import CountInfo from '@/components/ui/CountInfo'
 import Image from '@/components/ui/Image'
+import ShareDropdown from '@/components/ui/ShareDropdown'
 import UserProfileSkeleton from '@/components/ui/UserProfileSkeleton'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetPostsByUserId, useGetUserById } from '@/services/api/user.api'
 import { useModalsStore } from '@/store/modals.store'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import { useUserStore } from '@/store/user.store'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import {
   Button,
@@ -31,7 +32,6 @@ import {
 } from 'react-icons/md'
 import { RiUserFollowFill } from 'react-icons/ri'
 import { useStore } from 'zustand'
-import ShareDropdown from '@/components/ui/ShareDropdown'
 
 type PageProps = {
   params: Promise<{ username: string }>
@@ -45,7 +45,7 @@ function UserProfileClient({ params }: PageProps) {
   const [isImageOpen, setImageOpen] = useState(false)
   const { openEditProfile, openSettings } = useModalsStore()
 
-  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const currentUser = useStore(useUserStore, state => state.user)
 
   const { data: user, isPending: isLoading } = useGetUserById(id)
   const {

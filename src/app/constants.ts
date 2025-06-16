@@ -5,7 +5,7 @@ export const BASE_URL =
 
 export const BACKEND_URL =
   process.env.NODE_ENV === 'production'
-    ? process.env.PROD_BACKEND_URL_DEV
+    ? process.env.PROD_BACKEND_URL
     : process.env.DEV_BACKEND_URL
 
 export const APP_URL =

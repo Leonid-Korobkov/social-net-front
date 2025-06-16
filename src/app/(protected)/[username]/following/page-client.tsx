@@ -4,7 +4,7 @@ import FollowSkeleton from '@/components/ui/FollowSkeleton'
 import User from '@/components/ui/User'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetUserById } from '@/services/api/user.api'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import { useUserStore } from '@/store/user.store'
 import { pluralizeRu } from '@/utils/pluralizeRu'
 import { Button, Card, CardBody } from '@heroui/react'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -24,7 +24,7 @@ function FollowingClient({ params }: PageProps) {
   const subscriptionsRef = useRef<HTMLButtonElement | null>(null)
   const topLoader = useTopLoader()
 
-  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const currentUser = useStore(useUserStore, state => state.user)
   const { data: user, isPending: isLoading, isFetching } = useGetUserById(id)
 
   const {

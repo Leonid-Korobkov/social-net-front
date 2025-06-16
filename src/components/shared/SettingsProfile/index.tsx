@@ -1,6 +1,11 @@
 'use client'
-import { useUpdateUserSettings, useDeleteUser } from '@/services/api/user.api'
+import { SessionList } from '@/components/sessions/SessionList'
+import { useDeleteUser, useUpdateUserSettings } from '@/services/api/user.api'
+import { ApiErrorResponse } from '@/services/ApiConfig'
 import { User } from '@/store/types'
+import { useUserStore } from '@/store/user.store'
+import { UserSettingsStore } from '@/store/userSettings.store'
+import { UserThemeStore } from '@/store/userTheme.store'
 import { IUserSettings } from '@/types/user.interface'
 import {
   Button,
@@ -8,33 +13,26 @@ import {
   CardBody,
   CardHeader,
   Divider,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Switch,
-  Tabs,
-  Tab,
-  RadioGroup,
   Radio,
-  Input,
+  RadioGroup,
+  Switch,
 } from '@heroui/react'
+import { TbLockPassword } from 'react-icons/tb'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { IoIosSettings } from 'react-icons/io'
-import { IoMdMail } from 'react-icons/io'
-import { BiSolidBookContent } from 'react-icons/bi'
-import { FaMapMarkerAlt, FaBirthdayCake } from 'react-icons/fa'
-import { MdAnimation } from 'react-icons/md'
-import { MdColorLens } from 'react-icons/md'
 import toast from 'react-hot-toast'
-import { ApiErrorResponse } from '@/services/ApiConfig'
-import { UserSettingsStore } from '@/store/userSettings.store'
-import { UserThemeStore } from '@/store/userTheme.store'
-import { useUserStore } from '@/store/user.store'
+import { BiSolidBookContent } from 'react-icons/bi'
+import { FaBirthdayCake, FaMapMarkerAlt } from 'react-icons/fa'
+import { IoMdMail } from 'react-icons/io'
+import { MdAnimation } from 'react-icons/md'
 import { useStore } from 'zustand'
-import { useRouter } from 'next/navigation'
 
 interface SettingsProfileProps {
   isOpen: boolean
@@ -180,13 +178,14 @@ export default function SettingsProfile({
         size="2xl"
       >
         <ModalContent>
-          <ModalHeader>Настройки профиля</ModalHeader>
+          <ModalHeader className="justify-center">
+            Настройки профиля
+          </ModalHeader>
           <ModalBody>
-            <div className="space-y-4">
+            <div className="space-y-6">
               <Card>
-                <CardHeader className="flex gap-2 items-center text-primary">
-                  <IoIosSettings className="text-2xl" />
-                  <h3 className="text-lg font-semibold">Приватность</h3>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+                  <h3>Приватность</h3>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div className="flex justify-between items-center">
@@ -237,9 +236,8 @@ export default function SettingsProfile({
               </Card>
 
               <Card>
-                <CardHeader className="flex gap-2 items-center text-primary">
-                  <MdAnimation className="text-2xl" />
-                  <h3 className="text-lg font-semibold">Анимация</h3>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+                  <h3>Анимация</h3>
                 </CardHeader>
                 <CardBody>
                   <div className="flex justify-between items-center">
@@ -262,9 +260,8 @@ export default function SettingsProfile({
               </Card>
 
               <Card>
-                <CardHeader className="flex gap-2 items-center text-primary">
-                  <MdColorLens className="text-2xl" />
-                  <h3 className="text-lg font-semibold">Тема оформления</h3>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+                  <h3>Тема оформления</h3>
                 </CardHeader>
                 <CardBody>
                   <RadioGroup
@@ -354,8 +351,48 @@ export default function SettingsProfile({
               </Card>
 
               <Card>
-                <CardHeader className="flex gap-2 items-center text-danger">
-                  <h3 className="text-lg font-semibold">Удаление аккаунта</h3>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+                  <h3 className="text-lg font-semibold">Активные сессии</h3>
+                </CardHeader>
+                <CardBody>
+                  <SessionList />
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+                  <h3>Сброс пароля</h3>
+                </CardHeader>
+                <CardBody>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <TbLockPassword className="text-xl" />
+                      <div className="flex flex-col">
+                        <span>
+                          Мы отправили код подтверждения на ваш email.
+                        </span>
+                        <span className="text-sm text-gray-400">
+                          Затем нужно будет ввести новый пароль и подтвердить
+                          его.
+                        </span>
+                      </div>
+                    </div>
+                    <Button
+                      color="primary"
+                      onClick={() => {
+                        onClose()
+                        router.push('/reset-password')
+                      }}
+                    >
+                      Сбросить пароль
+                    </Button>
+                  </div>
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-danger">
+                  <h3>Удаление аккаунта</h3>
                 </CardHeader>
                 <CardBody>
                   <div className="flex justify-between items-center">

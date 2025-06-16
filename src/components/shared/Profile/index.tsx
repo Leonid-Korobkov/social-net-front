@@ -1,13 +1,13 @@
 'use client'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import ProfileSkeleton from '@/components/ui/ProfileSkeleton'
+import { useUserStore } from '@/store/user.store'
 import { Card, CardBody, CardHeader } from '@heroui/react'
 import Link from 'next/link'
-import Image from '../../ui/Image'
-import ProfileSkeleton from '@/components/ui/ProfileSkeleton'
 import { useStore } from 'zustand'
+import Image from '../../ui/Image'
 
 function Profile() {
-  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const currentUser = useStore(useUserStore, state => state.user)
 
   if (!currentUser) {
     return <ProfileSkeleton />

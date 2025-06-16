@@ -1,4 +1,4 @@
-'use client'
+'use client' // Error boundaries must be Client Components
 import { Button, Card } from '@heroui/react'
 import { BiError } from 'react-icons/bi'
 import { useRouter } from 'next/navigation'
@@ -7,11 +7,24 @@ import Container from '@/components/layout/Container'
 import LayoutNavigation from '@/components/layout/LayoutNavigation'
 import ProfileSidebar from '@/components/layout/ProfileSidebar'
 
-function ErrorPage() {
+import { useEffect } from 'react'
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
   const router = useRouter()
   const reloadPage = () => {
     router.push('/')
   }
+
+  useEffect(() => {
+    // Log the error to an error reporting service
+    console.error(error)
+  }, [error])
 
   return (
     <>
@@ -37,5 +50,3 @@ function ErrorPage() {
     </>
   )
 }
-
-export default ErrorPage

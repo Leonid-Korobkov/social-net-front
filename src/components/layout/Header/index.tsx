@@ -1,6 +1,5 @@
 'use client'
 import { useModalsStore } from '@/store/modals.store'
-import { useUserStore } from '@/store/user.store'
 import {
   Button,
   Dropdown,
@@ -21,7 +20,6 @@ import {
   useDisclosure,
   User,
 } from '@heroui/react'
-import { useQueryClient } from '@tanstack/react-query'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -29,37 +27,27 @@ import { useState } from 'react'
 import { AiFillEdit } from 'react-icons/ai'
 import { CiLogout } from 'react-icons/ci'
 
-import { UserSettingsStore } from '@/store/userSettings.store'
+import { useAuth } from '@/hooks/useAuth'
 import { FaMoon, FaPalette, FaUser } from 'react-icons/fa'
 import { IoIosSettings } from 'react-icons/io'
 import { LuSunMedium } from 'react-icons/lu'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import Logo from '../../shared/Logo'
-import { useStore } from 'zustand'
-import { useLogout } from '@/services/api/user.api'
 
 function Header({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const { mutateAsync: logout } = useLogout()
-
-  const currentUser = useStore(UserSettingsStore, state => state.current)
-  const isAuth = currentUser != null
-
+  const { user, handleLogout, isAuthenticated } = useAuth()
   const router = useRouter()
 
   const { getOptimizedUrl } = useCloudinaryImage({
-    src: currentUser?.avatarUrl,
+    src: user?.avatarUrl,
     width: 200,
   })
 
   const { openEditProfile, openSettings } = useModalsStore()
-
-  const handleLogout = () => {
-    logout()
-  }
 
   return (
     <>
@@ -71,111 +59,92 @@ function Header({ className }: { className?: string }) {
       >
         <NavbarContent>
           <NavbarBrand>
-            <Link href="/">
+            <Link href={isAuthenticated ? '/' : '/auth'}>
               <Logo />
             </Link>
           </NavbarBrand>
         </NavbarContent>
         <NavbarContent justify="end">
           <NavbarItem>
-            {isAuth ? (
-              <Dropdown placement="bottom-start">
-                <DropdownTrigger>
-                  <User
-                    as="button"
-                    avatarProps={{
-                      isBordered: true,
-                      src: getOptimizedUrl(),
-                    }}
-                    className="transition-transform [&>span]:order-1 [&>div]:items-end"
-                    description={currentUser?.email}
-                    name={currentUser?.userName}
-                  />
-                </DropdownTrigger>
-                <DropdownMenu aria-label="User Actions" variant="flat">
-                  <DropdownSection showDivider>
-                    <DropdownItem
-                      key="profile"
-                      onClick={() => router.push(`/${currentUser?.userName}`)}
-                      textValue="Мой профиль"
-                      startContent={<FaUser />}
-                      isDisabled={!currentUser.isEmailVerified}
-                    >
-                      Мой профиль
-                    </DropdownItem>
-                    <DropdownItem
-                      key="settings"
-                      onClick={() =>
-                        currentUser?.id && openSettings(currentUser.id)
-                      }
-                      textValue="Настройки"
-                      startContent={<IoIosSettings />}
-                      isDisabled={!currentUser.isEmailVerified}
-                    >
-                      Настройки
-                    </DropdownItem>
-                    <DropdownItem
-                      key="edit-profile"
-                      onClick={() =>
-                        currentUser?.id && openEditProfile(currentUser.id)
-                      }
-                      textValue="Редактировать профиль"
-                      startContent={<AiFillEdit />}
-                      isDisabled={!currentUser.isEmailVerified}
-                    >
-                      Редактировать профиль
-                    </DropdownItem>
-                    <DropdownItem
-                      key="theme"
-                      isReadOnly
-                      className="cursor-default"
-                      startContent={<FaPalette />}
-                      endContent={
-                        <Switch
-                          defaultSelected={resolvedTheme === 'light'}
-                          onChange={e =>
-                            setTheme(e.target.checked ? 'light' : 'dark')
-                          }
-                          color="primary"
-                          size="sm"
-                          thumbIcon={({ isSelected, className }) =>
-                            isSelected ? (
-                              <LuSunMedium className={className} />
-                            ) : (
-                              <FaMoon className={className} />
-                            )
-                          }
-                        ></Switch>
-                      }
-                    >
-                      Тема
-                    </DropdownItem>
-                  </DropdownSection>
+            <Dropdown placement="bottom-start">
+              <DropdownTrigger>
+                <User
+                  as="button"
+                  avatarProps={{
+                    isBordered: true,
+                    src: getOptimizedUrl(),
+                  }}
+                  className="transition-transform [&>span]:order-1 [&>div]:items-end"
+                  description={user?.email}
+                  name={user?.userName}
+                />
+              </DropdownTrigger>
+              <DropdownMenu aria-label="User Actions" variant="flat">
+                <DropdownSection showDivider>
                   <DropdownItem
-                    key="logout"
-                    color="danger"
-                    startContent={<CiLogout className="text-large" />}
-                    onClick={onOpen}
+                    key="profile"
+                    onClick={() => router.push(`/${user?.userName}`)}
+                    textValue="Мой профиль"
+                    startContent={<FaUser />}
+                    isDisabled={user ? !user.isEmailVerified : true}
                   >
-                    Выйти
+                    Мой профиль
                   </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            ) : (
-              <Switch
-                defaultSelected={resolvedTheme === 'light'}
-                onChange={e => setTheme(e.target.checked ? 'light' : 'dark')}
-                color="primary"
-                size="md"
-                thumbIcon={({ isSelected, className }) =>
-                  isSelected ? (
-                    <LuSunMedium className={className} />
-                  ) : (
-                    <FaMoon className={className} />
-                  )
-                }
-              ></Switch>
-            )}
+                  <DropdownItem
+                    key="settings"
+                    onClick={() => user?.id && openSettings(user.id)}
+                    textValue="Настройки"
+                    startContent={<IoIosSettings />}
+                    isDisabled={user ? !user.isEmailVerified : true}
+                  >
+                    Настройки
+                  </DropdownItem>
+                  <DropdownItem
+                    key="edit-profile"
+                    onClick={() => user?.id && openEditProfile(user.id)}
+                    textValue="Редактировать профиль"
+                    startContent={<AiFillEdit />}
+                    isDisabled={user ? !user?.isEmailVerified : true}
+                  >
+                    Редактировать профиль
+                  </DropdownItem>
+                  <DropdownItem
+                    key="theme"
+                    isReadOnly
+                    className="cursor-default"
+                    startContent={<FaPalette />}
+                    endContent={
+                      <Switch
+                        defaultSelected={resolvedTheme === 'light'}
+                        onChange={e =>
+                          setTheme(e.target.checked ? 'light' : 'dark')
+                        }
+                        color="primary"
+                        size="sm"
+                        thumbIcon={({ isSelected, className }) =>
+                          isSelected ? (
+                            <LuSunMedium className={className} />
+                          ) : (
+                            <FaMoon className={className} />
+                          )
+                        }
+                      ></Switch>
+                    }
+                  >
+                    Тема
+                  </DropdownItem>
+                </DropdownSection>
+                <DropdownItem
+                  key="logout"
+                  color="danger"
+                  startContent={<CiLogout className="text-large" />}
+                  onClick={onOpen}
+                  isDisabled={user ? !user.isEmailVerified : true}
+                >
+                  Выйти
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </NavbarItem>
         </NavbarContent>
       </NextNavbar>

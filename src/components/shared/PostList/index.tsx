@@ -60,11 +60,11 @@ function PostList({
   }
 
   return (
-    <div className={cn(currentFeedType != null && 'md:mt-[-80px]', className)}>
+    <div className={cn(currentFeedType != null && 'lg:mt-[-80px]', className)}>
       {currentFeedType != null && (
         <div
           className={cn(
-            'flex justify-between gap-2 md:sticky md:top-0 md:z-50 md:py-3 mb-4 justify-center'
+            'flex justify-between gap-2 lg:sticky lg:top-0 lg:z-50 lg:py-3 mb-4 justify-center'
           )}
         >
           <FeedTypeDropdown
@@ -84,9 +84,7 @@ function PostList({
         // Отображаем список постов или сообщение о просмотре всех постов
         <>
           {data.length === 0 && allViewed && <ViewedAllPosts />}
-          {data.length === 0 && !allViewed && (
-            <EmptyPosts/>
-          )}
+          {data.length === 0 && !allViewed && <EmptyPosts />}
           {data.length > 0 && (
             <div
               ref={parentRef}

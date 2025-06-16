@@ -1,12 +1,12 @@
 'use client'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import { useUserStore } from '@/store/user.store'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { FaRegSquarePlus, FaUser } from 'react-icons/fa6'
 import { GoHomeFill } from 'react-icons/go'
 import { IoSearch } from 'react-icons/io5'
-import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
 import { useStore } from 'zustand'
+import { useActiveNavLink } from '../../../hooks/useActiveNavLink'
 
 interface MobileNavBarProps {
   onCreatePost: () => void
@@ -14,7 +14,7 @@ interface MobileNavBarProps {
 
 function MobileNavBar({ onCreatePost }: MobileNavBarProps) {
   const pathname = usePathname()
-  const currentUser = useStore(UserSettingsStore, state => state.current)
+  const currentUser = useStore(useUserStore, state => state.user)
 
   const isActive = useActiveNavLink
 
