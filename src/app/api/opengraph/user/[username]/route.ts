@@ -1,4 +1,4 @@
-import { BACKEND_URL } from '@/app/constants'
+import { BACKEND_URL_FOR_OG } from '@/app/constants'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
@@ -13,12 +13,15 @@ export async function GET(
 
     const { username } = await context.params
 
-    const response = await fetch(`${BACKEND_URL}/api/og/user/${username}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-OpenGraph-Secret': process.env.OPENGRAPH_SECRET_PATH,
-      },
-    })
+    const response = await fetch(
+      `${BACKEND_URL_FOR_OG}/api/og/user/${username}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-opengraph-secret': process.env.OPENGRAPH_SECRET_PATH,
+        },
+      }
+    )
 
     if (!response.ok) {
       throw new Error(`Failed to fetch user data: ${response.status}`)

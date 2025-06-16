@@ -1,4 +1,4 @@
-import { BACKEND_URL } from '@/app/constants'
+import { BACKEND_URL_FOR_OG } from '@/app/constants'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
@@ -13,11 +13,11 @@ export async function GET(
 
     const { id } = await context.params
 
-    console.log(`${BACKEND_URL}/api/og/post/${id}`)
-    const response = await fetch(`${BACKEND_URL}/api/og/post/${id}`, {
+    console.log(`${BACKEND_URL_FOR_OG}/api/og/post/${id}`)
+    const response = await fetch(`${BACKEND_URL_FOR_OG}/api/og/post/${id}`, {
       headers: {
         'Content-Type': 'application/json',
-        'X-OpenGraph-Secret': process.env.OPENGRAPH_SECRET_PATH,
+        'x-opengraph-secret': process.env.OPENGRAPH_SECRET_PATH,
       },
     })
 
