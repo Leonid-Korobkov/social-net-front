@@ -105,6 +105,7 @@ export default function ResetPasswordPageClient() {
   // Повторная отправка кода
   const handleResend = async () => {
     await sendCode({ email })
+    setTimer(30)
   }
 
   if (isSendCodeToAuthenticatedUser && isAuthenticated) {
