@@ -119,8 +119,8 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               <div className="flex items-center space-x-2 text-sm text-default-500">
                 <RiMapPinLine className="w-4 h-4" />
                 <span>
-                  {session.location.city}, {session.location.region},{' '}
-                  {session.location.country}
+                  {session.location.city}, {session.location.region1},{' '}
+                  {session.location.country} ({session.location.capital})
                 </span>
               </div>
             </div>
@@ -172,14 +172,14 @@ export const SessionCard: React.FC<SessionCardProps> = ({
             <>
               <ModalHeader className="flex flex-col gap-1">
                 {/* Вывести всю информацию о сессии */}
-                Вы уверены, что хотите удалить сессию {session.browser} на {session.os}
-                ?
+                Вы уверены, что хотите удалить сессию {session.browser} на{' '}
+                {session.os}?
               </ModalHeader>
               <ModalBody>
                 Браузер {session.browserVersion}. Устройство {session.device}.
                 <span className="text-sm text-default-500">
-                  {session.location.city}, {session.location.region},{' '}
-                  {session.location.country}
+                  {session.location.city}, {session.location.region1},{' '}
+                  {session.location.country} ({session.location.capital})
                 </span>
               </ModalBody>
               <ModalFooter>

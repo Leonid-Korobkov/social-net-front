@@ -115,8 +115,10 @@ export interface Session {
   timestamp: string
   location: {
     country: string
-    region: string
     city: string
+    region1: string
+    region2: string
+    capital: string
   }
   lastActivity: string
   isCurrentSession?: boolean
