@@ -105,7 +105,10 @@ export default function SettingsProfile({
 
   const handleSave = async () => {
     try {
-      const promise = updateSettings({ userId: id.toString(), data: settings })
+      const promise = updateSettings({
+        username: user?.userName?.toString() || '',
+        data: settings,
+      })
 
       const toastId = toast.loading('Сохранение...')
 

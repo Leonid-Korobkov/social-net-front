@@ -364,10 +364,10 @@ export const useUpdateUserSettings = () => {
 
   return useMutation({
     mutationFn: async ({
-      userId,
+      username,
       data,
     }: {
-      userId: string
+      username: string
       data: IUserSettings
     }) => {
       try {
@@ -379,10 +379,10 @@ export const useUpdateUserSettings = () => {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
-    onSuccess: (data, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
+    onSuccess: (data, { username }) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.profile(username) })
       queryClient.invalidateQueries({ queryKey: userKeys.current() })
-      queryClient.invalidateQueries({ queryKey: userKeys.posts(userId) })
+      queryClient.invalidateQueries({ queryKey: userKeys.posts(username) })
     },
   })
 }
