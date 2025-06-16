@@ -118,7 +118,6 @@ export interface Session {
     city: string
     region1: string
     region2: string
-    capital: string
   }
   lastActivity: string
   isCurrentSession?: boolean

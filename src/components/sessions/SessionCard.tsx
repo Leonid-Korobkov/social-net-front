@@ -120,7 +120,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
                 <RiMapPinLine className="w-4 h-4" />
                 <span>
                   {session.location.city}, {session.location.region1},{' '}
-                  {session.location.country} ({session.location.capital})
+                  {session.location.country}
                 </span>
               </div>
             </div>
@@ -179,7 +179,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
                 Браузер {session.browserVersion}. Устройство {session.device}.
                 <span className="text-sm text-default-500">
                   {session.location.city}, {session.location.region1},{' '}
-                  {session.location.country} ({session.location.capital})
+                  {session.location.country}
                 </span>
               </ModalBody>
               <ModalFooter>
