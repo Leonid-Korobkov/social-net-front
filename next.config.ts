@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         destination: 'https://social-net-back.onrender.com/api/:path*',
       },
+      {
+        source: '/socket.io/:path*',
+        destination: 'https://social-net-back.onrender.com/socket.io/:path*',
+      },
     ]
   },
   serverExternalPackages: ['autoprefixer'],

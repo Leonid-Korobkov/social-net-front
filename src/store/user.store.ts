@@ -34,7 +34,6 @@ export const UserStore = create<UserState>(set => ({
     set({ user })
   },
   logout: () => {
-    console.log('logou in user store')
     Cookies.remove('sessionId')
     set(initialData)
   },

@@ -34,7 +34,7 @@ export default function VideoPlayer({
   const [progress, setProgress] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true)
 
   const { ref: inViewRef, inView } = useInView({ threshold: 0.6 })
 
