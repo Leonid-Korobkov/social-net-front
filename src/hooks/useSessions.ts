@@ -1,151 +1,54 @@
 import { useGetSessions } from '@/services/api/session.api'
 import { useSessionStore } from '@/store/sessionStore'
-import { useEffect, useCallback, useRef } from 'react'
+import { useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import { useAuth } from './useAuth'
 import { useModalsStore } from '@/store/modals.store'
-import { Session } from 'inspector/promises'
 
 export const useSessions = () => {
   const { refetch: refetchSessions } = useGetSessions()
   const { user } = useAuth()
-  const {
-    currentSessionId,
-    initializeSocket,
-    socket,
-    isConnected,
-    reconnectSocket,
-  } = useSessionStore()
+  const { currentSessionId, initializeSocket, socket } = useSessionStore()
   const { openSessionTermination } = useModalsStore()
-
-  // Используем ref для предотвращения дублирования обработчиков
-  const eventHandlersSet = useRef(false)
 
   // Инициализация WebSocket при наличии пользователя
   useEffect(() => {
-    if (user && !socket) {
-      console.log('Инициализация сокета для пользователя:', user.id)
+    if (user) {
       initializeSocket(user.id)
     }
-  }, [user, socket, initializeSocket])
+  }, [user, initializeSocket, socket])
 
-  // Обработчики событий WebSocket
-  const handleSessionTerminated = useCallback(
-    (data: { sessionId: string; message: string }) => {
-      console.log('Получено уведомление о завершении сессии:', data)
-      openSessionTermination()
-      toast.error(data.message || 'Ваша сессия была завершена')
-    },
-    [openSessionTermination]
-  )
-
-  const handleSessionsUpdated = useCallback(
-    (sessions: Session[]) => {
-      console.log('Получено обновление сессий:', sessions)
-      toast.success('Совершен новый вход в аккаунт с другого устройства!')
-      refetchSessions()
-    },
-    [refetchSessions]
-  )
-
-  const handleConnect = useCallback(() => {
-    console.log('Socket.IO: Соединение установлено')
-    toast.success('Соединение восстановлено', { duration: 2000 })
-  }, [])
-
-  const handleDisconnect = useCallback((reason: any) => {
-    console.log('Socket.IO: Соединение разорвано:', reason)
-
-    // Показываем уведомление только для неожиданных отключений
-    if (reason !== 'io client disconnect') {
-      toast.error('Соединение потеряно. Попытка переподключения...', {
-        duration: 3000,
-      })
-    }
-  }, [])
-
-  const handleReconnect = useCallback(() => {
-    console.log('Socket.IO: Переподключение успешно')
-    toast.success('Соединение восстановлено')
-  }, [])
-
-  const handleReconnectError = useCallback(() => {
-    console.log('Socket.IO: Ошибка переподключения')
-    toast.error('Не удается восстановить соединение')
-  }, [])
-
-  // Подписка на события WebSocket
-  useEffect(() => {
-    if (!socket || eventHandlersSet.current) return
-
-    console.log('Подписка на события сокета')
-
-    // Основные события приложения
-    socket.on('sessionTerminated', handleSessionTerminated)
-    socket.on('sessionsUpdated', handleSessionsUpdated)
-
-    // События соединения для мониторинга
-    socket.on('connect', handleConnect)
-    socket.on('disconnect', handleDisconnect)
-    socket.io.on('reconnect', handleReconnect)
-    socket.io.on('reconnect_error', handleReconnectError)
-
-    eventHandlersSet.current = true
-
-    // Очистка обработчиков событий при размонтировании
-    return () => {
-      if (socket) {
-        console.log('Очистка обработчиков событий сокета')
-
-        socket.off('sessionTerminated', handleSessionTerminated)
-        socket.off('sessionsUpdated', handleSessionsUpdated)
-        socket.off('connect', handleConnect)
-        socket.off('disconnect', handleDisconnect)
-        socket.io.off('reconnect', handleReconnect)
-        socket.io.off('reconnect_error', handleReconnectError)
-
-        eventHandlersSet.current = false
-      }
-    }
-  }, [
-    socket,
-    handleSessionTerminated,
-    handleSessionsUpdated,
-    handleConnect,
-    handleDisconnect,
-    handleReconnect,
-    handleReconnectError,
-  ])
-
-  // Мониторинг состояния соединения
+  // Обработка событий WebSocket
   useEffect(() => {
     if (!socket) return
 
-    const connectionCheckInterval = setInterval(() => {
-      if (!socket.connected && socket.disconnected) {
-        console.warn(
-          'Обнаружено разорванное соединение, попытка переподключения'
-        )
-        reconnectSocket()
-      }
-    }, 30000) // проверяем каждые 30 секунд
+    const handleSessionTerminated = (data: {
+      sessionId: string
+      socketId: string
+    }) => {
+      openSessionTermination()
+      toast.error('Ваша сессия была завершена')
+      // handleLogout()
+      // router.push('/auth')
+    }
 
+    const handleSessionsUpdated = () => {
+      toast.success('Совершен новый вход в аккаунт с другого устройства!')
+      refetchSessions()
+    }
+
+    // Подписка на события WebSocket
+    socket.on('sessionTerminated', handleSessionTerminated)
+    socket.on('sessionsUpdated', handleSessionsUpdated)
+
+    // Очистка обработчиков событий
     return () => {
-      clearInterval(connectionCheckInterval)
+      socket.off('sessionTerminated', handleSessionTerminated)
+      socket.off('sessionsUpdated', handleSessionsUpdated)
     }
-  }, [socket, reconnectSocket])
-
-  // Функция для принудительного переподключения
-  const forceReconnect = useCallback(() => {
-    if (socket) {
-      console.log('Принудительное переподключение сокета')
-      reconnectSocket()
-    }
-  }, [socket, reconnectSocket])
+  }, [socket, currentSessionId])
 
   return {
     currentSessionId,
-    isConnected,
-    forceReconnect,
   }
 }
