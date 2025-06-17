@@ -266,7 +266,7 @@ export default function VideoPlayer({
           <div
             className={cn(
               'absolute bottom-6 left-2 text-xs text-white bg-black/40 px-2 py-1 rounded-lg transition-opacity z-10 opacity-0',
-              isVideoPlaying && 'opacity-100',
+              !isVideoPlaying && 'opacity-100',
               isVideoLoaded ? 'opacity-100' : 'opacity-0'
             )}
           >
