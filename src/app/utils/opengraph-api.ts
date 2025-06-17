@@ -6,7 +6,7 @@ export async function fetchOpenGraphPostData(id: string) {
     const host = headersList.get('host')
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
 
-    const response = await fetch(`${protocol}://${host}/og/post/${id}`, {
+    const response = await fetch(`${protocol}://${host}/api/og/post/${id}`, {
       next: {
         revalidate: 3600, // Кэшируем на 1 час
       },
