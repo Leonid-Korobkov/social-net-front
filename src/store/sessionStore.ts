@@ -40,10 +40,12 @@ export const useSessionStore = create<SessionStore>((set, get) => ({
         },
         withCredentials: true,
         reconnection: true,
-        reconnectionAttempts: 1, // Увеличено количество попыток
+        reconnectionAttempts: 2,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
         timeout: 20000,
+        // Для Vercel/Render лучше использовать только polling
+        transports: ['polling'],
       })
 
       socket.on('connect', () => {
