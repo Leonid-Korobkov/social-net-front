@@ -88,6 +88,18 @@ export default function SettingsProfile({
     showLocation: user?.showLocation ?? false,
     showDateOfBirth: user?.showDateOfBirth ?? false,
     reduceAnimation: user?.reduceAnimation ?? false,
+    enablePushNotifications: user?.enablePushNotifications ?? false,
+    enableEmailNotifications: user?.enableEmailNotifications ?? false,
+    notifyOnNewPostPush: user?.notifyOnNewPostPush ?? false,
+    notifyOnNewPostEmail: user?.notifyOnNewPostEmail ?? false,
+    notifyOnNewCommentPush: user?.notifyOnNewCommentPush ?? false,
+    notifyOnNewCommentEmail: user?.notifyOnNewCommentEmail ?? false,
+    notifyOnLikePush: user?.notifyOnLikePush ?? false,
+    notifyOnLikeEmail: user?.notifyOnLikeEmail ?? false,
+    notifyOnRepostPush: user?.notifyOnRepostPush ?? false,
+    notifyOnRepostEmail: user?.notifyOnRepostEmail ?? false,
+    notifyOnNewFollowerPush: user?.notifyOnNewFollowerPush ?? false,
+    notifyOnNewFollowerEmail: user?.notifyOnNewFollowerEmail ?? false,
   })
 
   useEffect(() => {
@@ -350,6 +362,156 @@ export default function SettingsProfile({
                       </Radio>
                     </div>
                   </RadioGroup>
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+                  <h3>Уведомления</h3>
+                </CardHeader>
+                <CardBody className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span>Push-уведомления</span>
+                    <Switch
+                      color="primary"
+                      isSelected={settings.enablePushNotifications}
+                      onValueChange={() =>
+                        handleToggle('enablePushNotifications')
+                      }
+                    />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Email-уведомления</span>
+                    <Switch
+                      color="primary"
+                      isSelected={settings.enableEmailNotifications}
+                      onValueChange={() =>
+                        handleToggle('enableEmailNotifications')
+                      }
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+                  <h3>Уведомления по событиям</h3>
+                </CardHeader>
+                <CardBody className="space-y-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center gap-1">
+                      <span className="text-gray-400">Тип уведомления</span>
+                      <div className="flex gap-3">
+                        <span className="text-gray-400">Push</span>
+                        <span className="text-gray-400">Email</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center gap-1">
+                      <span>
+                        Новый пост от пользователя, на которого я подписан
+                      </span>
+                      <div className="flex gap-2">
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnNewPostPush}
+                          onValueChange={() =>
+                            handleToggle('notifyOnNewPostPush')
+                          }
+                          size="sm"
+                        ></Switch>
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnNewPostEmail}
+                          onValueChange={() =>
+                            handleToggle('notifyOnNewPostEmail')
+                          }
+                          size="sm"
+                        ></Switch>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Новый комментарий к моему посту</span>
+                      <div className="flex gap-2">
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnNewCommentPush}
+                          onValueChange={() =>
+                            handleToggle('notifyOnNewCommentPush')
+                          }
+                          size="sm"
+                        ></Switch>
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnNewCommentEmail}
+                          onValueChange={() =>
+                            handleToggle('notifyOnNewCommentEmail')
+                          }
+                          size="sm"
+                        ></Switch>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Лайк к моему посту</span>
+                      <div className="flex gap-2">
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnLikePush}
+                          onValueChange={() => handleToggle('notifyOnLikePush')}
+                          size="sm"
+                        ></Switch>
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnLikeEmail}
+                          onValueChange={() =>
+                            handleToggle('notifyOnLikeEmail')
+                          }
+                          size="sm"
+                        ></Switch>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Репост к моему посту</span>
+                      <div className="flex gap-2">
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnRepostPush}
+                          onValueChange={() =>
+                            handleToggle('notifyOnRepostPush')
+                          }
+                          size="sm"
+                        ></Switch>
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnRepostEmail}
+                          onValueChange={() =>
+                            handleToggle('notifyOnRepostEmail')
+                          }
+                          size="sm"
+                        ></Switch>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Новый подписчик</span>
+                      <div className="flex gap-2">
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnNewFollowerPush}
+                          onValueChange={() =>
+                            handleToggle('notifyOnNewFollowerPush')
+                          }
+                          size="sm"
+                        ></Switch>
+                        <Switch
+                          color="primary"
+                          isSelected={settings.notifyOnNewFollowerEmail}
+                          onValueChange={() =>
+                            handleToggle('notifyOnNewFollowerEmail')
+                          }
+                          size="sm"
+                        ></Switch>
+                      </div>
+                    </div>
+                  </div>
                 </CardBody>
               </Card>
 

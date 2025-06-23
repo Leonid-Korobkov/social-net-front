@@ -6,6 +6,7 @@ import { useUserStore } from '@/store/user.store'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import axios from 'axios'
 import { useEffect } from 'react'
+import { User } from '@/store/types'
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -56,8 +57,25 @@ function PreLoader() {
       UserSettingsStore.setState({
         reduceAnimation: user.reduceAnimation,
       })
-      // Подписываем пользователя на push-уведомления
-      subscribeUserToPush()
+      // Push-уведомления: подписка или отписка
+      if (user.enablePushNotifications) {
+        subscribeUserToPush()
+      } else {
+        // Если выключено — отписываем
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(async reg => {
+            const subscription = await reg.pushManager.getSubscription()
+            if (subscription) {
+              await axios.post(
+                `/apis/push/unsubscribe`,
+                { endpoint: subscription.endpoint },
+                { withCredentials: true }
+              )
+              await subscription.unsubscribe()
+            }
+          })
+        }
+      }
     }
 
     useUserStore.setState({ isLoadingUser: isLoading })
