@@ -23,9 +23,7 @@ async function subscribeUserToPush() {
   try {
     const reg = await navigator.serviceWorker.register('/sw.js')
 
-    const data = await axios.get(
-      `${BACKEND_URL_FOR_WEBPUSH}/api/push/public-key`
-    )
+    const data = await axios.get(`/apis/push/public-key`)
 
     let subscription = await reg.pushManager.getSubscription()
     if (!subscription) {
@@ -35,13 +33,9 @@ async function subscribeUserToPush() {
       })
     }
     if (subscription) {
-      await axios.post(
-        `${BACKEND_URL_FOR_WEBPUSH}/api/push/subscribe`,
-        subscription,
-        {
-          withCredentials: true,
-        }
-      )
+      await axios.post(`/apis/push/subscribe`, subscription, {
+        withCredentials: true,
+      })
     }
   } catch (e) {
     console.error('Ошибка при подписке на push', e)
