@@ -1,9 +1,46 @@
 'use client'
+import { BASE_URL } from '@/app/constants'
 import { useSessions } from '@/hooks/useSessions'
 import { useGetCurrentUser } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
 import { UserSettingsStore } from '@/store/userSettings.store'
+import axios from 'axios'
 import { useEffect } from 'react'
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+
+async function subscribeUserToPush() {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js')
+
+    const data = await axios.get(`${BASE_URL}/api/push/public-key`)
+
+    let subscription = await reg.pushManager.getSubscription()
+    if (!subscription) {
+      subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(data.data.publicKey),
+      })
+    }
+    if (subscription) {
+      await axios.post(`${BASE_URL}/api/push/subscribe`, subscription, {
+        withCredentials: true,
+      })
+    }
+  } catch (e) {
+    console.error('Ошибка при подписке на push', e)
+  }
+}
 
 function PreLoader() {
   const { error, data: user, isLoading, isSuccess } = useGetCurrentUser()
@@ -19,6 +56,8 @@ function PreLoader() {
       UserSettingsStore.setState({
         reduceAnimation: user.reduceAnimation,
       })
+      // Подписываем пользователя на push-уведомления
+      subscribeUserToPush()
     }
 
     useUserStore.setState({ isLoadingUser: isLoading })
