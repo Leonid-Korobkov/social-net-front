@@ -3,6 +3,11 @@ export const BASE_URL =
     ? process.env.NEXT_PUBLIC_PROD_BACKEND_URL
     : process.env.NEXT_PUBLIC_DEV_BACKEND_URL
 
+export const BACKEND_URL_FOR_WEBPUSH =
+  process.env.NODE_ENV === 'production'
+    ? process.env.NEXT_PUBLIC_PROD_BACKEND_URL_FOR_WEBPUSH
+    : process.env.NEXT_PUBLIC_DEV_BACKEND_URL_FOR_WEBPUSH
+
 export const BACKEND_URL =
   process.env.NODE_ENV === 'production'
     ? process.env.PROD_BACKEND_URL
