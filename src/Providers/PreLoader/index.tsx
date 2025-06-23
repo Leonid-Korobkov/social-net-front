@@ -1,5 +1,5 @@
 'use client'
-import { BASE_URL } from '@/app/constants'
+import { BACKEND_URL_FOR_WEBPUSH } from '@/app/constants'
 import { useSessions } from '@/hooks/useSessions'
 import { useGetCurrentUser } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
@@ -23,7 +23,9 @@ async function subscribeUserToPush() {
   try {
     const reg = await navigator.serviceWorker.register('/sw.js')
 
-    const data = await axios.get(`${BASE_URL}/api/push/public-key`)
+    const data = await axios.get(
+      `${BACKEND_URL_FOR_WEBPUSH}/api/push/public-key`
+    )
 
     let subscription = await reg.pushManager.getSubscription()
     if (!subscription) {
@@ -33,9 +35,13 @@ async function subscribeUserToPush() {
       })
     }
     if (subscription) {
-      await axios.post(`${BASE_URL}/api/push/subscribe`, subscription, {
-        withCredentials: true,
-      })
+      await axios.post(
+        `${BACKEND_URL_FOR_WEBPUSH}/api/push/subscribe`,
+        subscription,
+        {
+          withCredentials: true,
+        }
+      )
     }
   } catch (e) {
     console.error('Ошибка при подписке на push', e)
