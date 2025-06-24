@@ -6,7 +6,7 @@ import {
   PopoverContent,
 } from '@heroui/react'
 import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import UserPreviewPopover from './UserPreviewPopover'
 import { useGetUserById } from '@/services/api/user.api'
 
@@ -39,6 +39,21 @@ function User({
     isLoading: isLoadingUser,
   } = useGetUserById(username, false)
 
+  // Детектируем десктоп без тач-скрина
+  const [isDesktopHover, setIsDesktopHover] = useState(true)
+  useEffect(() => {
+    const check = () => {
+      if (typeof window !== 'undefined') {
+        setIsDesktopHover(
+          window.matchMedia('(hover: hover) and (pointer: fine)').matches
+        )
+      }
+    }
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   // Обработчики наведения
   const handleMouseEnter = () => {
     refetchUser()
@@ -48,6 +63,17 @@ function User({
   const handleMouseLeave = () => {
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => setIsOpen(false), 200)
+  }
+
+  if (!isDesktopHover) {
+    return (
+      <NextUiUser
+        name={username}
+        className={className}
+        description={description}
+        avatarProps={{ src: getOptimizedUrl() }}
+      />
+    )
   }
 
   return (
@@ -63,7 +89,7 @@ function User({
             />
           </span>
         </PopoverTrigger>
-        <PopoverContent className='p-0'>
+        <PopoverContent className="p-0">
           <UserPreviewPopover
             isLoading={isLoadingUser}
             username={userData?.userName}
