@@ -44,7 +44,7 @@ function MetaInfo({
   const [isLoading, setIsLoading] = useState(false)
   const [prevCount, setPrevCount] = useState(count)
 
-  const iconSizeClass = size === 'small' ? 'text-xs' : 'text-base'
+  const iconSizeClass = size === 'small' ? 'text-sm' : 'text-md'
   const textSizeClass = size === 'small' ? 'text-xs' : 'text-sm'
 
   // Новый форматированный count
