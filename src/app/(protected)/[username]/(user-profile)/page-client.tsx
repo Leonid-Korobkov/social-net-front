@@ -168,8 +168,9 @@ function UserProfileClient({ params }: PageProps) {
                   }
                   title={`Профиль ${user.name}`}
                   text={`Посмотрите профиль ${user.name} в социальной сети Zling!`}
-                  buttonText="Поделиться"
-                  className="w-full"
+                  iconOnly
+                  className="justify-center"
+                  buttonText='Поделиться'
                 />
               )}
             </div>

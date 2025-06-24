@@ -28,7 +28,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { FaEllipsisVertical, FaRegCopy, FaRegHeart } from 'react-icons/fa6'
-import { LuSend } from 'react-icons/lu'
+import { FiShare } from 'react-icons/fi'
 import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useStore } from 'zustand'
 import { ICard } from '../Card'
@@ -176,7 +176,7 @@ function CardActionWidget({
           <DropdownItem
             key="share"
             color="primary"
-            startContent={<LuSend />}
+            startContent={<FiShare />}
             onClick={handleShareClick}
             isDisabled={isSharing}
           >

@@ -10,12 +10,13 @@ import {
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { memo, useEffect, useState, useCallback } from 'react'
+import { memo, useState } from 'react'
 import { FaCircleInfo, FaRegComment } from 'react-icons/fa6'
-import { IoEyeOutline } from 'react-icons/io5'
-import { LuSend } from 'react-icons/lu'
+import { IoBookmarkOutline } from 'react-icons/io5'
 import { RiUserFollowFill } from 'react-icons/ri'
 
+import RepostIcon from '@/components/icons/Repost'
+import ViewsIcon from '@/components/icons/Views'
 import CollapsibleText from '@/components/shared/CollapsibleText'
 import AnimatedLike from '@/components/ui/AnimatedLike'
 import RawHTML from '@/components/ui/EscapeHtml'
@@ -25,14 +26,17 @@ import { useToggleCommentLike } from '@/services/api/commentLike.api'
 import { useCreateLike, useDeleteLike } from '@/services/api/like.api'
 import { useIncrementShareCount } from '@/services/api/post.api'
 import { CommentLike, Like } from '@/store/types'
-import { UserSettingsStore } from '@/store/userSettings.store'
+import { extractFirstLink } from '@/utils/extractLink'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import { formatDistance, Locale } from 'date-fns'
 import * as locales from 'date-fns/locale'
 import { useTopLoader } from 'nextjs-toploader'
 import CardActionWidget from '../CardActionWidget'
+import LinkPreview from '../LinkPreview'
 import MediaCarousel from '../MediaCarousel'
 import MediaModal from '../MediaModal'
+import ShareDropdown from '@/components/ui/ShareDropdown'
+import toast from 'react-hot-toast'
 
 export interface ICard {
   avatarUrl: string
@@ -46,6 +50,7 @@ export interface ICard {
   id?: string
   cardFor: 'comment' | 'post' | 'current-post' | 'search' // карточка комментария, карточка поста, карточка текущего поста
   likedByUser?: boolean
+  isBookmarkedByUser?: boolean
   isFollowing?: boolean
   likes?: Like[] | CommentLike[]
   refetch?: () => void
@@ -80,6 +85,7 @@ const Card = memo(
     commentsCount = 0,
     cardFor = 'post',
     likedByUser = false,
+    isBookmarkedByUser = false,
     createdAt,
     commentId = '',
     isFollowing = false,
@@ -140,6 +146,16 @@ const Card = memo(
         setIsLikeInProgress(false)
       }
     }
+
+    const handleRepost = async () => {
+      toast.error('Репосты пока не поддерживаются. Скоро будут добавлены')
+    }
+
+    const handleBookmark = async () => {
+      toast.error('Закладки пока не поддерживаются. Скоро будут добавлены')
+    }
+
+    const firstLink = extractFirstLink(content)
 
     return (
       <>
@@ -268,6 +284,10 @@ const Card = memo(
                   title={`Переход на страницу автора ${username}`}
                 />
               ))}
+            {/* OpenGraph предпросмотр */}
+            {firstLink && (!media || media.length === 0) && (
+              <LinkPreview url={firstLink} />
+            )}
             {/* Отображаем медиафайлы, если они есть */}
             {media && media.length > 0 && (
               <MediaCarousel
@@ -281,45 +301,58 @@ const Card = memo(
             )}
           </CardBody>
           {cardFor !== 'search' && (
-            <CardFooter className="gap-3 -ml-2 p-3 pt-0">
+            <CardFooter className="gap-3 p-3 pt-0 pb-1">
               <div className="flex items-center gap-1 w-full">
-                <AnimatedLike
-                  isLiked={likedByUser}
-                  count={likesCount}
-                  onClick={handleLike}
-                />
-                {cardFor === 'current-post' ? (
-                  <MetaInfo count={commentsCount} Icon={FaRegComment} />
-                ) : cardFor !== 'comment' ? (
-                  <Link
-                    href={`/${username}/post/${id}`}
-                    onClick={onClick}
-                    title={`Переход к посту ${content}`}
-                  >
+                <div
+                  className="flex items-center gap-2 flex-1 mr-3 -ml-2"
+                  style={{ columnCount: 4 }}
+                >
+                  <AnimatedLike
+                    isLiked={likedByUser}
+                    count={likesCount}
+                    onClick={handleLike}
+                  />
+                  {cardFor === 'current-post' ? (
                     <MetaInfo count={commentsCount} Icon={FaRegComment} />
-                  </Link>
-                ) : null}
-                <div className="flex flex-1">
+                  ) : cardFor !== 'comment' ? (
+                    <Link
+                      href={`/${username}/post/${id}`}
+                      onClick={onClick}
+                      title={`Переход к посту ${content}`}
+                    >
+                      <MetaInfo count={commentsCount} Icon={FaRegComment} />
+                    </Link>
+                  ) : null}
+                  {/* <div className="flex flex-1"> */}
+
+                  {cardFor !== 'comment' && (
+                    <MetaInfo count={viewCount} Icon={ViewsIcon} />
+                  )}
                   <MetaInfo
-                    username={username}
-                    count={shareCount}
-                    Icon={LuSend}
-                    postId={id}
-                    shareTitle={`Пост от ${username} в Zling`}
-                    shareText={
+                    onClick={handleRepost}
+                    count={0}
+                    Icon={RepostIcon}
+                  />
+                  {/* </div> */}
+                </div>
+                <div className="flex items-center gap-1 -mr-2">
+                  <MetaInfo
+                    onClick={handleBookmark}
+                    count={0}
+                    Icon={IoBookmarkOutline}
+                  />
+                  <ShareDropdown
+                    url={`/${username}/post/${id}`}
+                    title={`Пост от ${username} в Zling`}
+                    text={
                       content.substring(0, 100) +
                       (content.length > 100 ? '...' : '')
                     }
-                    onShare={() => incrementShareCount(id)}
+                    count={shareCount}
+                    className="p-0 min-w-0"
+                    onShareSuccess={() => incrementShareCount(id)}
                   />
                 </div>
-                {cardFor !== 'comment' && (
-                  <MetaInfo
-                    count={viewCount}
-                    Icon={IoEyeOutline}
-                    size="small"
-                  />
-                )}
               </div>
             </CardFooter>
           )}

@@ -156,7 +156,8 @@ export default function CreatePostPage() {
             >
               {characterCount} / 10000 символов
               <br />
-              {wordCount} {pluralizeRu(wordCount, ['слово', 'слова', 'слов'])}
+              {wordCount} {
+              (wordCount, ['слово', 'слова', 'слов'])}
             </div>
 
             <div className="flex gap-2 flex-col">

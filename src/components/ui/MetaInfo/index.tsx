@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { IconType } from 'react-icons'
 import { FaHeart, FaRegHeart } from 'react-icons/fa6'
+import { formatNumberShort } from '@/utils/formatNumberShort'
 
 interface IMetaInfo {
   username?: string
@@ -14,6 +15,7 @@ interface IMetaInfo {
   className?: string
   classNameForIcon?: string
   isLiked?: boolean
+  isBookmarked?: boolean
   size?: 'small' | 'normal'
   onClick?: () => void
   postId?: string
@@ -28,6 +30,7 @@ function MetaInfo({
   Icon,
   classNameForIcon,
   isLiked,
+  isBookmarked,
   className = '',
   size = 'normal',
   onClick,
@@ -41,11 +44,13 @@ function MetaInfo({
   const [isLoading, setIsLoading] = useState(false)
   const [prevCount, setPrevCount] = useState(count)
 
-  const iconSizeClass = size === 'small' ? 'text-sm' : 'text-xl'
-  const textSizeClass = size === 'small' ? 'text-xs' : 'text-l'
+  const iconSizeClass = size === 'small' ? 'text-xs' : 'text-base'
+  const textSizeClass = size === 'small' ? 'text-xs' : 'text-sm'
 
-  const countStr = count.toString()
-  const prevCountStr = prevCount.toString()
+  // Новый форматированный count
+  const formattedCount = formatNumberShort(count)
+
+  const countStr = formattedCount.toString()
   const staticPart = countStr.slice(0, -1)
   const animatedDigit = countStr.slice(-1)
 
@@ -105,13 +110,13 @@ function MetaInfo({
       </div>
       {reduce ? (
         <span
-          className={`select-none font-semibold text-default-400 ${textSizeClass}`}
+          className={`select-none font-medium text-default-400 ${textSizeClass}`}
         >
-          {count}
+          {formattedCount}
         </span>
       ) : (
         <div
-          className={`select-none font-semibold text-default-400 ${textSizeClass} flex items-center`}
+          className={`select-none font-medium text-default-400 ${textSizeClass} flex items-center`}
         >
           {staticPart}
           <AnimatePresence mode="popLayout" initial={false}>

@@ -43,7 +43,7 @@ type SearchComment = Comment & {
 }
 
 export interface SearchResponse {
-  users: (User & { _count: { followers: number } })[]
+  users: (User & { _count: { followers: number, following: number } })[]
   posts: Post[]
   comments: SearchComment[]
 }

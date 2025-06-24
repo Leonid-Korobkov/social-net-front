@@ -28,6 +28,7 @@ export type User = {
 
   _count: {
     followers: number
+    following: number
   }
 
   isEmailVerified: boolean

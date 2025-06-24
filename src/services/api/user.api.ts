@@ -282,7 +282,7 @@ export const useGetCurrentUser = () => {
 }
 
 // Хук для получения пользователя по ID
-export const useGetUserById = (id: string) => {
+export const useGetUserById = (id: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: userKeys.profile(id.toString()),
     retry: 0,
@@ -293,6 +293,7 @@ export const useGetUserById = (id: string) => {
         throw handleAxiosError(error as AxiosError<ErrorResponseData>)
       }
     },
+    enabled: enabled,
   })
 }
 

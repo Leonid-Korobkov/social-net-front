@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og'
 import { Post } from '@/store/types'
 import { FaComment, FaHeart } from 'react-icons/fa6'
 import { stripHtml } from '@/utils/stripHtml'
-import { LuSend } from 'react-icons/lu'
+import { FiShare } from 'react-icons/fi'
 import { FaCalendarAlt } from 'react-icons/fa'
 import { fetchOpenGraphPostData } from '@/app/utils/opengraph-api'
 import {
@@ -358,7 +358,7 @@ export default async function Image({ params }: { params: { id: string } }) {
                   </span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <LuSend color="#663399" />
+                  <FiShare color="#663399" />
                   <span
                     style={{
                       display: 'flex',
