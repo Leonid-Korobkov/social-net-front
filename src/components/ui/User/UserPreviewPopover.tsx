@@ -70,12 +70,12 @@ const UserPreviewPopover: React.FC<UserPreviewPopoverProps> = ({
       <CardHeader className="justify-between items-start">
         <div className="flex gap-3 flex-col">
           {isLoading ? (
-            <Skeleton className="w-14 h-14 rounded-full" />
+            <Skeleton className="w-18 h-18 rounded-full" />
           ) : (
             <Avatar
               isBordered
               radius="full"
-              className="w-14 h-14"
+              className="w-18 h-18"
               src={avatarUrl}
             />
           )}
