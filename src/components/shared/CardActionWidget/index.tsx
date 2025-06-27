@@ -283,7 +283,7 @@ function CardActionWidget({
                           <Divider className="mb-2" />
                           <div className="flex items-start justify-between gap-1">
                             <User
-                              username={like.user?.name || 'Аноним'}
+                              username={like.user?.userName || 'Аноним'}
                               avatarUrl={like.user?.avatarUrl || ''}
                               description={
                                 <div className="flex items-center gap-1">
