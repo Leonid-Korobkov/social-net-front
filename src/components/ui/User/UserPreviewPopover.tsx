@@ -75,7 +75,7 @@ const UserPreviewPopover: React.FC<UserPreviewPopoverProps> = ({
             <Avatar
               isBordered
               radius="full"
-              className="w-18 h-18 text-large"
+              className="w-14 h-14"
               src={avatarUrl}
             />
           )}
