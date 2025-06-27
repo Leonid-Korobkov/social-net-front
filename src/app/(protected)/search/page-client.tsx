@@ -206,6 +206,7 @@ function SearchClient() {
                           isFollowing={post.isFollowing}
                           ogImageUrl={post.ogImageUrl}
                           ogTitle={post.ogTitle}
+                          media={post.media}
                           ogDescr={post.ogDescr}
                           ogUrl={post.ogUrl}
                         />
@@ -304,6 +305,7 @@ function SearchClient() {
                     avatarUrl={post.author?.avatarUrl || ''}
                     cardFor={'search'}
                     content={post.content}
+                    media={post.media}
                     username={post.author?.userName || ''}
                     likedByUser={post.likedByUser}
                     commentsCount={post.commentCount}
