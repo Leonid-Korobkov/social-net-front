@@ -111,7 +111,17 @@ function User({
               }
               className={className}
               description={description}
-              avatarProps={{ src: getOptimizedUrl() }}
+              avatarProps={{
+                src: getOptimizedUrl(),
+                onClick: (e: React.MouseEvent) => {
+                  refetchUser()
+                  e.stopPropagation()
+                  e.preventDefault()
+                  setWasOpenedByButton(true)
+                  setIsOpen(true)
+                },
+                style: { cursor: 'pointer' },
+              }}
             />
             <button
               type="button"
