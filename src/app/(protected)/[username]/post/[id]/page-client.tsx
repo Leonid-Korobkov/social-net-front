@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation'
 import { use, useEffect, useState } from 'react'
 import CommentCreateRichModal from '@/components/shared/CommentCreate/CommentCreateRichModal'
 import { Button } from '@heroui/react'
+import { usePreviewPostStore } from '@/store/previewPost.store'
 
 type PageProps = {
   params: { id: string; username: string }
@@ -22,6 +23,8 @@ function CurrentPost({
   params: paramsIn,
   searchParams: searchParamsIn,
 }: PageProps) {
+  const previewPost = usePreviewPostStore(state => state.post)
+  const clearPreviewPost = usePreviewPostStore(state => state.clear)
   const {
     data: comments,
     fetchNextPage: fetchNextPageComments,
@@ -37,6 +40,16 @@ function CurrentPost({
   const router = useRouter()
   const { data, isLoading } = useGetPostById(paramsIn.id)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Состояние для поста: сначала берем из previewPost, потом из data
+  const [post, setPost] = useState<any>(previewPost)
+
+  useEffect(() => {
+    if (data) {
+      setPost(data)
+      clearPreviewPost()
+    }
+  }, [data])
 
   // Скролл к комменту при открытии страницы
   useEffect(() => {
@@ -55,7 +68,7 @@ function CurrentPost({
     }
   }, [commentId, isLoading, data])
 
-  if (isLoading) {
+  if (isLoading && !post) {
     return (
       <>
         <GoBack />
@@ -72,8 +85,9 @@ function CurrentPost({
     )
   }
 
-  if (!data) return <h1>Поста не существует</h1>
+  if (!data && !post) return <h1>Поста не существует</h1>
 
+  // Берем данные из post (preview или настоящие)
   const {
     content,
     author,
@@ -87,18 +101,27 @@ function CurrentPost({
     viewCount,
     shareCount,
     media,
-  } = data
+    username,
+    avatarUrl,
+    likesCount,
+    commentsCount,
+    cardFor,
+    ogImageUrl,
+    ogTitle,
+    ogDescr,
+    ogUrl,
+  } = post || {}
 
   return (
     <>
       <GoBack />
       <Card
-        cardFor="current-post"
-        avatarUrl={author?.avatarUrl ?? ''}
+        cardFor={cardFor || 'current-post'}
+        avatarUrl={avatarUrl ?? author?.avatarUrl ?? ''}
         content={content}
-        username={author?.userName ?? ''}
-        likesCount={likeCount}
-        commentsCount={commentCount}
+        username={username ?? author?.userName ?? ''}
+        likesCount={likesCount ?? likeCount}
+        commentsCount={commentsCount ?? commentCount}
         authorId={authorId}
         id={id}
         likedByUser={likedByUser}
@@ -107,6 +130,10 @@ function CurrentPost({
         shareCount={shareCount}
         viewCount={viewCount}
         media={media}
+        ogImageUrl={ogImageUrl}
+        ogTitle={ogTitle}
+        ogDescr={ogDescr}
+        ogUrl={ogUrl}
       />
       {/* <div className="mt-10">
         <Button color="primary" onClick={() => setIsModalOpen(true)}>

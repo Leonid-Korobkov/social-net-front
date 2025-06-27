@@ -71,6 +71,10 @@ export type Post = {
   isFollowing?: boolean
   media?: string[] // Массив URL медиафайлов
   idEdited?: boolean
+  ogImageUrl?: string | null
+  ogTitle?: string | null
+  ogDescr?: string | null
+  ogUrl?: string | null
 }
 
 export type Like = {

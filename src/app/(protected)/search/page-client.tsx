@@ -204,6 +204,10 @@ function SearchClient() {
                           createdAt={post.createdAt}
                           likesCount={post.likeCount}
                           isFollowing={post.isFollowing}
+                          ogImageUrl={post.ogImageUrl}
+                          ogTitle={post.ogTitle}
+                          ogDescr={post.ogDescr}
+                          ogUrl={post.ogUrl}
                         />
                       ))}
                     </div>
@@ -306,6 +310,10 @@ function SearchClient() {
                     createdAt={post.createdAt}
                     likesCount={post.likeCount}
                     isFollowing={post.isFollowing}
+                    ogImageUrl={post.ogImageUrl}
+                    ogTitle={post.ogTitle}
+                    ogDescr={post.ogDescr}
+                    ogUrl={post.ogUrl}
                   />
                 ))}
                 {hasNextPage && (

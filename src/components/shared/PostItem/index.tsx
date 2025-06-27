@@ -28,6 +28,10 @@ const PostItem = ({
     viewCount = 0,
     shareCount = 0,
     media = [],
+    ogImageUrl = '',
+    ogTitle = '',
+    ogDescr = '',
+    ogUrl = '',
   } = post
 
   // Используем useInView для отслеживания видимости поста
@@ -69,6 +73,10 @@ const PostItem = ({
         viewCount={viewCount}
         shareCount={shareCount}
         media={media}
+        ogImageUrl={ogImageUrl}
+        ogTitle={ogTitle}
+        ogDescr={ogDescr}
+        ogUrl={ogUrl}
       />
     </motion.div>
   )

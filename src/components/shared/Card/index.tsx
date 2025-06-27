@@ -37,6 +37,7 @@ import MediaCarousel from '../MediaCarousel'
 import MediaModal from '../MediaModal'
 import ShareDropdown from '@/components/ui/ShareDropdown'
 import toast from 'react-hot-toast'
+import { usePreviewPostStore } from '@/store/previewPost.store'
 
 export interface ICard {
   avatarUrl: string
@@ -58,6 +59,10 @@ export interface ICard {
   viewCount?: number
   shareCount?: number
   media?: any[]
+  ogImageUrl?: string | null
+  ogTitle?: string | null
+  ogDescr?: string | null
+  ogUrl?: string | null
 }
 
 // Функция для получения локали
@@ -93,6 +98,10 @@ const Card = memo(
     viewCount = 0,
     shareCount = 0,
     media = [],
+    ogImageUrl,
+    ogTitle,
+    ogDescr,
+    ogUrl,
   }: ICard) => {
     const { mutateAsync: likePost } = useCreateLike()
     const { mutateAsync: unlikePost } = useDeleteLike()
@@ -263,6 +272,28 @@ const Card = memo(
                 if ((e.target as HTMLElement).closest('a')) {
                   return
                 } else {
+                  // Сохраняем данные поста в zustand store для оптимистичной навигации
+                  usePreviewPostStore.getState().setPost({
+                    avatarUrl,
+                    username,
+                    authorId,
+                    content,
+                    likesCount,
+                    commentsCount,
+                    createdAt,
+                    id,
+                    cardFor,
+                    likedByUser,
+                    isBookmarkedByUser,
+                    isFollowing,
+                    viewCount,
+                    shareCount,
+                    media,
+                    ogImageUrl,
+                    ogTitle,
+                    ogDescr,
+                    ogUrl,
+                  })
                   loader.start()
                   router.push(`/${username}/post/${id}`)
                 }
@@ -286,7 +317,14 @@ const Card = memo(
               ))}
             {/* OpenGraph предпросмотр */}
             {firstLink && (!media || media.length === 0) && (
-              <LinkPreview url={firstLink} />
+              <LinkPreview
+                url={firstLink}
+                postId={id}
+                ogImageUrl={ogImageUrl}
+                ogTitle={ogTitle}
+                ogDescr={ogDescr}
+                ogUrl={ogUrl}
+              />
             )}
             {/* Отображаем медиафайлы, если они есть */}
             {media && media.length > 0 && (
@@ -302,9 +340,9 @@ const Card = memo(
           </CardBody>
           {cardFor !== 'search' && (
             <CardFooter className="gap-3 p-3 pt-0 pb-1">
-              <div className="flex items-center gap-1 w-full">
+              <div className="flex items-center gap-1 w-full justify-between">
                 <div
-                  className="flex items-center gap-2 flex-1 mr-3 -ml-2"
+                  className="grid grid-cols-[1fr_1fr_1fr_1fr] sm:gap-2 -ml-2 "
                   style={{ columnCount: 4 }}
                 >
                   <AnimatedLike
@@ -317,7 +355,32 @@ const Card = memo(
                   ) : cardFor !== 'comment' ? (
                     <Link
                       href={`/${username}/post/${id}`}
-                      onClick={onClick}
+                      onClick={e => {
+                        // Сохраняем данные поста в zustand store для оптимистичной навигации
+                        usePreviewPostStore.getState().setPost({
+                          avatarUrl,
+                          username,
+                          authorId,
+                          content,
+                          likesCount,
+                          commentsCount,
+                          createdAt,
+                          id,
+                          cardFor,
+                          likedByUser,
+                          isBookmarkedByUser,
+                          isFollowing,
+                          viewCount,
+                          shareCount,
+                          media,
+                          ogImageUrl,
+                          ogTitle,
+                          ogDescr,
+                          ogUrl,
+                        })
+                        console.log(usePreviewPostStore.getState())
+                        if (typeof onClick === 'function') onClick()
+                      }}
                       title={`Переход к посту ${content}`}
                     >
                       <MetaInfo count={commentsCount} Icon={FaRegComment} />
@@ -325,17 +388,17 @@ const Card = memo(
                   ) : null}
                   {/* <div className="flex flex-1"> */}
 
-                  {cardFor !== 'comment' && (
-                    <MetaInfo count={viewCount} Icon={ViewsIcon} />
-                  )}
                   <MetaInfo
                     onClick={handleRepost}
                     count={0}
                     Icon={RepostIcon}
                   />
+                  {cardFor !== 'comment' && (
+                    <MetaInfo count={viewCount} Icon={ViewsIcon} />
+                  )}
                   {/* </div> */}
                 </div>
-                <div className="flex items-center gap-1 -mr-2">
+                <div className="flex items-center gap-0 -mr-2">
                   <MetaInfo
                     onClick={handleBookmark}
                     count={0}

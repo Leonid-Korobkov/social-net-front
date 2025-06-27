@@ -2,6 +2,7 @@
 import { ApiErrorResponse } from '@/services/ApiConfig'
 import { useUpdateUser } from '@/services/api/user.api'
 import { User } from '@/store/types'
+import type { Selection } from '@heroui/react'
 import {
   Alert,
   Button,
@@ -13,9 +14,12 @@ import {
   ModalFooter,
   ModalHeader,
   Textarea,
+  Select,
+  SelectItem,
+  SharedSelection,
 } from '@heroui/react'
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { IoMdMail } from 'react-icons/io'
@@ -45,13 +49,19 @@ function EditProfile({
   params,
 }: IEditProfile) {
   const { mutateAsync: updateUser, isPending: isLoading } = useUpdateUser()
-
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | string | null>(null)
   const { id } = params
   const { getOptimizedUrl } = useCloudinaryImage({
     src: user?.avatarUrl,
   })
+
+  // стейт для дня, месяца, года
+  const [selectedDay, setSelectedDay] = React.useState<Selection>(new Set([]))
+  const [selectedMonth, setSelectedMonth] = React.useState<Selection>(
+    new Set([])
+  )
+  const [selectedYear, setSelectedYear] = React.useState<Selection>(new Set([]))
 
   const {
     register,
@@ -78,6 +88,20 @@ function EditProfile({
       reset(user)
     }
   }, [isOpen, user, reset])
+
+  // --- Синхронизация стейтов с field.value ---
+  useEffect(() => {
+    if (control?._formValues?.dateOfBirth) {
+      const date = new Date(control._formValues.dateOfBirth)
+      setSelectedDay(new Set([date.getDate().toString()]))
+      setSelectedMonth(new Set([date.getMonth().toString()]))
+      setSelectedYear(new Set([date.getFullYear().toString()]))
+    } else {
+      setSelectedDay(new Set([]))
+      setSelectedMonth(new Set([]))
+      setSelectedYear(new Set([]))
+    }
+  }, [control?._formValues?.dateOfBirth])
 
   const onSubmit = async (data: User) => {
     if (id) {
@@ -246,47 +270,135 @@ function EditProfile({
                     },
                   }}
                   render={({ field }) => {
-                    let parsedDate = null
-                    if (field.value) {
-                      try {
-                        parsedDate = parseDate(formatDateToISO(field.value))
-                      } catch (error) {
-                        console.error('Ошибка парсинга даты:', error)
+                    // Массивы для селектов
+                    const months = [
+                      { key: '0', name: 'января' },
+                      { key: '1', name: 'февраля' },
+                      { key: '2', name: 'марта' },
+                      { key: '3', name: 'апреля' },
+                      { key: '4', name: 'мая' },
+                      { key: '5', name: 'июня' },
+                      { key: '6', name: 'июля' },
+                      { key: '7', name: 'августа' },
+                      { key: '8', name: 'сентября' },
+                      { key: '9', name: 'октября' },
+                      { key: '10', name: 'ноября' },
+                      { key: '11', name: 'декабря' },
+                    ]
+                    const now = new Date()
+                    const currentYear = now.getFullYear()
+                    const years = Array.from({ length: 121 }, (_, i) =>
+                      (currentYear - i).toString()
+                    )
+                    // Дни зависят от месяца и года
+                    const yearNum =
+                      Number(Array.from(selectedYear)[0]) || currentYear
+                    const monthNum = Number(Array.from(selectedMonth)[0]) || 0
+                    const daysInMonth = new Date(
+                      yearNum,
+                      monthNum + 1,
+                      0
+                    ).getDate()
+                    const days = Array.from({ length: daysInMonth }, (_, i) =>
+                      (i + 1).toString()
+                    )
+
+                    // Обработчик изменения
+                    const handleChange = (
+                      type: 'day' | 'month' | 'year',
+                      set: Selection
+                    ) => {
+                      if (type === 'day') setSelectedDay(set)
+                      if (type === 'month') setSelectedMonth(set)
+                      if (type === 'year') setSelectedYear(set)
+                      const day = Array.from(
+                        type === 'day' ? set : selectedDay
+                      )[0]
+                      const month = Array.from(
+                        type === 'month' ? set : selectedMonth
+                      )[0]
+                      const year = Array.from(
+                        type === 'year' ? set : selectedYear
+                      )[0]
+                      if (day && month && year) {
+                        const date = new Date(
+                          Number(year),
+                          Number(month),
+                          Number(day)
+                        )
+                        field.onChange(date.toISOString())
                       }
                     }
-
+                    // Сброс
+                    const handleClear = () => {
+                      setSelectedDay(new Set([]))
+                      setSelectedMonth(new Set([]))
+                      setSelectedYear(new Set([]))
+                      field.onChange(null)
+                    }
                     return (
-                      <DatePicker
-                        {...field}
-                        label="Дата Рождения"
-                        labelPlacement="outside"
-                        value={parsedDate}
-                        maxValue={today(getLocalTimeZone())}
-                        minValue={today(getLocalTimeZone()).subtract({
-                          years: 120,
-                        })}
-                        onChange={date => {
-                          if (date) {
-                            field.onChange(date.toString())
-                          }
-                        }}
-                        endContent={
-                          field.value && (
-                            <div className="flex items-center">
-                              <IoCloseOutline
-                                className="text-xl text-default-400 cursor-pointer hover:text-default-foreground hover:scale-125 transition-transform"
-                                onClick={() => field.onChange(null)}
-                              />
+                      <div>
+                        <div className="mb-1 text-sm font-medium text-foreground">
+                          День рождения
+                        </div>
+                        <div className="flex gap-2 flex-col sm:flex-row">
+                          <Select
+                            label="День"
+                            selectedKeys={selectedDay}
+                            onSelectionChange={set => handleChange('day', set)}
+                            className="min-w-[90px]"
+                            variant="bordered"
+                            size="md"
+                            placeholder="День"
+                          >
+                            {days.map(d => (
+                              <SelectItem key={d}>{d}</SelectItem>
+                            ))}
+                          </Select>
+                          <Select
+                            label="Месяц"
+                            selectedKeys={selectedMonth}
+                            onSelectionChange={set =>
+                              handleChange('month', set)
+                            }
+                            className="min-w-[140px]"
+                            variant="bordered"
+                            size="md"
+                            placeholder="Месяц"
+                          >
+                            {months.map(m => (
+                              <SelectItem key={m.key}>{m.name}</SelectItem>
+                            ))}
+                          </Select>
+                          <Select
+                            label="Год"
+                            selectedKeys={selectedYear}
+                            onSelectionChange={set => handleChange('year', set)}
+                            className="min-w-[110px]"
+                            variant="bordered"
+                            size="md"
+                            placeholder="Год"
+                          >
+                            {years.map(y => (
+                              <SelectItem key={y}>{y}</SelectItem>
+                            ))}
+                          </Select>
+                          {field.value && (
+                            <div
+                              className="flex items-center text-sm text-default-400 cursor-pointer hover:text-default-foreground"
+                              onClick={handleClear}
+                            >
+                              <IoCloseOutline className='text-xl' />
+                              <span className="sm:hidden">Очистить дату</span>
                             </div>
-                          )
-                        }
-                        variant="bordered"
-                        errorMessage={errors.dateOfBirth?.message || ''}
-                        isInvalid={errors.dateOfBirth ? true : false}
-                        showMonthAndYearPickers
-                        selectorButtonPlacement="start"
-                        description="Формат даты: ММ.ДД.ГГГГ"
-                      />
+                          )}
+                        </div>
+                        {errors.dateOfBirth?.message && (
+                          <div className="text-danger text-xs mt-1">
+                            {errors.dateOfBirth.message}
+                          </div>
+                        )}
+                      </div>
                     )
                   }}
                 />

@@ -1,12 +1,10 @@
 'use client'
-import { BACKEND_URL_FOR_WEBPUSH } from '@/app/constants'
 import { useSessions } from '@/hooks/useSessions'
 import { useGetCurrentUser } from '@/services/api/user.api'
 import { useUserStore } from '@/store/user.store'
 import { UserSettingsStore } from '@/store/userSettings.store'
 import axios from 'axios'
 import { useEffect } from 'react'
-import { User } from '@/store/types'
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)

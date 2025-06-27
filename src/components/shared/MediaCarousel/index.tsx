@@ -7,6 +7,7 @@ import VideoPlayer from '../VideoPlayer'
 import Image from 'next/image'
 import { useCloudinaryImage } from '@/hooks/useCloudinaryImage'
 import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton'
+import { useTouchDevice } from '@/hooks/useTouchDevice'
 
 interface MediaCarouselProps {
   media: string[]
@@ -26,14 +27,9 @@ export default function MediaCarousel({
   const [isDragging, setIsDragging] = useState(false)
   const [position, setPosition] = useState(0)
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
-  const [isTouchDevice, setIsTouchDevice] = useState(false)
+  const { isTouchDevice } = useTouchDevice()
 
   const { getOptimizedUrlByCustomSrc } = useCloudinaryImage({})
-
-  // Определение сенсорного устройства
-  useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
-  }, [])
 
   // Определение типа медиа по URL
   useEffect(() => {

@@ -1,61 +1,91 @@
 import { cn } from '@/lib/utils'
-import { useEffect, useState } from 'react'
-import CardSkeleton from '@/components/ui/CardSkeleton'
 import { Skeleton } from '@heroui/react'
-// Компонент предпросмотра OpenGraph-ссылки
-function LinkPreview({ url }: { url: string }) {
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { BASE_URL } from '@/app/constants'
+
+interface LinkPreviewProps {
+  url: string
+  postId?: string
+  ogImageUrl?: string | null
+  ogTitle?: string | null
+  ogDescr?: string | null
+  ogUrl?: string | null
+}
+
+function LinkPreview({
+  url,
+  postId,
+  ogImageUrl,
+  ogTitle,
+  ogDescr,
+  ogUrl,
+}: LinkPreviewProps) {
+  const hasOG = ogImageUrl || ogTitle || ogDescr || ogUrl
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (hasOG) return
     if (!url) return
     setLoading(true)
     setError(null)
-    fetch(`/api/og?url=${encodeURIComponent(url)}`)
-      .then(res => {
-        if (!res.ok) throw new Error('Ошибка загрузки OpenGraph')
-        return res.json()
-      })
-      .then(setData)
+    axios
+      .post(`${BASE_URL}/api/og/link-preview`, { url, postId })
+      .then(res => setData(res.data))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
-  }, [url])
+  }, [url, postId, hasOG])
 
   if (!url) return null
-  if (loading) return <LinkPreviewSkeleton />
-  if (error) return null
-  if (!data) return null
+  if (!hasOG && loading) return <LinkPreviewSkeleton />
+  if (!hasOG && error) return null
+
+  const previewData = hasOG
+    ? {
+        ogImageUrl,
+        ogTitle,
+        ogDescr,
+        ogUrl: ogUrl || url,
+      }
+    : data
+
+  if (!previewData) return null
 
   return (
     <a
-      href={url}
+      href={previewData.ogUrl || url}
       target="_blank"
       rel="noopener noreferrer nofollow"
       className={cn(
         'block border border-default-400 rounded-xl p-3 mt-2 bg-default-100 hover:bg-default-200 transition',
-        data.image && 'flex gap-2 flex-col xl:flex-row',
-        !data.image && 'flex flex-col'
+        previewData.ogImageUrl && 'flex gap-2 flex-col xl:flex-row',
+        !previewData.ogImageUrl && 'flex flex-col'
       )}
       style={{ textDecoration: 'none' }}
     >
-      {data.image && (
+      {previewData.ogImageUrl && (
         <div className="flex-1 flex items-center justify-start">
           <img
-            src={data.image}
-            alt={data.title || url}
+            src={previewData.ogImageUrl}
+            alt={previewData.ogTitle || url}
             className="h-auto max-w-[400px] w-full rounded-lg"
           />
         </div>
       )}
       <div className="flex-1 flex flex-col justify-center min-w-0">
-        <div className="font-semibold text-base mb-1">{data.title || url}</div>
-        {data.description && (
+        <div className="font-semibold text-base mb-1">
+          {previewData.ogTitle || url}
+        </div>
+        {previewData.ogDescr && (
           <div className="text-sm text-default-500 mb-1 line-clamp-3">
-            {data.description}
+            {previewData.ogDescr}
           </div>
         )}
-        <div className="text-xs text-primary-500 break-all">{url}</div>
+        <div className="text-xs text-primary-500 break-all">
+          {previewData.ogUrl || url}
+        </div>
       </div>
     </a>
   )

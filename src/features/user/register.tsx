@@ -69,7 +69,7 @@ function Register({ setSelected }: RegisterProps) {
         placeholder="Иван Петрович"
         {...register('name', {
           required: 'Обязательное поле',
-          minLength: { value: 3, message: 'Минимум 3 символа' },
+          minLength: { value: 2, message: 'Минимум 2 символа' },
           validate: value => {
             if (value.trim() === '') {
               return 'Имя не может содержать пробелы'

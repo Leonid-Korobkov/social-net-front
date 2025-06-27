@@ -230,6 +230,7 @@ function ImageUpload({
         fullWidth
         color="default"
         type="button"
+        className="whitespace-normal h-auto py-2"
         startContent={<FaWandMagicSparkles />}
         isLoading={isLoadingNewImage}
         onClick={async () => {
@@ -241,5 +242,4 @@ function ImageUpload({
     </div>
   )
 }
-
 export default ImageUpload

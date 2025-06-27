@@ -9,6 +9,8 @@ import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
 import React, { useRef, useState, useEffect } from 'react'
 import UserPreviewPopover from './UserPreviewPopover'
 import { useGetUserById } from '@/services/api/user.api'
+import { FaPlus } from 'react-icons/fa6'
+import { useTouchDevice } from '@/hooks/useTouchDevice'
 
 interface IUser {
   username: string
@@ -27,9 +29,10 @@ function User({
     src: avatarUrl,
     width: 200,
   })
-  // Popover state
-  const [showPopover, setShowPopover] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Состояние: открыт ли popover по кнопке
+  const [wasOpenedByButton, setWasOpenedByButton] = useState(false)
 
   // Получаем данные пользователя только при наведении
   const [isOpen, setIsOpen] = useState(false)
@@ -39,54 +42,93 @@ function User({
     isLoading: isLoadingUser,
   } = useGetUserById(username, false)
 
-  // Детектируем десктоп без тач-скрина
-  const [isDesktopHover, setIsDesktopHover] = useState(true)
-  useEffect(() => {
-    const check = () => {
-      if (typeof window !== 'undefined') {
-        setIsDesktopHover(
-          window.matchMedia('(hover: hover) and (pointer: fine)').matches
-        )
-      }
-    }
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
   // Обработчики наведения
   const handleMouseEnter = () => {
     refetchUser()
     if (timerRef.current) clearTimeout(timerRef.current)
     timerRef.current = setTimeout(() => setIsOpen(true), 300)
+    setWasOpenedByButton(false)
   }
   const handleMouseLeave = () => {
     if (timerRef.current) clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(() => setIsOpen(false), 200)
+    timerRef.current = setTimeout(() => {
+      setIsOpen(false)
+      setWasOpenedByButton(false)
+    }, 200)
   }
 
-  if (!isDesktopHover) {
-    return (
-      <NextUiUser
-        name={username}
-        className={className}
-        description={description}
-        avatarProps={{ src: getOptimizedUrl() }}
-      />
-    )
-  }
+  // Ref для popover-обёртки
+  const popoverWrapperRef = useRef<HTMLDivElement>(null)
+
+  // Глобальный обработчик клика вне popover
+  useEffect(() => {
+    if (!isOpen) return
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        popoverWrapperRef.current &&
+        !popoverWrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+        setWasOpenedByButton(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isOpen])
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <Popover isOpen={isOpen} showArrow>
+    <div
+      className="relative inline-block"
+      onMouseLeave={handleMouseLeave}
+      ref={popoverWrapperRef}
+    >
+      <Popover
+        isOpen={isOpen}
+        showArrow
+        backdrop={wasOpenedByButton ? 'opaque' : 'transparent'}
+        classNames={{
+          base: ['before:bg-default-200'],
+          content: [
+            'py-3 px-4 border border-default-200',
+            'bg-gradient-to-br from-white to-default-300',
+            'dark:from-default-100 dark:to-default-50',
+          ],
+        }}
+      >
         <PopoverTrigger>
-          <span>
+          <span className="relative">
             <NextUiUser
-              name={username}
+              name={
+                <span
+                  className="user-nickname cursor-pointer hover:underline"
+                  onMouseEnter={handleMouseEnter}
+                >
+                  {username}
+                </span>
+              }
               className={className}
               description={description}
               avatarProps={{ src: getOptimizedUrl() }}
             />
+            <button
+              type="button"
+              aria-label="Открыть меню пользователя"
+              className="absolute bottom-1 left-4 translate-x-1/4 translate-y-1/4 bg-foreground text-content1 rounded-full w-5 h-5 flex items-center justify-center border-2 border-content1 hover:scale-110 focus:outline-none z-10 ease-in transition-transform duration-150"
+              style={{ fontSize: 12 }}
+              onClick={e => {
+                refetchUser()
+                e.stopPropagation()
+                e.preventDefault()
+                setWasOpenedByButton(true)
+                setIsOpen(true)
+              }}
+              tabIndex={0}
+            >
+              <FaPlus size={10} />
+            </button>
           </span>
         </PopoverTrigger>
         <PopoverContent className="p-0">
