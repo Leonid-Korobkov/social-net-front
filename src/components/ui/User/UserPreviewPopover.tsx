@@ -72,7 +72,12 @@ const UserPreviewPopover: React.FC<UserPreviewPopoverProps> = ({
           {isLoading ? (
             <Skeleton className="w-14 h-14 rounded-full" />
           ) : (
-            <Avatar isBordered radius="full" size="lg" src={avatarUrl} />
+            <Avatar
+              isBordered
+              radius="full"
+              className="w-18 h-18 text-large"
+              src={avatarUrl}
+            />
           )}
           <div className="flex flex-col items-start justify-center min-w-0">
             {isLoading ? (
