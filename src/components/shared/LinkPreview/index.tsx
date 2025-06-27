@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { Skeleton } from '@heroui/react'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { BASE_URL } from '@/app/constants'
+import { BACKEND_URL_FOR_WEBPUSH } from '@/app/constants'
 
 interface LinkPreviewProps {
   url: string
@@ -32,7 +32,7 @@ function LinkPreview({
     setLoading(true)
     setError(null)
     axios
-      .post(`${BASE_URL}/api/og/link-preview`, { url, postId })
+      .post(`${BACKEND_URL_FOR_WEBPUSH}/api/og/link-preview`, { url, postId })
       .then(res => setData(res.data))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
