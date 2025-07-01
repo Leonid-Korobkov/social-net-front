@@ -11,6 +11,7 @@ import UserPreviewPopover from './UserPreviewPopover'
 import { useGetUserById } from '@/services/api/user.api'
 import { FaPlus } from 'react-icons/fa6'
 import { useTouchDevice } from '@/hooks/useTouchDevice'
+import { useTopLoader } from 'nextjs-toploader'
 
 interface IUser {
   username: string
@@ -30,6 +31,7 @@ function User({
     width: 200,
   })
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const topLoader = useTopLoader()
 
   // Состояние: открыт ли popover по кнопке
   const [wasOpenedByButton, setWasOpenedByButton] = useState(false)
@@ -114,6 +116,9 @@ function User({
               avatarProps={{
                 src: getOptimizedUrl(),
                 onClick: (e: React.MouseEvent) => {
+                  setTimeout(() => {
+                    topLoader.done(true)
+                  }, 0)
                   refetchUser()
                   e.stopPropagation()
                   e.preventDefault()
@@ -129,6 +134,9 @@ function User({
               className="absolute bottom-1 left-4 translate-x-1/4 translate-y-1/4 bg-foreground text-content1 rounded-full w-5 h-5 flex items-center justify-center border-2 border-content1 hover:scale-110 focus:outline-none z-10 ease-in transition-transform duration-150"
               style={{ fontSize: 12 }}
               onClick={e => {
+                setTimeout(() => {
+                  topLoader.done(true)
+                }, 0)
                 refetchUser()
                 e.stopPropagation()
                 e.preventDefault()
