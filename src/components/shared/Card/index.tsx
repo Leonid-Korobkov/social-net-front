@@ -282,7 +282,6 @@ const Card = memo(
                     commentsCount,
                     createdAt,
                     id,
-                    cardFor,
                     likedByUser,
                     isBookmarkedByUser,
                     isFollowing,
