@@ -160,10 +160,6 @@ const Card = memo(
       toast.error('Репосты пока не поддерживаются. Скоро будут добавлены')
     }
 
-    const handleBookmark = async () => {
-      toast.error('Закладки пока не поддерживаются. Скоро будут добавлены')
-    }
-
     const firstLink = extractFirstLink(content)
 
     return (
@@ -341,7 +337,7 @@ const Card = memo(
             <CardFooter className="gap-3 p-3 pt-0 pb-1">
               <div className="flex items-center gap-1 w-full justify-between">
                 <div
-                  className="grid grid-cols-[1fr_1fr_1fr_1fr] sm:gap-2 -ml-2 "
+                  className="grid grid-cols-[1fr_1fr_1fr_1fr] sm:gap-2 -ml-2"
                   style={{ columnCount: 4 }}
                 >
                   <AnimatedLike
@@ -385,7 +381,6 @@ const Card = memo(
                       <MetaInfo count={commentsCount} Icon={FaRegComment} />
                     </Link>
                   ) : null}
-                  {/* <div className="flex flex-1"> */}
 
                   <MetaInfo
                     onClick={handleRepost}
@@ -395,14 +390,8 @@ const Card = memo(
                   {cardFor !== 'comment' && (
                     <MetaInfo count={viewCount} Icon={ViewsIcon} />
                   )}
-                  {/* </div> */}
                 </div>
                 <div className="flex items-center gap-0 -mr-2">
-                  <MetaInfo
-                    onClick={handleBookmark}
-                    count={0}
-                    Icon={IoBookmarkOutline}
-                  />
                   <ShareDropdown
                     url={`/${username}/post/${id}`}
                     title={`Пост от ${username} в Zling`}

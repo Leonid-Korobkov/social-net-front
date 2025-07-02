@@ -13,6 +13,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownSection,
   DropdownTrigger,
   Modal,
   ModalBody,
@@ -27,11 +28,18 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { FaEllipsisVertical, FaRegCopy, FaRegHeart } from 'react-icons/fa6'
+import {
+  FaEllipsisVertical,
+  FaRegCopy,
+  FaRegHeart,
+  FaUserLargeSlash,
+} from 'react-icons/fa6'
 import { FiShare } from 'react-icons/fi'
 import { RiDeleteBinLine, RiUserFollowFill } from 'react-icons/ri'
 import { useStore } from 'zustand'
 import { ICard } from '../Card'
+import { IoBookmarkOutline } from 'react-icons/io5'
+import { TbMessageReportFilled } from 'react-icons/tb'
 
 function CardActionWidget({
   username,
@@ -151,6 +159,18 @@ function CardActionWidget({
     copyToClipboard(shareUrl, id)
   }
 
+  const handleBookmark = async () => {
+    toast.error('Закладки пока не поддерживаются. Скоро будут добавлены')
+  }
+
+  const handleBlock = async () => {
+    toast.error('Блокировка пока не поддерживается. Скоро будут добавлены')
+  }
+
+  const handleReport = async () => {
+    toast.error('Пожаловаться пока не поддерживается. Скоро будут добавлены')
+  }
+
   const handleOpenModalLikes = () => {
     refetchLikes()
     setIsLikesModalOpen(true)
@@ -164,37 +184,63 @@ function CardActionWidget({
             <FaEllipsisVertical />
           </Button>
         </DropdownTrigger>
-        <DropdownMenu aria-label="Post actions">
+        <DropdownMenu variant="flat" aria-label="Действия над постом">
+          <DropdownSection showDivider>
+            <DropdownItem
+              key="likes"
+              startContent={<FaRegHeart />}
+              onClick={handleOpenModalLikes}
+            >
+              Кто поставил лайк
+            </DropdownItem>
+            <DropdownItem
+              key="share"
+              startContent={<FiShare />}
+              onClick={handleShareClick}
+              isDisabled={isSharing}
+            >
+              {isSharing ? (
+                <>
+                  <Spinner size="sm" className="mr-2" /> Отправка...
+                </>
+              ) : (
+                'Поделиться'
+              )}
+            </DropdownItem>
+            <DropdownItem
+              key="copy"
+              startContent={<FaRegCopy />}
+              onClick={handleCopyLink}
+            >
+              Скопировать ссылку
+            </DropdownItem>
+          </DropdownSection>
+          <DropdownSection showDivider>
+            <DropdownItem
+              key="save"
+              startContent={<IoBookmarkOutline />}
+              onClick={handleBookmark}
+            >
+              В избранное
+            </DropdownItem>
+          </DropdownSection>
           <DropdownItem
-            key="likes"
-            color="primary"
-            startContent={<FaRegHeart />}
-            onClick={handleOpenModalLikes}
+            key="block"
+            className="text-danger"
+            color="danger"
+            startContent={<FaUserLargeSlash />}
+            onClick={handleBlock}
           >
-            Кто поставил лайк
+            Блокировать
           </DropdownItem>
           <DropdownItem
-            key="share"
-            color="primary"
-            startContent={<FiShare />}
-            onClick={handleShareClick}
-            isDisabled={isSharing}
+            key="report"
+            className="text-danger"
+            color="danger"
+            startContent={<TbMessageReportFilled />}
+            onClick={handleReport}
           >
-            {isSharing ? (
-              <>
-                <Spinner size="sm" className="mr-2" /> Отправка...
-              </>
-            ) : (
-              'Поделиться'
-            )}
-          </DropdownItem>
-          <DropdownItem
-            key="copy"
-            color="primary"
-            startContent={<FaRegCopy />}
-            onClick={handleCopyLink}
-          >
-            Скопировать ссылку
+            Пожаловаться
           </DropdownItem>
           {authorId === currentUser?.id ? (
             <DropdownItem

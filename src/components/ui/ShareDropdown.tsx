@@ -83,7 +83,12 @@ export default function ShareDropdown({
                 }
               >
                 {loading ? (
-                  <Spinner size="sm" color="primary" variant="gradient" className='gap-0'/>
+                  <Spinner
+                    size="sm"
+                    color="primary"
+                    variant="gradient"
+                    className="gap-0"
+                  />
                 ) : (
                   <FiShare />
                 )}
@@ -142,7 +147,7 @@ export default function ShareDropdown({
             </div>
           </div>
         </DropdownTrigger>
-        <DropdownMenu aria-label="share-options">
+        <DropdownMenu variant="flat" aria-label="share-options">
           <DropdownItem
             key="copy"
             startContent={<MdContentCopy />}
@@ -168,7 +173,7 @@ export default function ShareDropdown({
       <DropdownTrigger>
         <Button
           variant="ghost"
-          color="secondary"
+          color="primary"
           startContent={<MdShare />}
           className={className}
           fullWidth
@@ -177,7 +182,7 @@ export default function ShareDropdown({
           {buttonText}
         </Button>
       </DropdownTrigger>
-      <DropdownMenu aria-label="share-options">
+      <DropdownMenu variant="flat" aria-label="share-options">
         <DropdownItem
           key="copy"
           startContent={<MdContentCopy />}
