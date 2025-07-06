@@ -12,6 +12,7 @@ import { useGetUserById } from '@/services/api/user.api'
 import { FaPlus } from 'react-icons/fa6'
 import { useTouchDevice } from '@/hooks/useTouchDevice'
 import { useTopLoader } from 'nextjs-toploader'
+import Link from 'next/link'
 
 interface IUser {
   username: string
@@ -104,12 +105,14 @@ function User({
           <span className="relative">
             <NextUiUser
               name={
-                <span
+                <Link
+                  href={`/${username}`}
                   className="user-nickname cursor-pointer hover:underline"
                   onMouseEnter={handleMouseEnter}
+                  prefetch={false}
                 >
                   {username}
-                </span>
+                </Link>
               }
               className={className}
               description={description}
