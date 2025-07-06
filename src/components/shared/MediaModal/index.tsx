@@ -321,12 +321,10 @@ export default function MediaModal({
               >
                 {item.type === MediaType.IMAGE ? (
                   <div className="relative h-full w-full flex items-center justify-center">
-                    <Image
+                    <img
                       src={optimizedUrl}
                       alt={`Изображение ${index + 1}`}
                       className="max-w-full max-h-full object-contain"
-                      fill
-                      quality={100}
                     />
                   </div>
                 ) : (
