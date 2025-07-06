@@ -7,6 +7,7 @@ import { IoChevronBack, IoChevronForward, IoClose } from 'react-icons/io5'
 import VideoPlayer from '../VideoPlayer'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
+import { useCloudinaryImage } from '@/hooks/useCloudinaryImage'
 
 interface MediaModalProps {
   isOpen: boolean
@@ -33,6 +34,8 @@ export default function MediaModal({
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+
+  const { getOptimizedUrlByCustomSrc } = useCloudinaryImage({})
 
   // Для анимации появления
   const [isVisible, setIsVisible] = useState(false)
@@ -299,41 +302,48 @@ export default function MediaModal({
           }}
           onMouseDown={handleMouseDown}
         >
-          {mediaItems.map((item, index) => (
-            <div
-              key={index}
-              ref={el => {
-                slideRefs.current[index] = el
-              }}
-              className={cn(
-                'min-w-full h-full flex-shrink-0 flex items-center justify-center',
-                'snap-center'
-              )}
-            >
-              {item.type === MediaType.IMAGE ? (
-                <div className="relative h-full w-full flex items-center justify-center">
-                  <Image
-                    src={item.url}
-                    alt={`Изображение ${index + 1}`}
-                    className="max-w-full max-h-full object-contain"
-                    fill
-                    quality={100}
-                  />
-                </div>
-              ) : (
-                <div className="h-full w-full flex items-center justify-center overflow-hidden">
-                  <VideoPlayer
-                    src={item.url}
-                    autoPlay={index === currentIndex}
-                    controls={true}
-                    loop={true}
-                    muted={false}
-                    mode="modal"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+          {mediaItems.map((item, index) => {
+            const optimizedUrl = getOptimizedUrlByCustomSrc(
+              item.url,
+              'auto',
+              1200
+            )
+            return (
+              <div
+                key={index}
+                ref={el => {
+                  slideRefs.current[index] = el
+                }}
+                className={cn(
+                  'min-w-full h-full flex-shrink-0 flex items-center justify-center',
+                  'snap-center'
+                )}
+              >
+                {item.type === MediaType.IMAGE ? (
+                  <div className="relative h-full w-full flex items-center justify-center">
+                    <Image
+                      src={optimizedUrl}
+                      alt={`Изображение ${index + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                      fill
+                      quality={100}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center overflow-hidden">
+                    <VideoPlayer
+                      src={optimizedUrl}
+                      autoPlay={index === currentIndex}
+                      controls={true}
+                      loop={true}
+                      muted={false}
+                      mode="modal"
+                    />
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
 
         {/* Кнопка закрытия */}
