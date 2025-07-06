@@ -16,8 +16,8 @@ export const validateUserName = {
   minLength: (value: string) =>
     value.length >= 3 || 'Имя пользователя должно содержать минимум 3 символа',
   maxLength: (value: string) =>
-    value.length <= 15 ||
-    'Имя пользователя должно содержать максимум 15 символов',
+    value.length <= 20 ||
+    'Имя пользователя должно содержать максимум 20 символов',
   allowedCharacters: (value: string) =>
     /^[a-z0-9_.-]+$/.test(value) ||
     'Имя пользователя может содержать только латинские буквы, цифры и символы _, -, .',
