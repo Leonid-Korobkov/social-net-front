@@ -15,9 +15,8 @@ function EditProfileClient({ params }: PageProps) {
   const currentUser = useUserStore(state => state.user)
   const router = useRouter()
 
-  // Если пользователь не авторизован — редирект на логин
+  // Если пользователь не авторизован
   if (!currentUser) {
-    if (typeof window !== 'undefined') router.push('/auth')
     return null
   }
 
