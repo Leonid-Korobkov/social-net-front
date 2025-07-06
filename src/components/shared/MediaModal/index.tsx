@@ -324,7 +324,7 @@ export default function MediaModal({
                     <img
                       src={item.url}
                       alt={`Изображение ${index + 1}`}
-                      className="max-w-full max-h-full object-contain"
+                      className="absolute max-w-full max-h-full object-contain"
                     />
                   </div>
                 ) : (
@@ -357,7 +357,7 @@ export default function MediaModal({
         {mediaItems.length > 1 && (
           <>
             <div
-              className="absolute left-0 top-0 bottom-0 w-24 flex items-center justify-start px-4 cursor-pointer bg-gradient-to-r from-black/10 to-transparent hidden md:flex hover:bg-black/20"
+              className="absolute left-0 top-0 bottom-0 w-[70px] flex items-center justify-start px-4 cursor-pointer bg-gradient-to-r from-black/10 to-transparent hidden md:flex hover:bg-black/20 transition-all"
               onClick={prevItem}
             >
               <button
@@ -369,7 +369,7 @@ export default function MediaModal({
             </div>
 
             <div
-              className="absolute right-0 top-0 bottom-0 w-24 flex items-center justify-end px-4 cursor-pointer bg-gradient-to-l from-black/10 to-transparent hidden md:flex hover:bg-black/20"
+              className="absolute right-0 top-0 bottom-0 w-[70px] flex items-center justify-end px-4 cursor-pointer bg-gradient-to-l from-black/10 to-transparent hidden md:flex hover:bg-black/20 transition-all"
               onClick={nextItem}
             >
               <button
