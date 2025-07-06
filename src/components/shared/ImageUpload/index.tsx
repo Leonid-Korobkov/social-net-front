@@ -2,9 +2,10 @@
 import { useCallback, useState, useEffect } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { Button, cn, Image } from '@heroui/react'
-import { useGetNewRandomImage } from '@/services/api/user.api'
+import { useGetNewRandomImage, userKeys } from '@/services/api/user.api'
 import { FaWandMagicSparkles } from 'react-icons/fa6'
 import { IoCloudUploadOutline } from 'react-icons/io5'
+import { useQueryClient } from '@tanstack/react-query'
 // Импорт heic2any только на клиенте
 let heic2any: any = null
 if (typeof window !== 'undefined') {
@@ -34,6 +35,7 @@ function ImageUpload({
   const [preview, setPreview] = useState<string | null>(null)
   const [isConverting, setIsConverting] = useState(false)
   const [isShowClearImageBtn, setIsShowClearImageBtn] = useState(false)
+  const queryClient = useQueryClient()
 
   const {
     data: newImageUrl,
@@ -249,6 +251,14 @@ function ImageUpload({
           setIsShowClearImageBtn(false)
           setPreview(currentImageUrl)
           onChange(currentImageUrl)
+          // Получаем QueryCache из QueryClient
+          const queryCache = queryClient.getQueryCache()
+          // Ищем запрос по ключу
+          const query = queryCache.find({ queryKey: userKeys.randomImage })
+          // Удаляем запрос из кэша
+          if (query) {
+            queryCache.remove(query)
+          }
         }}
         className={cn(
           'whitespace-normal h-auto py-2',
