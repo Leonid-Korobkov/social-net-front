@@ -1,7 +1,7 @@
 'use client'
-import { FaRegArrowAltCircleLeft } from 'react-icons/fa'
 
 import { useRouter } from 'next/navigation'
+import { TbArrowLeft } from 'react-icons/tb'
 
 function GoBack() {
   const router = useRouter()
@@ -11,12 +11,14 @@ function GoBack() {
   }
 
   return (
-    <div
-      onClick={handleGoBack}
-      className="text-default-500 flex items-center gap-2 mb-10 cursor-pointer"
-    >
-      <FaRegArrowAltCircleLeft />
-      Назад
+    <div className="flex">
+      <div
+        onClick={handleGoBack}
+        className="text-foreground text-sm gap-2 mb-4 cursor-pointer
+      px-1 py-1 rounded-full border border-default-200 bg-content1 hover:bg-default-200/70 transition-colors"
+      >
+        <TbArrowLeft />
+      </div>
     </div>
   )
 }

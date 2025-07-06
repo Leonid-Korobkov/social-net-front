@@ -9,7 +9,6 @@ import UserProfileSkeleton from '@/components/ui/UserProfileSkeleton'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { useCreateFollow, useDeleteFollow } from '@/services/api/follow.api'
 import { useGetPostsByUserId, useGetUserById } from '@/services/api/user.api'
-import { useModalsStore } from '@/store/modals.store'
 import { useUserStore } from '@/store/user.store'
 import { formatToClientDate } from '@/utils/formatToClientDate'
 import {
@@ -20,7 +19,7 @@ import {
   Image as NextImage,
 } from '@heroui/react'
 import { motion } from 'framer-motion'
-import { notFound } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
 import { use, useState } from 'react'
 import { AiFillEdit } from 'react-icons/ai'
 import { BsPostcardFill } from 'react-icons/bs'
@@ -41,9 +40,7 @@ type PageProps = {
 function UserProfileClient({ params }: PageProps) {
   const { username: id } = use(params)
 
-  const [party, setParty] = useState(false)
   const [isImageOpen, setImageOpen] = useState(false)
-  const { openEditProfile, openSettings } = useModalsStore()
 
   const currentUser = useStore(useUserStore, state => state.user)
 
@@ -65,6 +62,7 @@ function UserProfileClient({ params }: PageProps) {
     useDeleteFollow()
 
   const size = useWindowSize()
+  const router = useRouter()
 
   const handleFollow = async () => {
     try {
@@ -79,7 +77,6 @@ function UserProfileClient({ params }: PageProps) {
             followingId: id,
             userId: currentUser?.id.toString() || '',
           })
-          setParty(true)
         }
       }
     } catch (error) {
@@ -143,7 +140,7 @@ function UserProfileClient({ params }: PageProps) {
                 <div className="flex gap-2 flex-col w-full">
                   <Button
                     startContent={<AiFillEdit />}
-                    onClick={() => openEditProfile(currentUser.id)}
+                    onClick={() => router.push(`/${currentUser.userName}/edit`)}
                     variant="ghost"
                     color="warning"
                     fullWidth
@@ -152,7 +149,9 @@ function UserProfileClient({ params }: PageProps) {
                   </Button>
                   <Button
                     startContent={<IoIosSettings />}
-                    onClick={() => openSettings(currentUser.id)}
+                    onClick={() =>
+                      router.push(`/${currentUser.userName}/settings`)
+                    }
                     variant="ghost"
                     color="primary"
                     fullWidth
@@ -170,7 +169,7 @@ function UserProfileClient({ params }: PageProps) {
                   text={`Посмотрите профиль ${user.name} в социальной сети Zling!`}
                   iconOnly
                   className="justify-center"
-                  buttonText='Поделиться'
+                  buttonText="Поделиться"
                 />
               )}
             </div>

@@ -77,5 +77,4 @@ type PageProps = {
 function UserProfile({ params }: PageProps) {
   return <UserProfileClient params={Promise.resolve(params)} />
 }
-
 export default UserProfile

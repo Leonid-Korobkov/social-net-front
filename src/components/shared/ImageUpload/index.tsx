@@ -20,7 +20,7 @@ if (typeof window !== 'undefined') {
 
 interface ImageUploadProps {
   onChange: (file: File | string) => void
-  currentImageUrl?: string
+  currentImageUrl: string
   className?: string
   onError?: (message: string) => void
 }
@@ -33,6 +33,8 @@ function ImageUpload({
 }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(null)
   const [isConverting, setIsConverting] = useState(false)
+  const [isShowClearImageBtn, setIsShowClearImageBtn] = useState(false)
+
   const {
     data: newImageUrl,
     refetch: refetchNewImage,
@@ -234,10 +236,26 @@ function ImageUpload({
         startContent={<FaWandMagicSparkles />}
         isLoading={isLoadingNewImage}
         onClick={async () => {
+          setIsShowClearImageBtn(true)
           await refetchNewImage()
         }}
       >
         Сгенерировать случайное изображение
+      </Button>
+      <Button
+        size="sm"
+        variant="bordered"
+        onClick={() => {
+          setIsShowClearImageBtn(false)
+          setPreview(currentImageUrl)
+          onChange(currentImageUrl)
+        }}
+        className={cn(
+          'whitespace-normal h-auto py-2',
+          !isShowClearImageBtn && 'hidden'
+        )}
+      >
+        Вернуть предыдущее изображение
       </Button>
     </div>
   )

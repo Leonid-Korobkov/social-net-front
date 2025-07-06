@@ -35,24 +35,13 @@ import { MdAnimation } from 'react-icons/md'
 import { useStore } from 'zustand'
 
 interface SettingsProfileProps {
-  isOpen: boolean
-  onClose: () => void
-  user: User | null
-  params: {
-    id: string
-  }
+  user: User
 }
 
-export default function SettingsProfile({
-  isOpen,
-  onClose,
-  user,
-  params,
-}: SettingsProfileProps) {
+export default function SettingsProfile({ user }: SettingsProfileProps) {
   const { mutateAsync: updateSettings, isPending: isUpdatingSettings } =
     useUpdateUserSettings()
   const { mutateAsync: deleteUser, isPending: isDeletingUser } = useDeleteUser()
-  const { id } = params
   const setReduce = UserSettingsStore.getState().setReduceAnimation
   const setTheme = UserThemeStore.getState().setTheme
   const [showReloadConfirm, setShowReloadConfirm] = useState(false)
@@ -65,6 +54,9 @@ export default function SettingsProfile({
   const logout = useUserStore(state => state.logout)
   const logoutSettings = useStore(UserSettingsStore, state => state.logout)
   const router = useRouter()
+  const [loadingField, setLoadingField] = useState<keyof IUserSettings | null>(
+    null
+  )
 
   const {
     reset,
@@ -108,56 +100,47 @@ export default function SettingsProfile({
     }
   }, [user, reset])
 
-  const handleToggle = (field: keyof IUserSettings) => {
-    setSettings(prev => ({
-      ...prev,
-      [field]: !prev[field],
-    }))
-  }
-
-  const handleSave = async () => {
+  const handleSave = async (
+    newSettings = settings,
+    newTheme = selectedTheme,
+    field?: keyof IUserSettings
+  ) => {
     try {
-      const promise = updateSettings({
+      await updateSettings({
         username: user?.userName?.toString() || '',
-        data: settings,
+        data: newSettings,
       })
-
-      const toastId = toast.loading('Сохранение...')
-
-      promise
-        .then(() => {
-          toast.success('Настройки сохранены!')
-
-          // Применяем тему
-          if (UserThemeStore.getState().theme !== selectedTheme) {
-            setTheme(selectedTheme as any)
-          }
-
-          if (settings.reduceAnimation) {
-            setReduce(settings.reduceAnimation)
-            setShowReloadConfirm(true)
-          } else {
-            onClose()
-          }
-        })
-        .catch((err: ApiErrorResponse) => {
-          toast.error(err.errorMessage)
-        })
-        .finally(() => {
-          toast.dismiss(toastId)
-        })
+      if (UserThemeStore.getState().theme !== newTheme) {
+        setTheme(newTheme as any)
+      }
+      if (newSettings.reduceAnimation) {
+        setReduce(newSettings.reduceAnimation)
+        setShowReloadConfirm(true)
+      }
     } catch (error) {
       console.error('Error updating settings:', error)
+    } finally {
+      if (field) setLoadingField(null)
     }
+  }
+
+  const handleToggle = (field: keyof IUserSettings) => {
+    setSettings(prev => {
+      const newSettings = { ...prev, [field]: !prev[field] }
+      setLoadingField(field)
+      handleSave(newSettings, selectedTheme, field)
+      return newSettings
+    })
   }
 
   const handleReload = () => {
     location.reload()
-    onClose()
   }
 
   const handleThemeChange = (theme: string) => {
     setSelectedTheme(theme)
+    setLoadingField('theme' as keyof IUserSettings)
+    handleSave(settings, theme, 'theme' as keyof IUserSettings)
   }
 
   const handleDeleteAccount = async () => {
@@ -165,14 +148,13 @@ export default function SettingsProfile({
     try {
       const toastId = toast.loading('Удаление аккаунта...')
       await deleteUser({
-        userId: id.toString(),
+        userId: user.id.toString(),
         confirmationText: deleteConfirmation,
       })
       toast.success('Аккаунт успешно удален!')
       logout()
       logoutSettings()
       router.push('/auth')
-      onClose()
     } catch (err: any) {
       console.error('Ошибка при удалении аккаунта:', err)
       toast.error(err.errorMessage || 'Не удалось удалить аккаунт')
@@ -185,412 +167,378 @@ export default function SettingsProfile({
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        backdrop="blur"
-        placement="top"
-        size="2xl"
-      >
-        <ModalContent>
-          <ModalHeader className="justify-center">
-            Настройки профиля
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-6">
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
-                  <h3>Приватность</h3>
-                </CardHeader>
-                <CardBody className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <IoMdMail className="text-xl" />
-                      <span>Показывать email</span>
-                    </div>
-                    <Switch
-                      color="primary"
-                      isSelected={settings.showEmail}
-                      onValueChange={() => handleToggle('showEmail')}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <BiSolidBookContent className="text-xl" />
-                      <span>Показывать биографию</span>
-                    </div>
-                    <Switch
-                      color="primary"
-                      isSelected={settings.showBio}
-                      onValueChange={() => handleToggle('showBio')}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <FaMapMarkerAlt className="text-xl" />
-                      <span>Показывать местоположение</span>
-                    </div>
-                    <Switch
-                      color="primary"
-                      isSelected={settings.showLocation}
-                      onValueChange={() => handleToggle('showLocation')}
-                    />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <FaBirthdayCake className="text-xl" />
-                      <span>Показывать дату рождения</span>
-                    </div>
-                    <Switch
-                      color="primary"
-                      isSelected={settings.showDateOfBirth}
-                      onValueChange={() => handleToggle('showDateOfBirth')}
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
-                  <h3>Анимация</h3>
-                </CardHeader>
-                <CardBody>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <MdAnimation className="text-xl flex-shrink-0" />
-                      <div className="flex flex-col">
-                        <span>Уменьшить анимацию</span>
-                        <span className="text-sm text-gray-400">
-                          Если настройка не применилась - перезагрузите страницу
-                        </span>
-                      </div>
-                    </div>
-                    <Switch
-                      color="primary"
-                      isSelected={settings.reduceAnimation}
-                      onValueChange={() => handleToggle('reduceAnimation')}
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
-                  <h3>Тема оформления</h3>
-                </CardHeader>
-                <CardBody>
-                  <RadioGroup
-                    value={selectedTheme}
-                    onValueChange={handleThemeChange}
-                    orientation="horizontal"
-                    className="grid gap-2 w-full"
-                  >
-                    <div className="grid gap-2 w-full">
-                      <Radio
-                        value="default"
-                        classNames={{
-                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                        }}
-                      >
-                        <div className="w-full flex flex-col gap-1">
-                          <p className="text-medium">По умолчанию</p>
-                          <div className="flex gap-1">
-                            <span className="w-4 h-4 rounded-full bg-[#9353D3]" />
-                            <span className="w-4 h-4 rounded-full bg-[#18181B]" />
-                          </div>
-                        </div>
-                      </Radio>
-
-                      <Radio
-                        value="purple"
-                        classNames={{
-                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                        }}
-                      >
-                        <div className="w-full flex flex-col gap-1">
-                          <p className="text-medium">Фиолетовая</p>
-                          <div className="flex gap-1">
-                            <span className="w-4 h-4 rounded-full bg-[#9353d3]" />
-                            <span className="w-4 h-4 rounded-full bg-[#637aff]" />
-                          </div>
-                        </div>
-                      </Radio>
-
-                      <Radio
-                        value="monochrome"
-                        classNames={{
-                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                        }}
-                      >
-                        <div className="w-full flex flex-col gap-1">
-                          <p className="text-medium">Монохромная</p>
-                          <div className="flex gap-1">
-                            <span className="w-4 h-4 rounded-full bg-black dark:bg-white" />
-                            <span className="w-4 h-4 rounded-full bg-gray-400" />
-                          </div>
-                        </div>
-                      </Radio>
-
-                      <Radio
-                        value="brown"
-                        classNames={{
-                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                        }}
-                      >
-                        <div className="w-full flex flex-col gap-1">
-                          <p className="text-medium">Коричневая</p>
-                          <div className="flex gap-1">
-                            <span className="w-4 h-4 rounded-full bg-[#db924b]" />
-                            <span className="w-4 h-4 rounded-full bg-[#5a8486]" />
-                          </div>
-                        </div>
-                      </Radio>
-
-                      <Radio
-                        value="green"
-                        classNames={{
-                          base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-green-50 dark:bg-green-950 hover:bg-green-100 dark:hover:bg-green-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
-                        }}
-                      >
-                        <div className="w-full flex flex-col gap-1">
-                          <p className="text-medium">Зеленая</p>
-                          <div className="flex gap-1">
-                            <span className="w-4 h-4 rounded-full bg-[#66cc8a]" />
-                            <span className="w-4 h-4 rounded-full bg-[#377cfb]" />
-                          </div>
-                        </div>
-                      </Radio>
-                    </div>
-                  </RadioGroup>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
-                  <h3>Уведомления</h3>
-                </CardHeader>
-                <CardBody className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>Push-уведомления</span>
-                    <Switch
-                      color="primary"
-                      isSelected={settings.enablePushNotifications}
-                      onValueChange={() =>
-                        handleToggle('enablePushNotifications')
-                      }
-                    />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Email-уведомления</span>
-                    <Switch
-                      color="primary"
-                      isSelected={settings.enableEmailNotifications}
-                      onValueChange={() =>
-                        handleToggle('enableEmailNotifications')
-                      }
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
-                  <h3>Уведомления по событиям</h3>
-                </CardHeader>
-                <CardBody className="space-y-4">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center gap-1">
-                      <span className="text-gray-400">Тип уведомления</span>
-                      <div className="flex gap-3">
-                        <span className="text-gray-400">Push</span>
-                        <span className="text-gray-400">Email</span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center gap-1">
-                      <span>
-                        Новый пост от пользователя, на которого я подписан
-                      </span>
-                      <div className="flex gap-2">
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnNewPostPush}
-                          onValueChange={() =>
-                            handleToggle('notifyOnNewPostPush')
-                          }
-                          size="sm"
-                        ></Switch>
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnNewPostEmail}
-                          onValueChange={() =>
-                            handleToggle('notifyOnNewPostEmail')
-                          }
-                          size="sm"
-                        ></Switch>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Новый комментарий к моему посту</span>
-                      <div className="flex gap-2">
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnNewCommentPush}
-                          onValueChange={() =>
-                            handleToggle('notifyOnNewCommentPush')
-                          }
-                          size="sm"
-                        ></Switch>
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnNewCommentEmail}
-                          onValueChange={() =>
-                            handleToggle('notifyOnNewCommentEmail')
-                          }
-                          size="sm"
-                        ></Switch>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Лайк к моему посту</span>
-                      <div className="flex gap-2">
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnLikePush}
-                          onValueChange={() => handleToggle('notifyOnLikePush')}
-                          size="sm"
-                        ></Switch>
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnLikeEmail}
-                          onValueChange={() =>
-                            handleToggle('notifyOnLikeEmail')
-                          }
-                          size="sm"
-                        ></Switch>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Репост к моему посту</span>
-                      <div className="flex gap-2">
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnRepostPush}
-                          onValueChange={() =>
-                            handleToggle('notifyOnRepostPush')
-                          }
-                          size="sm"
-                        ></Switch>
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnRepostEmail}
-                          onValueChange={() =>
-                            handleToggle('notifyOnRepostEmail')
-                          }
-                          size="sm"
-                        ></Switch>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Новый подписчик</span>
-                      <div className="flex gap-2">
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnNewFollowerPush}
-                          onValueChange={() =>
-                            handleToggle('notifyOnNewFollowerPush')
-                          }
-                          size="sm"
-                        ></Switch>
-                        <Switch
-                          color="primary"
-                          isSelected={settings.notifyOnNewFollowerEmail}
-                          onValueChange={() =>
-                            handleToggle('notifyOnNewFollowerEmail')
-                          }
-                          size="sm"
-                        ></Switch>
-                      </div>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
-                  <h3 className="text-lg font-semibold">Активные сессии</h3>
-                </CardHeader>
-                <CardBody>
-                  <SessionList />
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
-                  <h3>Сброс пароля</h3>
-                </CardHeader>
-                <CardBody>
-                  <div className="flex justify-between md:items-center flex-col md:flex-row gap-2 md:gap-0">
-                    <div className="flex items-center gap-2">
-                      <TbLockPassword className="text-xl flex-shrink-0" />
-                      <div className="flex flex-col">
-                        <span>Мы отправим код подтверждения на ваш email.</span>
-                        <span className="text-sm text-gray-400">
-                          Затем нужно будет ввести новый пароль и подтвердить
-                          его.
-                        </span>
-                      </div>
-                    </div>
-                    <Button
-                      color="primary"
-                      onClick={() => {
-                        onClose()
-                        router.push('/reset-password')
-                      }}
-                    >
-                      Сбросить пароль
-                    </Button>
-                  </div>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex gap-2 items-center text-lg font-semibold text-danger max-w-3xl:flex-col">
-                  <h3>Удаление аккаунта</h3>
-                </CardHeader>
-                <CardBody>
-                  <div className="flex justify-between md:items-center flex-col md:flex-row gap-2 md:gap-0">
-                    <div className="flex flex-col">
-                      <span>Полностью удалить ваш аккаунт и все данные.</span>
-                      <span className="text-sm text-gray-400">
-                        Это действие необратимо.
-                      </span>
-                    </div>
-                    <Button
-                      color="danger"
-                      onClick={() => setShowDeleteConfirm(true)}
-                    >
-                      Удалить
-                    </Button>
-                  </div>
-                </CardBody>
-              </Card>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+            <h3>Приватность</h3>
+          </CardHeader>
+          <CardBody className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <IoMdMail className="text-xl" />
+                <span>Показывать email</span>
+              </div>
+              <Switch
+                color="primary"
+                isSelected={settings.showEmail}
+                onValueChange={() => handleToggle('showEmail')}
+                isDisabled={loadingField === 'showEmail'}
+              />
             </div>
-          </ModalBody>
-          <Divider />
-          <ModalFooter>
-            <Button variant="ghost" onClick={onClose}>
-              Отмена
-            </Button>
-            <Button
-              color="primary"
-              onClick={handleSave}
-              isLoading={isUpdatingSettings}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <BiSolidBookContent className="text-xl" />
+                <span>Показывать биографию</span>
+              </div>
+              <Switch
+                color="primary"
+                isSelected={settings.showBio}
+                onValueChange={() => handleToggle('showBio')}
+                isDisabled={loadingField === 'showBio'}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <FaMapMarkerAlt className="text-xl" />
+                <span>Показывать местоположение</span>
+              </div>
+              <Switch
+                color="primary"
+                isSelected={settings.showLocation}
+                onValueChange={() => handleToggle('showLocation')}
+                isDisabled={loadingField === 'showLocation'}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <FaBirthdayCake className="text-xl" />
+                <span>Показывать дату рождения</span>
+              </div>
+              <Switch
+                color="primary"
+                isSelected={settings.showDateOfBirth}
+                onValueChange={() => handleToggle('showDateOfBirth')}
+                isDisabled={loadingField === 'showDateOfBirth'}
+              />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+            <h3>Анимация</h3>
+          </CardHeader>
+          <CardBody>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <MdAnimation className="text-xl flex-shrink-0" />
+                <div className="flex flex-col">
+                  <span>Уменьшить анимацию</span>
+                  <span className="text-sm text-gray-400">
+                    Если настройка не применилась - перезагрузите страницу
+                  </span>
+                </div>
+              </div>
+              <Switch
+                color="primary"
+                isSelected={settings.reduceAnimation}
+                onValueChange={() => handleToggle('reduceAnimation')}
+                isDisabled={loadingField === 'reduceAnimation'}
+              />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+            <h3>Тема оформления</h3>
+          </CardHeader>
+          <CardBody>
+            <RadioGroup
+              value={selectedTheme}
+              onValueChange={handleThemeChange}
+              orientation="horizontal"
+              className="grid gap-2 w-full"
             >
-              Сохранить
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+              <div className="grid gap-2 w-full">
+                <Radio
+                  value="default"
+                  classNames={{
+                    base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                  }}
+                >
+                  <div className="w-full flex flex-col gap-1">
+                    <p className="text-medium">По умолчанию</p>
+                    <div className="flex gap-1">
+                      <span className="w-4 h-4 rounded-full bg-[#9353D3]" />
+                      <span className="w-4 h-4 rounded-full bg-[#18181B]" />
+                    </div>
+                  </div>
+                </Radio>
+
+                <Radio
+                  value="purple"
+                  classNames={{
+                    base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                  }}
+                >
+                  <div className="w-full flex flex-col gap-1">
+                    <p className="text-medium">Фиолетовая</p>
+                    <div className="flex gap-1">
+                      <span className="w-4 h-4 rounded-full bg-[#9353d3]" />
+                      <span className="w-4 h-4 rounded-full bg-[#637aff]" />
+                    </div>
+                  </div>
+                </Radio>
+
+                <Radio
+                  value="monochrome"
+                  classNames={{
+                    base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                  }}
+                >
+                  <div className="w-full flex flex-col gap-1">
+                    <p className="text-medium">Монохромная</p>
+                    <div className="flex gap-1">
+                      <span className="w-4 h-4 rounded-full bg-black dark:bg-white" />
+                      <span className="w-4 h-4 rounded-full bg-gray-400" />
+                    </div>
+                  </div>
+                </Radio>
+
+                <Radio
+                  value="brown"
+                  classNames={{
+                    base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                  }}
+                >
+                  <div className="w-full flex flex-col gap-1">
+                    <p className="text-medium">Коричневая</p>
+                    <div className="flex gap-1">
+                      <span className="w-4 h-4 rounded-full bg-[#db924b]" />
+                      <span className="w-4 h-4 rounded-full bg-[#5a8486]" />
+                    </div>
+                  </div>
+                </Radio>
+
+                <Radio
+                  value="green"
+                  classNames={{
+                    base: 'inline-flex m-0 flex-1 w-full max-w-full min-w-[200px] bg-green-50 dark:bg-green-950 hover:bg-green-100 dark:hover:bg-green-900 items-center justify-start cursor-pointer rounded-lg gap-2 p-3 border-2 data-[selected=true]:border-primary shadow-sm transition-all data-[selected=true]:shadow-md',
+                  }}
+                >
+                  <div className="w-full flex flex-col gap-1">
+                    <p className="text-medium">Зеленая</p>
+                    <div className="flex gap-1">
+                      <span className="w-4 h-4 rounded-full bg-[#66cc8a]" />
+                      <span className="w-4 h-4 rounded-full bg-[#377cfb]" />
+                    </div>
+                  </div>
+                </Radio>
+              </div>
+            </RadioGroup>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+            <h3>Уведомления</h3>
+          </CardHeader>
+          <CardBody className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span>Push-уведомления</span>
+              <Switch
+                color="primary"
+                isSelected={settings.enablePushNotifications}
+                onValueChange={() => handleToggle('enablePushNotifications')}
+                isDisabled={loadingField === 'enablePushNotifications'}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <span>Email-уведомления</span>
+              <Switch
+                color="primary"
+                isSelected={settings.enableEmailNotifications}
+                onValueChange={() => handleToggle('enableEmailNotifications')}
+                isDisabled={loadingField === 'enableEmailNotifications'}
+              />
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+            <h3>Уведомления по событиям</h3>
+          </CardHeader>
+          <CardBody className="space-y-4">
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center gap-1">
+                <span className="text-gray-400">Тип уведомления</span>
+                <div className="flex gap-3">
+                  <span className="text-gray-400">Push</span>
+                  <span className="text-gray-400">Email</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-1">
+                <span>Новый пост от пользователя, на которого я подписан</span>
+                <div className="flex gap-2">
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnNewPostPush}
+                    onValueChange={() => handleToggle('notifyOnNewPostPush')}
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnNewPostPush'}
+                  ></Switch>
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnNewPostEmail}
+                    onValueChange={() => handleToggle('notifyOnNewPostEmail')}
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnNewPostEmail'}
+                  ></Switch>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-1">
+                <span>Новый комментарий к моему посту</span>
+                <div className="flex gap-2">
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnNewCommentPush}
+                    onValueChange={() => handleToggle('notifyOnNewCommentPush')}
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnNewCommentPush'}
+                  ></Switch>
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnNewCommentEmail}
+                    onValueChange={() =>
+                      handleToggle('notifyOnNewCommentEmail')
+                    }
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnNewCommentEmail'}
+                  ></Switch>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-1">
+                <span>Лайк к моему посту</span>
+                <div className="flex gap-2">
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnLikePush}
+                    onValueChange={() => handleToggle('notifyOnLikePush')}
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnLikePush'}
+                  ></Switch>
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnLikeEmail}
+                    onValueChange={() => handleToggle('notifyOnLikeEmail')}
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnLikeEmail'}
+                  ></Switch>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-1">
+                <span>Репост к моему посту</span>
+                <div className="flex gap-2">
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnRepostPush}
+                    onValueChange={() => handleToggle('notifyOnRepostPush')}
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnRepostPush'}
+                  ></Switch>
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnRepostEmail}
+                    onValueChange={() => handleToggle('notifyOnRepostEmail')}
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnRepostEmail'}
+                  ></Switch>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Новый подписчик</span>
+                <div className="flex gap-2">
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnNewFollowerPush}
+                    onValueChange={() =>
+                      handleToggle('notifyOnNewFollowerPush')
+                    }
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnNewFollowerPush'}
+                  ></Switch>
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnNewFollowerEmail}
+                    onValueChange={() =>
+                      handleToggle('notifyOnNewFollowerEmail')
+                    }
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnNewFollowerEmail'}
+                  ></Switch>
+                </div>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+            <h3 className="text-lg font-semibold">Активные сессии</h3>
+          </CardHeader>
+          <CardBody>
+            <SessionList />
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-foreground">
+            <h3>Сброс пароля</h3>
+          </CardHeader>
+          <CardBody>
+            <div className="flex justify-between md:items-center flex-col md:flex-row gap-2 md:gap-0">
+              <div className="flex items-center gap-2">
+                <TbLockPassword className="text-xl flex-shrink-0" />
+                <div className="flex flex-col">
+                  <span>Мы отправим код подтверждения на ваш email.</span>
+                  <span className="text-sm text-gray-400">
+                    Затем нужно будет ввести новый пароль и подтвердить его.
+                  </span>
+                </div>
+              </div>
+              <Button
+                color="primary"
+                onClick={() => {
+                  router.push('/reset-password')
+                }}
+              >
+                Сбросить пароль
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center text-lg font-semibold text-danger max-w-3xl:flex-col">
+            <h3>Удаление аккаунта</h3>
+          </CardHeader>
+          <CardBody>
+            <div className="flex justify-between md:items-center flex-col md:flex-row gap-2 md:gap-0">
+              <div className="flex flex-col">
+                <span>Полностью удалить ваш аккаунт и все данные.</span>
+                <span className="text-sm text-gray-400">
+                  Это действие необратимо.
+                </span>
+              </div>
+              <Button color="danger" onClick={() => setShowDeleteConfirm(true)}>
+                Удалить
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
 
       <Modal
         isOpen={showReloadConfirm}
@@ -614,7 +562,6 @@ export default function SettingsProfile({
               variant="ghost"
               onClick={() => {
                 setShowReloadConfirm(false)
-                onClose()
               }}
             >
               Позже
@@ -666,8 +613,7 @@ export default function SettingsProfile({
             <Button
               color="danger"
               onClick={handleDeleteAccount}
-              isLoading={isDeletingUser}
-              isDisabled={!isDeleteConfirmed}
+              isDisabled={isDeletingUser}
             >
               Удалить аккаунт
             </Button>

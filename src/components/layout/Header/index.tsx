@@ -47,8 +47,6 @@ function Header({ className }: { className?: string }) {
     width: 200,
   })
 
-  const { openEditProfile, openSettings } = useModalsStore()
-
   return (
     <>
       <NextNavbar
@@ -92,7 +90,10 @@ function Header({ className }: { className?: string }) {
                   </DropdownItem>
                   <DropdownItem
                     key="settings"
-                    onClick={() => user?.id && openSettings(user.id)}
+                    onClick={() =>
+                      user?.userName &&
+                      router.push(`/${user.userName}/settings`)
+                    }
                     textValue="Настройки"
                     startContent={<IoIosSettings />}
                     isDisabled={user ? !user.isEmailVerified : true}
@@ -101,7 +102,9 @@ function Header({ className }: { className?: string }) {
                   </DropdownItem>
                   <DropdownItem
                     key="edit-profile"
-                    onClick={() => user?.id && openEditProfile(user.id)}
+                    onClick={() =>
+                      user?.userName && router.push(`/${user.userName}/edit`)
+                    }
                     textValue="Редактировать профиль"
                     startContent={<AiFillEdit />}
                     isDisabled={user ? !user?.isEmailVerified : true}

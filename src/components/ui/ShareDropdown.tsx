@@ -172,8 +172,8 @@ export default function ShareDropdown({
     <Dropdown>
       <DropdownTrigger>
         <Button
-          variant="ghost"
-          color="primary"
+          variant="flat"
+          color="secondary"
           startContent={<MdShare />}
           className={className}
           fullWidth
