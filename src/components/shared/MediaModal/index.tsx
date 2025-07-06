@@ -303,11 +303,11 @@ export default function MediaModal({
           onMouseDown={handleMouseDown}
         >
           {mediaItems.map((item, index) => {
-            const optimizedUrl = getOptimizedUrlByCustomSrc(
-              item.url,
-              'auto',
-              1200
-            )
+            // const optimizedUrl = getOptimizedUrlByCustomSrc(
+            //   item.url,
+            //   'auto',
+            //   1200
+            // )
             return (
               <div
                 key={index}
@@ -322,7 +322,7 @@ export default function MediaModal({
                 {item.type === MediaType.IMAGE ? (
                   <div className="relative h-full w-full flex items-center justify-center">
                     <img
-                      src={optimizedUrl}
+                      src={item.url}
                       alt={`Изображение ${index + 1}`}
                       className="max-w-full max-h-full object-contain"
                     />
@@ -330,7 +330,7 @@ export default function MediaModal({
                 ) : (
                   <div className="h-full w-full flex items-center justify-center overflow-hidden">
                     <VideoPlayer
-                      src={optimizedUrl}
+                      src={item.url}
                       autoPlay={index === currentIndex}
                       controls={true}
                       loop={true}
