@@ -387,11 +387,6 @@ const Card = memo(
                     count={0}
                     Icon={RepostIcon}
                   />
-                  {cardFor !== 'comment' && (
-                    <MetaInfo count={viewCount} Icon={ViewsIcon} />
-                  )}
-                </div>
-                <div className="flex items-center gap-0 -mr-2">
                   <ShareDropdown
                     url={`/${username}/post/${id}`}
                     title={`Пост от ${username} в Zling`}
@@ -403,6 +398,11 @@ const Card = memo(
                     className="p-0 min-w-0"
                     onShareSuccess={() => incrementShareCount(id)}
                   />
+                </div>
+                <div className="flex items-center gap-0 -mr-2">
+                  {cardFor !== 'comment' && (
+                    <MetaInfo count={viewCount} Icon={ViewsIcon} />
+                  )}
                 </div>
               </div>
             </CardFooter>
