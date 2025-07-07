@@ -337,7 +337,7 @@ const Card = memo(
             <CardFooter className="gap-3 p-3 pt-0 pb-1">
               <div className="flex items-center gap-1 w-full justify-between">
                 <div
-                  className="grid grid-cols-[1fr_1fr_1fr_1fr] sm:gap-2 -ml-2"
+                  className="flex sm:gap-2 -ml-2"
                   style={{ columnCount: 4 }}
                 >
                   <AnimatedLike
