@@ -174,14 +174,7 @@ function ImageUpload({
 
   // Очистка URL при размонтировании компонента
   useEffect(() => {
-    // Получаем QueryCache из QueryClient
-    const queryCache = queryClient.getQueryCache()
-    // Ищем запрос по ключу
-    const query = queryCache.find({ queryKey: userKeys.randomImage })
-    // Удаляем запрос из кэша
-    if (query) {
-      setIsShowClearImageBtn(true)
-    }
+    setIsShowClearImageBtn(!!preview)
     return () => {
       if (preview) {
         URL.revokeObjectURL(preview)
