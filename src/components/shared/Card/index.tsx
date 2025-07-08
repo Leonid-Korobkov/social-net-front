@@ -38,6 +38,7 @@ import MediaModal from '../MediaModal'
 import ShareDropdown from '@/components/ui/ShareDropdown'
 import toast from 'react-hot-toast'
 import { usePreviewPostStore } from '@/store/previewPost.store'
+import { stripHtml } from '@/utils/stripHtml'
 
 export interface ICard {
   avatarUrl: string
@@ -371,7 +372,7 @@ const Card = memo(
                         })
                         if (typeof onClick === 'function') onClick()
                       }}
-                      title={`Переход к посту ${content}`}
+                      title={`Переход к посту ${stripHtml(content)}`}
                     >
                       <MetaInfo count={commentsCount} Icon={FaRegComment} />
                     </Link>
