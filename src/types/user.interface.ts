@@ -17,4 +17,6 @@ export interface IUserSettings {
   theme?: 'purple' | 'monochrome' | 'brown' | 'green'
   notifyOnNewFollowerPush?: boolean
   notifyOnNewFollowerEmail?: boolean
+  notifyOnCommentLikePush?: boolean
+  notifyOnCommentLikeEmail?: boolean
 }

@@ -92,6 +92,8 @@ export default function SettingsProfile({ user }: SettingsProfileProps) {
     notifyOnRepostEmail: user?.notifyOnRepostEmail ?? false,
     notifyOnNewFollowerPush: user?.notifyOnNewFollowerPush ?? false,
     notifyOnNewFollowerEmail: user?.notifyOnNewFollowerEmail ?? false,
+    notifyOnCommentLikePush: user?.notifyOnCommentLikePush ?? false,
+    notifyOnCommentLikeEmail: user?.notifyOnCommentLikeEmail ?? false,
   })
 
   useEffect(() => {
@@ -435,6 +437,29 @@ export default function SettingsProfile({ user }: SettingsProfileProps) {
                     onValueChange={() => handleToggle('notifyOnLikeEmail')}
                     size="sm"
                     isDisabled={loadingField === 'notifyOnLikeEmail'}
+                  ></Switch>
+                </div>
+              </div>
+              <div className="flex justify-between items-center gap-1">
+                <span>Лайк к моему комментарию</span>
+                <div className="flex gap-2">
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnCommentLikePush}
+                    onValueChange={() =>
+                      handleToggle('notifyOnCommentLikePush')
+                    }
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnCommentLikePush'}
+                  ></Switch>
+                  <Switch
+                    color="primary"
+                    isSelected={settings.notifyOnCommentLikeEmail}
+                    onValueChange={() =>
+                      handleToggle('notifyOnCommentLikeEmail')
+                    }
+                    size="sm"
+                    isDisabled={loadingField === 'notifyOnCommentLikeEmail'}
                   ></Switch>
                 </div>
               </div>

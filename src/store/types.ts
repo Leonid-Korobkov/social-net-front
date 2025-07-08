@@ -45,6 +45,8 @@ export type User = {
   notifyOnRepostEmail?: boolean
   notifyOnNewFollowerPush?: boolean
   notifyOnNewFollowerEmail?: boolean
+  notifyOnCommentLikePush?: boolean
+  notifyOnCommentLikeEmail?: boolean
 }
 
 export type Follows = {
