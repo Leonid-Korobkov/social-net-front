@@ -278,7 +278,6 @@ const Card = memo(
                     commentsCount,
                     createdAt,
                     id,
-                    cardFor,
                     likedByUser,
                     isBookmarkedByUser,
                     isFollowing,
@@ -337,10 +336,7 @@ const Card = memo(
           {cardFor !== 'search' && (
             <CardFooter className="gap-3 p-3 pt-0 pb-1">
               <div className="flex items-center gap-1 w-full justify-between">
-                <div
-                  className="flex sm:gap-2 -ml-2"
-                  style={{ columnCount: 4 }}
-                >
+                <div className="flex sm:gap-2 -ml-2" style={{ columnCount: 4 }}>
                   <AnimatedLike
                     isLiked={likedByUser}
                     count={likesCount}
@@ -362,7 +358,6 @@ const Card = memo(
                           commentsCount,
                           createdAt,
                           id,
-                          cardFor,
                           likedByUser,
                           isBookmarkedByUser,
                           isFollowing,
