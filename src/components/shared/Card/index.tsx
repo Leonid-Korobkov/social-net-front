@@ -278,6 +278,7 @@ const Card = memo(
                     commentsCount,
                     createdAt,
                     id,
+                    cardFor,
                     likedByUser,
                     isBookmarkedByUser,
                     isFollowing,
@@ -373,7 +374,6 @@ const Card = memo(
                           ogDescr,
                           ogUrl,
                         })
-                        console.log(usePreviewPostStore.getState())
                         if (typeof onClick === 'function') onClick()
                       }}
                       title={`Переход к посту ${content}`}
