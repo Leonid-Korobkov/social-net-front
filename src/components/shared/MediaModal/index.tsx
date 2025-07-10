@@ -258,6 +258,31 @@ export default function MediaModal({
     }
   }, [handleMouseMove, handleMouseUp, isMobile, isMouseDown])
 
+  // Глобальный обработчик клика вне модального окна
+  useEffect(() => {
+    if (!isOpen) return
+
+    function handleClickOutside(event: MouseEvent) {
+      if (isDragging) {
+        setIsDragging(false) // сбрасываем флаг после drag-scroll
+        return
+      }
+      const target = event.target as HTMLElement
+      // Не закрываем, если клик по изображению или элементу управления
+      if (target.closest('.media-modal-ignore-close')) {
+        return
+      }
+      if (modalRef.current && !modalRef.current.contains(target)) {
+        onClose()
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isOpen, onClose, isDragging])
+
   // Если нет медиафайлов или компонент не смонтирован, не рендерим модальное окно
   if (!mediaItems || mediaItems.length === 0 || !mounted) return null
 
@@ -324,7 +349,7 @@ export default function MediaModal({
                     <img
                       src={item.url}
                       alt={`Изображение ${index + 1}`}
-                      className="absolute max-w-full max-h-full object-contain"
+                      className="absolute max-w-full max-h-full object-contain media-modal-ignore-close"
                     />
                   </div>
                 ) : (
@@ -346,7 +371,7 @@ export default function MediaModal({
 
         {/* Кнопка закрытия */}
         <button
-          className="absolute top-4 right-4 bg-default-100 text-default-800 z-50 hover:bg-default-200 p-2 rounded-full"
+          className="media-modal-ignore-close absolute top-4 right-4 bg-default-100 text-default-800 z-50 hover:bg-default-200 p-2 rounded-full"
           onClick={onClose}
           aria-label="Закрыть"
         >
@@ -357,11 +382,11 @@ export default function MediaModal({
         {mediaItems.length > 1 && (
           <>
             <div
-              className="absolute left-0 top-0 bottom-0 w-[70px] flex items-center justify-start px-4 cursor-pointer bg-gradient-to-r from-black/10 to-transparent hidden md:flex hover:bg-black/20 transition-all"
+              className="absolute left-0 top-0 bottom-0 w-[70px] flex items-center justify-start px-4 cursor-pointer bg-gradient-to-r from-black/10 to-transparent hidden md:flex hover:bg-black/20 transition-all media-modal-ignore-close"
               onClick={prevItem}
             >
               <button
-                className="bg-default-100 text-default-800 hover:bg-default-200 z-10 p-2 rounded-full"
+                className="media-modal-ignore-close bg-default-100 text-default-800 hover:bg-default-200 z-10 p-2 rounded-full"
                 aria-label="Предыдущее изображение"
               >
                 <IoChevronBack size={24} />
@@ -369,11 +394,11 @@ export default function MediaModal({
             </div>
 
             <div
-              className="absolute right-0 top-0 bottom-0 w-[70px] flex items-center justify-end px-4 cursor-pointer bg-gradient-to-l from-black/10 to-transparent hidden md:flex hover:bg-black/20 transition-all"
+              className="absolute right-0 top-0 bottom-0 w-[70px] flex items-center justify-end px-4 cursor-pointer bg-gradient-to-l from-black/10 to-transparent hidden md:flex hover:bg-black/20 transition-all media-modal-ignore-close"
               onClick={nextItem}
             >
               <button
-                className="bg-default-100 text-default-800 hover:bg-default-200 z-10 p-2 rounded-full"
+                className="media-modal-ignore-close bg-default-100 text-default-800 hover:bg-default-200 z-10 p-2 rounded-full"
                 aria-label="Следующее изображение"
               >
                 <IoChevronForward size={24} />
@@ -389,7 +414,7 @@ export default function MediaModal({
               <button
                 key={index}
                 className={cn(
-                  'w-2 h-2 rounded-full transition-all',
+                  'media-modal-ignore-close w-2 h-2 rounded-full transition-all',
                   index === currentIndex ? 'bg-white w-4' : 'bg-white/50'
                 )}
                 onClick={() => setCurrentIndex(index)}
