@@ -109,7 +109,7 @@ const createPreviewUrl = (file: File): Promise<string> => {
         // Сразу возвращаем заглушку для быстрого отображения UI
         // и запускаем конвертацию в фоне
         resolve(
-          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23eeeeee'/%3E%3C/svg%3E"
+          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23eeeeee'/%3E%3C/svg%3E",
         )
 
         // Проверка доступности heic2any
@@ -198,7 +198,7 @@ const createVideoThumbnail = (file: File): Promise<string> => {
       // Сохраняем пропорции
       const ratio = Math.min(
         width / video.videoWidth,
-        height / video.videoHeight
+        height / video.videoHeight,
       )
       canvas.width = video.videoWidth * ratio
       canvas.height = video.videoHeight * ratio
@@ -250,7 +250,7 @@ const prepareFileForUpload = async (file: File): Promise<File> => {
       const jpegFile = new File(
         [jpegBlob],
         file.name.replace(/\.heic$/i, '.jpg'),
-        { type: 'image/jpeg' }
+        { type: 'image/jpeg' },
       )
       return jpegFile
     } catch (error) {
@@ -269,11 +269,11 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
   // Получаем данные из Zustand и их преобразуем в рабочий формат
   const mediaUploadsStore = useStore(
     UserSettingsStore,
-    state => state.mediaUploads
+    state => state.mediaUploads,
   )
   const setMediaUploadsStore = useStore(
     UserSettingsStore,
-    state => state.setMediaUploads
+    state => state.setMediaUploads,
   )
 
   // Локальное состояние для работы с файлами
@@ -299,7 +299,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
           const emptyFile = new File(
             [new ArrayBuffer(storable.fileSize || 0)], // Создаем буфер правильного размера
             storable.fileName || 'file',
-            { type: storable.fileType }
+            { type: storable.fileType },
           )
 
           return {
@@ -357,7 +357,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
                 // Важно: сохраняем существующий URL для превью
                 url: currentPreviewUrl,
               }
-            : u
+            : u,
         )
 
         return updated
@@ -378,7 +378,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
           file: preparedFile,
           onProgress: progress => {
             setUploads(prev =>
-              prev.map(u => (u.id === upload.id ? { ...u, progress } : u))
+              prev.map(u => (u.id === upload.id ? { ...u, progress } : u)),
             )
           },
         })
@@ -401,7 +401,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
                   url: mediaUrl,
                   progress: 100,
                 }
-              : u
+              : u,
           )
 
           // После обновления локального состояния
@@ -428,8 +428,8 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
           prev.map(u =>
             u.id === upload.id
               ? { ...u, status: 'error' as const, error: errorMessage }
-              : u
-          )
+              : u,
+          ),
         )
 
         if (onError) {
@@ -446,7 +446,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
       uploadToCloudinary,
       uploadToCloudinaryChunked,
       getUploadedUrls,
-    ]
+    ],
   )
 
   // Обработчик добавления файлов
@@ -485,8 +485,8 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
           if (file.size > MAX_IMAGE_FILE_SIZE) {
             toast.error(
               `Файл слишком большой: ${(file.size / (1024 * 1024)).toFixed(
-                2
-              )} МБ > ${MAX_IMAGE_FILE_SIZE} МБ`
+                2,
+              )} МБ > ${MAX_IMAGE_FILE_SIZE} МБ`,
             )
             continue
           }
@@ -494,8 +494,8 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
           if (file.size > MAX_VIDEO_FILE_SIZE) {
             toast.error(
               `Файл слишком большой: ${(file.size / (1024 * 1024)).toFixed(
-                2
-              )} МБ > ${(MAX_VIDEO_FILE_SIZE / (1024 * 1024)).toFixed(2)} МБ`
+                2,
+              )} МБ > ${(MAX_VIDEO_FILE_SIZE / (1024 * 1024)).toFixed(2)} МБ`,
             )
             continue
           }
@@ -532,8 +532,8 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
                       prev.map(u =>
                         u.id === newUpload.id
                           ? { ...u, url: event.target!.result as string }
-                          : u
-                      )
+                          : u,
+                      ),
                     )
                   }
                 }
@@ -569,7 +569,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
         return updatedUploads
       })
     },
-    [uploads, maxFiles, uploadFileDirectly]
+    [uploads, maxFiles, uploadFileDirectly],
   )
 
   // Функция для загрузки файла по ID (используется для повторной загрузки)
@@ -586,7 +586,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
       // Используем общую функцию для загрузки
       await uploadFileDirectly(upload)
     },
-    [uploads, uploadFileDirectly]
+    [uploads, uploadFileDirectly],
   )
 
   // Загрузить все файлы
@@ -604,7 +604,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
 
       // Обновляем статус на removing
       setUploads(prev =>
-        prev.map(u => (u.id === id ? { ...u, status: 'removing' } : u))
+        prev.map(u => (u.id === id ? { ...u, status: 'removing' } : u)),
       )
 
       try {
@@ -627,7 +627,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
 
       // Синхронизируем с Zustand (будет вызвано через useEffect)
     },
-    [uploads]
+    [uploads],
   )
 
   // Очистить все файлы
@@ -688,7 +688,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
         handleFiles(e.dataTransfer.files)
       }
     },
-    [handleFiles]
+    [handleFiles],
   )
 
   // Обработчик клика на зону для выбора файлов
@@ -709,7 +709,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
         }
       }
     },
-    [handleFiles]
+    [handleFiles],
   )
 
   // Обработчик вставки изображений из буфера обмена
@@ -748,7 +748,7 @@ export const useUploadMedia = (options: UseUploadMediaOptions = {}) => {
   const isLoading = uploads.some(upload => upload.status === 'uploading')
   const hasError = uploads.some(upload => upload.status === 'error')
   const isComplete = uploads.every(
-    upload => upload.status === 'success' || upload.status === 'error'
+    upload => upload.status === 'success' || upload.status === 'error',
   )
 
   return {

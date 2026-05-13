@@ -1,5 +1,10 @@
 'use client'
-import { useModalsStore } from '@/store/modals.store'
+
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useTheme } from 'next-themes'
+
 import {
   Button,
   Dropdown,
@@ -8,7 +13,6 @@ import {
   DropdownSection,
   DropdownTrigger,
   Modal,
-  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -17,22 +21,19 @@ import {
   NavbarItem,
   Navbar as NextNavbar,
   Switch,
-  useDisclosure,
   User,
+  useDisclosure,
 } from '@heroui/react'
-import { useTheme } from 'next-themes'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+
 import { AiFillEdit } from 'react-icons/ai'
 import { CiLogout } from 'react-icons/ci'
-
-import { useAuth } from '@/hooks/useAuth'
 import { FaMoon, FaPalette, FaUser } from 'react-icons/fa'
 import { IoIosSettings } from 'react-icons/io'
 import { LuSunMedium } from 'react-icons/lu'
-import { useCloudinaryImage } from '../../../hooks/useCloudinaryImage'
+
 import Logo from '../../shared/Logo'
+import { useAuth } from '@/hooks/useAuth'
+import { useCloudinaryImage } from '@/hooks/useCloudinaryImage'
 
 function Header({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme()
@@ -47,10 +48,12 @@ function Header({ className }: { className?: string }) {
     width: 200,
   })
 
+  const isDisabled = !user?.isEmailVerified
+
   return (
     <>
       <NextNavbar
-        className=""
+        className={className}
         maxWidth="xl"
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
@@ -62,6 +65,7 @@ function Header({ className }: { className?: string }) {
             </Link>
           </NavbarBrand>
         </NavbarContent>
+
         <NavbarContent justify="end">
           <NavbarItem>
             <Dropdown placement="bottom-start">
@@ -84,7 +88,7 @@ function Header({ className }: { className?: string }) {
                     onClick={() => router.push(`/${user?.userName}`)}
                     textValue="Мой профиль"
                     startContent={<FaUser />}
-                    isDisabled={user ? !user.isEmailVerified : true}
+                    isDisabled={isDisabled}
                   >
                     Мой профиль
                   </DropdownItem>
@@ -96,7 +100,7 @@ function Header({ className }: { className?: string }) {
                     }
                     textValue="Настройки"
                     startContent={<IoIosSettings />}
-                    isDisabled={user ? !user.isEmailVerified : true}
+                    isDisabled={isDisabled}
                   >
                     Настройки
                   </DropdownItem>
@@ -107,7 +111,7 @@ function Header({ className }: { className?: string }) {
                     }
                     textValue="Редактировать профиль"
                     startContent={<AiFillEdit />}
-                    isDisabled={user ? !user?.isEmailVerified : true}
+                    isDisabled={isDisabled}
                   >
                     Редактировать профиль
                   </DropdownItem>
@@ -131,7 +135,7 @@ function Header({ className }: { className?: string }) {
                             <FaMoon className={className} />
                           )
                         }
-                      ></Switch>
+                      />
                     }
                   >
                     Тема
@@ -142,7 +146,7 @@ function Header({ className }: { className?: string }) {
                   color="danger"
                   startContent={<CiLogout className="text-large" />}
                   onClick={onOpen}
-                  isDisabled={user ? !user.isEmailVerified : true}
+                  isDisabled={isDisabled}
                 >
                   Выйти
                 </DropdownItem>
@@ -154,7 +158,7 @@ function Header({ className }: { className?: string }) {
 
       <Modal
         isOpen={isOpen}
-        scrollBehavior={'inside'}
+        scrollBehavior="inside"
         onOpenChange={onOpenChange}
         backdrop="blur"
       >
@@ -164,7 +168,6 @@ function Header({ className }: { className?: string }) {
               <ModalHeader className="flex flex-col gap-1">
                 Вы уверены, что хотите выйти из аккаунта?
               </ModalHeader>
-              <ModalBody></ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onClick={onClose}>
                   Отмена

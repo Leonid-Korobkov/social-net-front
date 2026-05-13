@@ -81,7 +81,7 @@ export const useCreatePost = () => {
               data: [newPost, ...newPages[0].data],
             }
             return { ...old, pages: newPages }
-          }
+          },
         )
       }
     },
@@ -165,7 +165,7 @@ export const useDeletePost = () => {
               data: page.data.filter((post: Post) => post.id !== id),
             }))
             return { ...old, pages: filteredPages }
-          }
+          },
         )
       }
     },
@@ -263,7 +263,7 @@ export const useGetFeed = ({ limit, feedType }: FeedRequest) => {
 // Вспомогательная функция для обновления всех feed-кэшей
 function updateAllFeedCaches(
   queryClient: ReturnType<typeof useQueryClient>,
-  updater: (old: InfiniteData<PostsDTO>) => InfiniteData<PostsDTO>
+  updater: (old: InfiniteData<PostsDTO>) => InfiniteData<PostsDTO>,
 ) {
   const feedQueries = queryClient
     .getQueryCache()
@@ -280,7 +280,7 @@ function updateAllFeedCaches(
 function updateUserPostsCache(
   queryClient: ReturnType<typeof useQueryClient>,
   username: string,
-  updater: (old: InfiniteData<PostsDTO>) => InfiniteData<PostsDTO>
+  updater: (old: InfiniteData<PostsDTO>) => InfiniteData<PostsDTO>,
 ) {
   const key = userKeys.posts(username)
   queryClient.setQueryData<InfiniteData<PostsDTO>>(key, old => {

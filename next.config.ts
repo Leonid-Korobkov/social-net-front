@@ -1,18 +1,18 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/apis/:path*',
-        destination: 'https://social-net-back.onrender.com/apis/:path*',
-      },
-      {
-        source: '/socket.io/:path*',
-        destination: 'https://social-net-back.onrender.com/socket.io/:path*',
-      },
-    ]
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/apis/:path*',
+  //       destination: 'https://social-net-back.onrender.com/apis/:path*',
+  //     },
+  //     {
+  //       source: '/socket.io/:path*',
+  //       destination: 'https://social-net-back.onrender.com/socket.io/:path*',
+  //     },
+  //   ]
+  // },
   serverExternalPackages: ['autoprefixer'],
   experimental: {
     optimizePackageImports: [

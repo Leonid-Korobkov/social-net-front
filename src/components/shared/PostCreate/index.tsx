@@ -1,16 +1,16 @@
 'use client'
 import { Editor, EditorContent } from '@tiptap/react'
 import { EditorMenus } from './EditorMenus'
+import { LinkPopover } from '@/components/tiptap-ui/link-popover'
 
 import '@/css/editor.css'
 import '@/css/syntax-highlight.css'
 import '@/css/tippy.css'
-import { Spinner } from '@heroui/react'
-import { extractFirstLink } from '@/utils/extractLink'
-import LinkPreview from '../LinkPreview'
-import { useUploadMedia } from '@/hooks/useUploadMedia'
 import { UserSettingsStore } from '@/store/userSettings.store'
+import { extractFirstLink } from '@/utils/extractLink'
+import { Spinner } from '@heroui/react'
 import { useStore } from 'zustand'
+import LinkPreview from '../LinkPreview'
 
 interface CreatePostProps {
   onSuccess?: () => void
@@ -42,6 +42,9 @@ function CreatePost({ editor, content }: CreatePostProps) {
     <div className="flex-grow">
       {/* Подключение меню форматирования */}
       <EditorMenus editor={editor} />
+
+      {/* LinkPopover для ссылок */}
+      <LinkPopover editor={editor} />
 
       {/* Сам редактор */}
       <div className="mb-3">
